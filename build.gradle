@@ -1,0 +1,60 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform' version '1.4.20'
+}
+
+group = 'org.mifek.wfc'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = '1.8'
+        }
+        testRuns["test"].executionTask.configure {
+            useJUnit()
+        }
+    }
+
+    
+    sourceSets {
+        commonMain {
+
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-junit')
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+            }
+        }
+        jvmTest {
+            dependsOn commonTest
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+    }
+
+    targets {
+        jvm()
+
+        configure([jvm])  {
+            withJava()
+            jvmJar {
+                manifest {
+                    attributes 'Main-Class': 'org.mifek.wfc.Test'
+                }
+                from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+            }
+        }
+    }
+}
