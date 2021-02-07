@@ -1,28 +1,31 @@
 package org.mifek.wfc
 
 import org.mifek.wfc.datastructures.Quadruple
+import org.mifek.wfc.utils.RANDOM
 import kotlin.random.Random
 
-private val RANDOM = Random(12345)
-
+/**
+ * Product of int array elements
+ */
 fun IntArray.product(): Int {
     return this.reduce { acc, it -> acc*it }
 }
 
+/**
+ * Return index of random element based on given distribution
+ */
 fun DoubleArray.randomIndex(random: Random = RANDOM): Int {
     val sum = sum()
     val rand = random.nextDouble() * sum
     var partialSum = 0.0
-//    println("Sum: $sum\tRand: $rand\tSize: $size")
+
     for (i in 0 until size) {
         partialSum += this[i]
         if (partialSum > rand) {
-//            println("Random: $i")
             return i
         }
     }
 
-//    println("Random: ${size-1}")
     return size-1
 }
 

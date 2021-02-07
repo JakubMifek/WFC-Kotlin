@@ -17,5 +17,5 @@ interface Network {
     /**
      * Returns pairs of neighbour's direction and index
      */
-    fun neighbourIterator(index: Int): Iterable<Pair<Int, Int>>
+    fun neighbourIterator(index: Int): Sequence<Pair<Int, Int>>
 }
