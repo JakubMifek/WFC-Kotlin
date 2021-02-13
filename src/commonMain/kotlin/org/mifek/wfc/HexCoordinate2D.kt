@@ -1,4 +1,4 @@
-package org.mifek.wfc.implementations
+package org.mifek.wfc
 //
 ///**
 // * Flat side up hexagonal grid coordinate

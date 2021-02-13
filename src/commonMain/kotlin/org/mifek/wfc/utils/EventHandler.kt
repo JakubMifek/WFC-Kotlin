@@ -1,7 +1,7 @@
-package org.mifek.wfc.interfaces
+package org.mifek.wfc.utils
 
 class EventHandler<T> {
-    private val set = mutableSetOf<(T) -> Unit>()
+    protected val set = mutableSetOf<(T) -> Unit>()
 
     /**
      * Subscribes event handler

@@ -1,15 +1,24 @@
 package org.mifek.wfc
 
-import org.mifek.wfc.utils.column
-import org.mifek.wfc.utils.row
+import org.mifek.wfc.models.OverlappingCartesian2DModel
+import org.mifek.wfc.utils.overlapping.constructOutput
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class FacadeTest {
+class OverlappingCartesian2DModelTest {
     fun printGrid(grid: IntArray, width: Int, height: Int) {
         for (i in 0 until height) {
             println(grid.slice(i * width until (i + 1) * width).joinToString(" "))
         }
+    }
+
+    fun createImageModel(source: IntArray, stride: Int, width: Int, height: Int, overlap: Int, seed: Int): IntArray {
+        val model = OverlappingCartesian2DModel(source, stride, overlap, width, height)
+        val algorithm = model.build()
+        val result = algorithm.run(seed)
+        assertTrue(result, "Expected algorithm to be successful.")
+        return constructOutput(algorithm.waves, model.patterns)
     }
 
     @Test

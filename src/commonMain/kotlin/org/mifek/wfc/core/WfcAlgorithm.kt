@@ -1,49 +1,125 @@
-package org.mifek.wfc.interfaces
+package org.mifek.wfc.core
 
+import org.mifek.wfc.utils.EventHandler
 import org.mifek.wfc.randomIndex
+import org.mifek.wfc.topologies.Topology
 import org.mifek.wfc.utils.LOG_BASE
 import org.mifek.wfc.utils.RANDOM
 import kotlin.math.log
 import kotlin.random.Random
 
-abstract class Core(
-    override val totalSize: Int,
-    override val maxDegree: Int,
+open class WfcAlgorithm(
+    val topology: Topology,
     protected val weights: DoubleArray,
     protected val propagator: Array<Array<IntArray>>
-) : Network {
-    protected  val patternCount = weights.size
-    protected val waves = Array(totalSize) { BooleanArray(patternCount) }
-    protected val compatible = Array(waves.size) { Array(patternCount) { IntArray(maxDegree) } }
+) {
+    protected val patternCount = weights.size
+
+    /**
+     * Contains option-based boolean array for each pixel
+     */
+    protected val wavesArray = Array(topology.totalSize) { BooleanArray(patternCount) }
+    val waves = Waves(wavesArray)
+
+    /**
+     * Used for banning patterns at pixels, for each pattern on each pixel we remember how many compatible pairs are in
+     * each direction. If any of the directions gets to 0, we ban the pattern since it becomes incompatible with that
+     * neighbour.
+     */
+    protected val compatible = Array(wavesArray.size) { Array(patternCount) { IntArray(topology.maxDegree) } }
+
+    /**
+     * Used for minimum entropy selection.
+     */
     protected val weightLogWeights = DoubleArray(patternCount) { weights[it] * log(weights[it], LOG_BASE) }
 
+    /**
+     * Used for minimum entropy selection.
+     */
     protected val sumOfWeights: Double = weights.sum()
+
+    /**
+     * Used for minimum entropy selection.
+     */
     protected val sumOfWeightLogWeights: Double = weightLogWeights.sum()
+
+    /**
+     * Used for clearing
+     */
     protected var startingEntropy: Double = log(sumOfWeights, LOG_BASE) - sumOfWeightLogWeights / sumOfWeights
+
+    /**
+     * Help variable for propagate
+     */
     protected var stacksize: Int = 0
 
-    protected val stack = arrayOfNulls<Pair<Int, Int>?>(waves.size * patternCount)
-    protected val sumsOfOnes = IntArray(waves.size) { weights.size }
-    protected val sumsOfWeights = DoubleArray(waves.size) { sumOfWeights }
-    protected val sumsOfWeightLogWeights = DoubleArray(waves.size) { sumOfWeightLogWeights }
-    protected val entropies = DoubleArray(waves.size) { startingEntropy }
+    /**
+     * Pre-initialized stack, there may never be more then waves * patterns elements.
+     */
+    protected val stack = arrayOfNulls<Pair<Int, Int>?>(wavesArray.size * patternCount)
 
-    val onClear = EventHandler<Array<BooleanArray>>()
-    val onObserve = EventHandler<Array<BooleanArray>>()
-    val onFail = EventHandler<Array<BooleanArray>>()
-    val onPropagationStep = EventHandler<Array<BooleanArray>>()
-    val onStep = EventHandler<Array<BooleanArray>>()
+    /**
+     * Used for minimum entropy selection.
+     */
+    protected val sumsOfOnes = IntArray(wavesArray.size) { weights.size }
+
+    /**
+     * Used for minimum entropy selection.
+     */
+    protected val sumsOfWeights = DoubleArray(wavesArray.size) { sumOfWeights }
+
+    /**
+     * Used for minimum entropy selection.
+     */
+    protected val sumsOfWeightLogWeights = DoubleArray(wavesArray.size) { sumOfWeightLogWeights }
+
+    /**
+     * Used for minimum entropy selection.
+     */
+    protected val entropies = DoubleArray(wavesArray.size) { startingEntropy }
+
+    // EVENTS
+
+    /**
+     * Triggered *after* core cleanup.
+     */
+    val onClear = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *after* wave observation
+     */
+    val onObserve = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *after* the algorithm fails
+     */
+    val onFail = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *after* each propagation step (when original stack-size reaches 0)
+     */
+    val onPropagationStep = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *after* each step of the algorithm (observation + propagation)
+     */
+    val onStep = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered at the end of algorithm run (whatever the result)
+     */
+    val onFinished = EventHandler<WfcAlgorithm>()
 
     /**
      * Clears the calculations made in the network
      */
     open fun clear() {
-        for (w in waves.indices) {
+        for (w in wavesArray.indices) {
             for (p in 0 until patternCount) {
-                waves[w][p] = true
-                for (n in 0 until maxDegree) {
+                wavesArray[w][p] = true
+                for (n in 0 until topology.maxDegree) {
                     compatible[w][p][n] =
-                        propagator[(n + maxDegree / 2) % maxDegree][p].size // opposite direction number of same patterns
+                        propagator[(n + topology.maxDegree / 2) % topology.maxDegree][p].size // opposite direction number of same patterns
                 }
             }
 
@@ -53,17 +129,17 @@ abstract class Core(
             entropies[w] = startingEntropy
         }
 
-        onClear(waves)
+        onClear(this)
     }
 
     /**
      * Bans the pattern in selected wave
      */
     open fun ban(wave: Int, pattern: Int) {
-        waves[wave][pattern] = false
+        wavesArray[wave][pattern] = false
 
         val compatiblePatterns = compatible[wave][pattern]
-        for (neighbour in 0 until maxDegree) compatiblePatterns[neighbour] = 0
+        for (neighbour in 0 until topology.maxDegree) compatiblePatterns[neighbour] = 0
 
         stack[stacksize++] = Pair(wave, pattern)
 
@@ -77,11 +153,11 @@ abstract class Core(
     /**
      * Returns wave index with lowest entropy
      */
-    open fun lowestEntropy(random: Random = RANDOM): Int? {
+    protected fun lowestEntropy(random: Random = RANDOM): Int? {
         var min = Double.MAX_VALUE
         var argmin: Int = -1
 
-        for (waveIndex in waves.indices) {
+        for (waveIndex in wavesArray.indices) {
             val amount = sumsOfOnes[waveIndex]
             if (amount == 0) return null
 
@@ -98,7 +174,7 @@ abstract class Core(
         return argmin
     }
 
-    open fun observePattern(patterns: BooleanArray, random: Random = RANDOM): Int {
+    protected fun observePatternUsingWeights(patterns: BooleanArray, random: Random = RANDOM): Int {
         val distribution = DoubleArray(patternCount) { if (patterns[it]) weights[it] else 0.0 }
         return distribution.randomIndex(random)
     }
@@ -110,7 +186,7 @@ abstract class Core(
         val argmin = lowestEntropy(random)
 
         if (argmin == null) {
-            onFail(waves)
+            onFail(this)
             return false
         } else if (argmin == -1) {
 //            for (wave in waves.indices) for (patternIndex in 0 until patternCount) if (waves[wave][patternIndex]) network[wave] =
@@ -118,8 +194,8 @@ abstract class Core(
             return true
         }
 
-        val wavePatterns = waves[argmin]
-        val observedPattern = observePattern(wavePatterns, random)
+        val wavePatterns = wavesArray[argmin]
+        val observedPattern = observePatternUsingWeights(wavePatterns, random)
 
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == observedPattern)) {
@@ -127,7 +203,26 @@ abstract class Core(
             }
         }
 
-        onObserve(waves)
+        onObserve(this)
+
+        return null
+    }
+
+    /**
+     * Forces pattern observation to given index.
+     *
+     * This function is intended for user-interaction.
+     */
+    protected fun forceObserve(index: Int, pattern: Int): Boolean? {
+        val wavePatterns = wavesArray[index]
+
+        if (!wavePatterns[pattern]) return false
+
+        for (patternIndex in 0 until patternCount) {
+            if (wavePatterns[patternIndex] != (patternIndex == pattern)) {
+                ban(index, patternIndex)
+            }
+        }
 
         return null
     }
@@ -145,7 +240,7 @@ abstract class Core(
 
             // we have banned patternIndex in waveIndex location
             val (waveIndex, pattern) = actual
-            neighbourIterator(waveIndex).forEach { neighbour ->
+            topology.neighbourIterator(waveIndex).forEach { neighbour ->
                 val direction = neighbour.first
                 val neighbour = neighbour.second
                 val options = propagator[direction][pattern]
@@ -163,7 +258,7 @@ abstract class Core(
 
             if (original == 0) {
                 original = stacksize
-                onPropagationStep(waves)
+                onPropagationStep(this)
             }
         }
     }
@@ -176,14 +271,14 @@ abstract class Core(
         val result = observe(random)
         if (result != null) return result
         propagate()
-        onStep(waves)
+        onStep(this)
         return null
     }
 
     /**
      * Main loop of WFC algorithm
      */
-    open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backstepLimit: Int = 0): Boolean? {
+    open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backstepLimit: Int = 0): Boolean {
         val random = Random(seed)
         clear()
 
@@ -192,25 +287,32 @@ abstract class Core(
             var l = 0
             while (l < limit) {
                 val result = step(random)
-                if (result != null) return result
+                if (result != null) {
+                    onFinished(this)
+                    return result
+                }
                 l++
             }
         } else {
             while (true) {
                 val result = step(random)
-                if (result != null) return result
+                if (result != null) {
+                    onFinished(this)
+                    return result
+                }
             }
         }
 
+        onFinished(this)
         return true
     }
 
     /**
-     * Decodes waves into output pixels, leaves null if not determined yet. Returns null if any wave has no options left.
+     * Decodes waves into output patterns, leaves null if not determined yet. Returns null if any wave has no options left.
      */
-    open fun constructOutput(patterns: Array<IntArray>): Array<Int?>? {
-        return Array(totalSize) {
-            val candidates = waves[it]
+    fun constructOutput(): Array<Int?>? {
+        return Array(topology.totalSize) {
+            val candidates = wavesArray[it]
             val a = 1
             val b = 0
             val sum: Int = candidates.sumOf { item ->
@@ -221,7 +323,14 @@ abstract class Core(
             }
             if (sum == 0) return null
             if (sum > 1) null
-            patterns[candidates.indexOf(true)][0]
+            candidates.indexOf(true)
         }
+    }
+
+    /**
+     * Returns copy of waves to ensure no mutations to the array
+     */
+    fun getWavesCopy(): Array<BooleanArray> {
+        return wavesArray.copyOf()
     }
 }

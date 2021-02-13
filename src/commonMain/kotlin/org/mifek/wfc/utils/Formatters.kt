@@ -3,8 +3,8 @@ package org.mifek.wfc.utils
 /**
  * Formats waves and prints to standard output
  */
-fun printWaves(waves: Array<BooleanArray>) {
-    println(" " + waves.indices.joinToString(" ") { idx ->
+fun formatWaves(waves: Array<BooleanArray>): String {
+    return " " + waves.indices.joinToString(" ") { idx ->
         val s = waves[idx].sumBy {
             when (it) {
                 true -> 1
@@ -19,30 +19,29 @@ fun printWaves(waves: Array<BooleanArray>) {
             else -> " " + (if (s < 10) " $s" else s.toString()) + " "
         }
         if ((idx + 1) % 10 == 0) (r + "\n") else r
-    })
+    }
 }
 
 /**
  * Formats patterns and prints to standard output
  */
-fun printPatterns(patterns: Array<IntArray>) {
-    println(patterns.mapIndexed { index, it ->
+fun formatPatterns(patterns: Array<IntArray>): String {
+    return patterns.mapIndexed { index, it ->
         "$index:\n${it.joinToString(" ")}"
-    }.joinToString("\n\n"))
+    }.joinToString("\n\n")
 }
 
 /**
  * Formats propagator and prints to standard output
  */
-fun printPropagator(propagator: Array<Array<IntArray>>) {
+fun formatPropagator(propagator: Array<Array<IntArray>>): String {
     val x = "   "
-    println(propagator[0].indices.joinToString(" ") {
+    var result = propagator[0].indices.joinToString(" ") {
         x.subSequence(0, x.length - it.toString().length).toString() + it.toString()
-    })
+    } + "\n"
     val template = "00"
     for (dir in propagator.indices) {
-        println(
-            propagator[dir].joinToString(" ") {
+        result += propagator[dir].joinToString(" ") {
                 when {
                     it.isEmpty() -> "[X]"
                     it.size > 1 -> "[?]"
@@ -50,6 +49,7 @@ fun printPropagator(propagator: Array<Array<IntArray>>) {
                         0 until (3 - it[0].toString().length)
                     ) + it[0].toString()
                 }
-            })
+            } + "\n"
     }
+    return result
 }

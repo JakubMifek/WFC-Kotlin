@@ -2,6 +2,9 @@ package org.mifek.wfc.utils
 
 import kotlin.random.Random
 
+/**
+ * Default random
+ */
 val RANDOM = Random(Random.nextInt())
 
 /**

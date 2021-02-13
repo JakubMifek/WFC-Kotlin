@@ -1,9 +1,6 @@
-package org.mifek.wfc.interfaces
+package org.mifek.wfc.topologies
 
-import org.mifek.wfc.utils.RANDOM
-import kotlin.random.Random
-
-interface Network {
+interface Topology {
     /**
      * Total number of nodes
      */

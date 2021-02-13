@@ -5,7 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Utils2DTest {
+class Array2DFunctionsTest {
     @Test
     fun playground() {
     }

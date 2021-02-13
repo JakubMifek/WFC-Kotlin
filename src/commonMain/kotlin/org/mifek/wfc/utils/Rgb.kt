@@ -5,6 +5,7 @@ import org.mifek.wfc.datastructures.Quadruple
 /**
  * Converts RGB triple to Int
  */
+@ExperimentalUnsignedTypes
 inline fun rgbToInt(r: UByte, g: UByte, b: UByte): Int {
     return 255.shl(8).or(r.toInt()).shl(8).or(g.toInt()).shl(8).or(b.toInt())
 }
@@ -12,6 +13,7 @@ inline fun rgbToInt(r: UByte, g: UByte, b: UByte): Int {
 /**
  * Serializes RGBA quadruple to Int
  */
+@ExperimentalUnsignedTypes
 inline fun rgbaToInt(r: UByte, g: UByte, b: UByte, a: UByte): Int {
     return a.toInt().shl(8).or(r.toInt()).shl(8).or(g.toInt()).shl(8)
         .or(b.toInt()) // Convert 'a' first so later intToRgb works
@@ -20,6 +22,7 @@ inline fun rgbaToInt(r: UByte, g: UByte, b: UByte, a: UByte): Int {
 /**
  * Converts serialized color to RGB triple
  */
+@ExperimentalUnsignedTypes
 inline fun intToRgb(data: Int): Triple<UByte, UByte, UByte> {
     return Triple(data.shr(16).toUByte(), data.shr(8).toUByte(), data.toUByte())
 }
@@ -27,6 +30,7 @@ inline fun intToRgb(data: Int): Triple<UByte, UByte, UByte> {
 /**
  * Converts serialized color to RGBA quadruple
  */
+@ExperimentalUnsignedTypes
 inline fun intToRgba(data: Int): Quadruple<UByte, UByte, UByte, UByte> {
     return Quadruple(data.shr(16).toUByte(), data.shr(8).toUByte(), data.toUByte(), data.shr(24).toUByte())
 }

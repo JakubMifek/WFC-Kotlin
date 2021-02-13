@@ -41,34 +41,6 @@ fun getColumns(array: IntArray, columns: IntRange, size: Int): Iterable<IntArray
 }
 
 /**
- * Returns a column
- */
-fun IntArray.column(column: Int, size: Int): IntArray {
-    return getColumn(this, column, size)
-}
-
-/**
- * Returns iterator of selected columns
- */
-fun IntArray.columns(columns: IntRange, size: Int): Iterable<IntArray> {
-    return getColumns(this, columns, size)
-}
-
-/**
- * Returns a row
- */
-fun IntArray.row(row: Int, size: Int): IntArray {
-    return getRow(this, row, size)
-}
-
-/**
- * Returns iterator of selected rows
- */
-fun IntArray.rows(rows: IntRange, size: Int): Iterable<IntArray> {
-    return getRows(this, rows, size)
-}
-
-/**
  * Rotation of a pattern
  */
 fun rotate(pattern: IntArray, overlap: Int): IntArray {
@@ -82,13 +54,6 @@ fun rotate(pattern: IntArray, overlap: Int): IntArray {
         res[(tmp + index) % pattern.size] = pattern[index]
     }
     return res
-}
-
-/**
- * Rotation of a pattern
- */
-fun IntArray.rotate2D(overlap: Int): IntArray {
-    return rotate(this, overlap)
 }
 
 /**
@@ -109,13 +74,6 @@ fun hFlip(pattern: IntArray, overlap: Int): IntArray {
 }
 
 /**
- * Horizontal flip of a pattern
- */
-fun IntArray.hFlip2D(overlap: Int): IntArray {
-    return hFlip(this, overlap)
-}
-
-/**
  * Vertical flip of a pattern
  */
 fun vFlip(pattern: IntArray, overlap: Int): IntArray {
@@ -130,11 +88,4 @@ fun vFlip(pattern: IntArray, overlap: Int): IntArray {
         res[index + tmp] = pattern[index]
     }
     return res
-}
-
-/**
- * Vertical flip of a pattern
- */
-fun IntArray.vFlip2D(overlap: Int): IntArray {
-    return vFlip(this, overlap)
 }

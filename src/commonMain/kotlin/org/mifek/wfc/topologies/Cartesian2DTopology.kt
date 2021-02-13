@@ -1,14 +1,11 @@
-package org.mifek.wfc.implementations
+package org.mifek.wfc.topologies
 
 import org.mifek.wfc.datatypes.Directions2D
-import org.mifek.wfc.interfaces.Core
 
-class Core2D(
-    val width: Int,
-    val height: Int,
-    weights: DoubleArray,
-    propagator: Array<Array<IntArray>>
-) : Core(width * height, 4, weights, propagator) {
+class Cartesian2DTopology(private val width: Int, private val height: Int) : Topology {
+    override val totalSize = width * height
+    override val maxDegree = 4
+
     override fun neighbourIterator(index: Int): Sequence<Pair<Int, Int>> {
         return sequence {
             if (index > width)
