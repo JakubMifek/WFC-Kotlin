@@ -2,6 +2,8 @@ package org.mifek.wfc
 
 import org.mifek.wfc.datastructures.Quadruple
 import org.mifek.wfc.utils.*
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 /**
@@ -97,4 +99,12 @@ fun IntArray.scale2D(stride: Int, scale: Int): IntArray {
         val oriY = y / scale
         this[oriY * stride + oriX]
     }
+}
+
+operator fun Quadruple<UByte, UByte, UByte, UByte>.plus(other: Quadruple<UByte, UByte, UByte, UByte>): Quadruple<UByte, UByte, UByte, UByte> {
+    return Quadruple(min(first + other.first, 255u).toUByte(), min(second + other.second, 255u).toUByte(), min(third + other.third, 255u).toUByte(), min(fourth + other.fourth, 255u).toUByte())
+}
+
+operator fun Quadruple<UByte, UByte, UByte, UByte>.div(value: Int): Quadruple<UByte, UByte, UByte, UByte> {
+    return Quadruple(((first + value.toUInt() - 1u) / value.toUInt()).toUByte(), ((second + value.toUInt() - 1u)  / value.toUInt()).toUByte(), ((third + value.toUInt() - 1u) / value.toUInt()).toUByte(), ((fourth + value.toUInt() - 1u) / value.toUInt()).toUByte())
 }

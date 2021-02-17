@@ -6,7 +6,6 @@ data class Quadruple<out A, out B, out C, out D>(
     val third: C,
     val fourth: D
 ) {
-
     /**
      * Returns string representation of the [Quadruple] including its [first], [second], [third] and [fourth] values.
      */

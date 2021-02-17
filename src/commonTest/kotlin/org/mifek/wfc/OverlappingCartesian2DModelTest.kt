@@ -1,7 +1,6 @@
 package org.mifek.wfc
 
 import org.mifek.wfc.models.OverlappingCartesian2DModel
-import org.mifek.wfc.utils.overlapping.constructOutput
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -18,7 +17,7 @@ class OverlappingCartesian2DModelTest {
         val algorithm = model.build()
         val result = algorithm.run(seed)
         assertTrue(result, "Expected algorithm to be successful.")
-        return constructOutput(algorithm.waves, model.patterns)
+        return algorithm.constructOutput()
     }
 
     @Test
@@ -31,7 +30,7 @@ class OverlappingCartesian2DModelTest {
                 0, 1, 0, 1, 0, 1,
                 1, 0, 1, 0, 1, 0,
                 0, 1, 0, 1, 0, 1,
-            ), 6, 4, 4, 1, 12345
+            ), 6, 4, 4, 1, 123456789
         )
         for (i in 0 until 4) {
             println(result.slice(i * 4 until (i + 1) * 4).joinToString(" "))

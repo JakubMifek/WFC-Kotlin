@@ -153,7 +153,7 @@ open class WfcAlgorithm(
     /**
      * Returns wave index with lowest entropy
      */
-    protected fun lowestEntropy(random: Random = RANDOM): Int? {
+    open fun selectWave(random: Random = RANDOM): Int? {
         var min = Double.MAX_VALUE
         var argmin: Int = -1
 
@@ -183,23 +183,23 @@ open class WfcAlgorithm(
      * Observes a pattern in a wave using given random
      */
     open fun observe(random: Random = RANDOM): Boolean? {
-        val argmin = lowestEntropy(random)
+        // TODO: Better heuristic integration
+        // TODO: Reset bounds to patterns from original image
+        val selectedWave = selectWave(random)
 
-        if (argmin == null) {
+        if (selectedWave == null) {
             onFail(this)
             return false
-        } else if (argmin == -1) {
-//            for (wave in waves.indices) for (patternIndex in 0 until patternCount) if (waves[wave][patternIndex]) network[wave] =
-//                patternIndex
+        } else if (selectedWave == -1) {
             return true
         }
 
-        val wavePatterns = wavesArray[argmin]
+        val wavePatterns = wavesArray[selectedWave]
         val observedPattern = observePatternUsingWeights(wavePatterns, random)
 
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == observedPattern)) {
-                ban(argmin, patternIndex)
+                ban(selectedWave, patternIndex)
             }
         }
 
@@ -213,7 +213,7 @@ open class WfcAlgorithm(
      *
      * This function is intended for user-interaction.
      */
-    protected fun forceObserve(index: Int, pattern: Int): Boolean? {
+    open fun forceObserve(index: Int, pattern: Int): Boolean? {
         val wavePatterns = wavesArray[index]
 
         if (!wavePatterns[pattern]) return false
@@ -238,20 +238,22 @@ open class WfcAlgorithm(
             original--
             val actual = stack[stacksize] ?: continue
 
+            // TODO: Add support for 'periodic' parameter
+
             // we have banned patternIndex in waveIndex location
-            val (waveIndex, pattern) = actual
+            val (waveIndex, patternIndex) = actual
             topology.neighbourIterator(waveIndex).forEach { neighbour ->
                 val direction = neighbour.first
-                val neighbour = neighbour.second
-                val options = propagator[direction][pattern]
-                val compatibles = compatible[neighbour]
+                val neighbourIndex = neighbour.second
+                val neighbourPatterns = propagator[direction][patternIndex]
+                val compatibles = compatible[neighbourIndex]
 
-                for (option in options) {
-                    val optionCompatible = compatibles[option]
+                for (neighbourPatternIndex in neighbourPatterns) {
+                    val optionCompatible = compatibles[neighbourPatternIndex]
 
                     optionCompatible[direction]--
                     if (optionCompatible[direction] == 0) {
-                        ban(neighbour, option)
+                        ban(neighbourIndex, neighbourPatternIndex)
                     }
                 }
             }
@@ -278,11 +280,11 @@ open class WfcAlgorithm(
     /**
      * Main loop of WFC algorithm
      */
-    open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backstepLimit: Int = 0): Boolean {
+    open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backtrackLimit: Int = 0): Boolean {
         val random = Random(seed)
         clear()
 
-        // TODO: Allow backstepping if bigger than 0
+        // TODO: Allow backtracking if bigger than 0
         if (limit != 0) {
             var l = 0
             while (l < limit) {
@@ -307,30 +309,23 @@ open class WfcAlgorithm(
         return true
     }
 
-    /**
-     * Decodes waves into output patterns, leaves null if not determined yet. Returns null if any wave has no options left.
-     */
-    fun constructOutput(): Array<Int?>? {
-        return Array(topology.totalSize) {
-            val candidates = wavesArray[it]
-            val a = 1
-            val b = 0
-            val sum: Int = candidates.sumOf { item ->
-                when (item) {
-                    true -> a
-                    false -> b
-                }
-            }
-            if (sum == 0) return null
-            if (sum > 1) null
-            candidates.indexOf(true)
-        }
-    }
-
-    /**
-     * Returns copy of waves to ensure no mutations to the array
-     */
-    fun getWavesCopy(): Array<BooleanArray> {
-        return wavesArray.copyOf()
-    }
+//    /**
+//     * Decodes waves into output patterns, leaves null if not determined yet. Returns null if any wave has no options left.
+//     */
+//    fun constructOutput(): Array<Int?>? {
+//        return Array(topology.totalSize) {
+//            val candidates = wavesArray[it]
+//            val a = 1
+//            val b = 0
+//            val sum: Int = candidates.sumOf { item ->
+//                when (item) {
+//                    true -> a
+//                    false -> b
+//                }
+//            }
+//            if (sum == 0) return null
+//            if (sum > 1) return null
+//            candidates.indexOf(true)
+//        }
+//    }
 }
