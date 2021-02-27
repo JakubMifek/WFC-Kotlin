@@ -1,6 +1,10 @@
 package org.mifek.wfc
 
-import org.mifek.wfc.utils.*
+import org.mifek.wfc.datastructures.IntArray2D
+import org.mifek.wfc.utils.intToRgb
+import org.mifek.wfc.utils.intToRgba
+import org.mifek.wfc.utils.rgbToInt
+import org.mifek.wfc.utils.rgbaToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -58,9 +62,10 @@ class Array2DFunctionsTest {
 
     @Test
     fun columnSelection() {
-        val data = (1..25).toList().toIntArray()
-        val column1 = data.column(0, 5)
-        val column2 = data.column(3, 5)
+        val data = (1..25).toList()
+        val arr = IntArray2D(5, 5) { data[it] }
+        val column1 = arr.column(0)
+        val column2 = arr.column(3)
         assertTrue(column1 is IntArray)
         assertTrue(column1.contentEquals(intArrayOf(1, 6, 11, 16, 21)))
         assertTrue(column2 is IntArray)
@@ -69,9 +74,10 @@ class Array2DFunctionsTest {
 
     @Test
     fun rowSelection() {
-        val data = (1..25).toList().toIntArray()
-        val row1 = data.row(0, 5)
-        val row2 = data.row(3, 5)
+        val data = (1..25).toList()
+        val arr = IntArray2D(5, 5) { data[it] }
+        val row1 = arr.row(0)
+        val row2 = arr.row(3)
         assertTrue(row1 is IntArray)
         assertTrue(row1.contentEquals(intArrayOf(1, 2, 3, 4, 5)))
         assertTrue(row2 is IntArray)
@@ -80,11 +86,12 @@ class Array2DFunctionsTest {
 
     @Test
     fun gridRotation() {
-        val data = (1..25).toList().toIntArray()
-        val rot1 = data.rotate2D(4)
-        assertTrue(rot1 is IntArray)
+        val data = (1..25).toList()
+        val arr = IntArray2D(5, 5) { data[it] }
+        val rot1 = arr.rotated()
+        assertTrue(rot1 is IntArray2D)
         assertTrue(
-            rot1.contentEquals(
+            rot1.data.contentEquals(
                 intArrayOf(
                     21, 16, 11, 6, 1,
                     22, 17, 12, 7, 2,
@@ -94,10 +101,10 @@ class Array2DFunctionsTest {
                 )
             )
         )
-        val rot2 = rot1.rotate2D(4)
-        assertTrue(rot2 is IntArray)
+        val rot2 = rot1.rotated()
+        assertTrue(rot2 is IntArray2D)
         assertTrue(
-            rot2.contentEquals(
+            rot2.data.contentEquals(
                 intArrayOf(
                     25, 24, 23, 22, 21,
                     20, 19, 18, 17, 16,
@@ -107,10 +114,10 @@ class Array2DFunctionsTest {
                 )
             )
         )
-        val rot3 = rot2.rotate2D(4)
-        assertTrue(rot3 is IntArray)
+        val rot3 = rot2.rotated()
+        assertTrue(rot3 is IntArray2D)
         assertTrue(
-            rot3.contentEquals(
+            rot3.data.contentEquals(
                 intArrayOf(
                     5, 10, 15, 20, 25,
                     4, 9, 14, 19, 24,
@@ -120,10 +127,10 @@ class Array2DFunctionsTest {
                 )
             )
         )
-        val rot4 = rot3.rotate2D(4)
-        assertTrue(rot4 is IntArray)
+        val rot4 = rot3.rotated()
+        assertTrue(rot4 is IntArray2D)
         assertTrue(
-            rot4.contentEquals(
+            rot4.data.contentEquals(
                 intArrayOf(
                     1, 2, 3, 4, 5,
                     6, 7, 8, 9, 10,
@@ -137,11 +144,12 @@ class Array2DFunctionsTest {
 
     @Test
     fun gridHFlip() {
-        val data = (1..25).toList().toIntArray()
-        val flip1 = data.hFlip2D(4)
-        assertTrue(flip1 is IntArray)
+        val data = (1..25).toList()
+        val arr = IntArray2D(5, 5) { data[it] }
+        val flip1 = arr.hFlipped()
+        assertTrue(flip1 is IntArray2D)
         assertTrue(
-            flip1.contentEquals(
+            flip1.data.contentEquals(
                 intArrayOf(
                     5, 4, 3, 2, 1,
                     10, 9, 8, 7, 6,
@@ -151,10 +159,10 @@ class Array2DFunctionsTest {
                 )
             )
         )
-        val flip2 = flip1.hFlip2D(4)
-        assertTrue(flip2 is IntArray)
+        val flip2 = flip1.hFlipped()
+        assertTrue(flip2 is IntArray2D)
         assertTrue(
-            flip2.contentEquals(
+            flip2.data.contentEquals(
                 intArrayOf(
                     1, 2, 3, 4, 5,
                     6, 7, 8, 9, 10,
@@ -168,11 +176,12 @@ class Array2DFunctionsTest {
 
     @Test
     fun gridVFlip() {
-        val data = (1..25).toList().toIntArray()
-        val flip1 = data.vFlip2D(4)
-        assertTrue(flip1 is IntArray)
+        val data = (1..25).toList()
+        val arr = IntArray2D(5, 5) { data[it] }
+        val flip1 = arr.vFlipped()
+        assertTrue(flip1 is IntArray2D)
         assertTrue(
-            flip1.contentEquals(
+            flip1.data.contentEquals(
                 intArrayOf(
                     21, 22, 23, 24, 25,
                     16, 17, 18, 19, 20,
@@ -182,10 +191,10 @@ class Array2DFunctionsTest {
                 )
             )
         )
-        val flip2 = flip1.vFlip2D(4)
-        assertTrue(flip2 is IntArray)
+        val flip2 = flip1.vFlipped()
+        assertTrue(flip2 is IntArray2D)
         assertTrue(
-            flip2.contentEquals(
+            flip2.data.contentEquals(
                 intArrayOf(
                     1, 2, 3, 4, 5,
                     6, 7, 8, 9, 10,

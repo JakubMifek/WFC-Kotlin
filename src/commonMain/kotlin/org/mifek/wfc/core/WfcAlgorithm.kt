@@ -1,10 +1,9 @@
 package org.mifek.wfc.core
 
-import org.mifek.wfc.utils.EventHandler
 import org.mifek.wfc.randomIndex
 import org.mifek.wfc.topologies.Topology
+import org.mifek.wfc.utils.EventHandler
 import org.mifek.wfc.utils.LOG_BASE
-import org.mifek.wfc.utils.RANDOM
 import kotlin.math.log
 import kotlin.random.Random
 
@@ -153,7 +152,7 @@ open class WfcAlgorithm(
     /**
      * Returns wave index with lowest entropy
      */
-    open fun selectWave(random: Random = RANDOM): Int? {
+    open fun selectWave(random: Random = Random.Default): Int? {
         var min = Double.MAX_VALUE
         var argmin: Int = -1
 
@@ -174,7 +173,7 @@ open class WfcAlgorithm(
         return argmin
     }
 
-    protected fun observePatternUsingWeights(patterns: BooleanArray, random: Random = RANDOM): Int {
+    protected fun observePatternUsingWeights(patterns: BooleanArray, random: Random = Random.Default): Int {
         val distribution = DoubleArray(patternCount) { if (patterns[it]) weights[it] else 0.0 }
         return distribution.randomIndex(random)
     }
@@ -182,7 +181,7 @@ open class WfcAlgorithm(
     /**
      * Observes a pattern in a wave using given random
      */
-    open fun observe(random: Random = RANDOM): Boolean? {
+    open fun observe(random: Random = Random.Default): Boolean? {
         // TODO: Better heuristic integration
         // TODO: Reset bounds to patterns from original image
         val selectedWave = selectWave(random)
@@ -196,6 +195,8 @@ open class WfcAlgorithm(
 
         val wavePatterns = wavesArray[selectedWave]
         val observedPattern = observePatternUsingWeights(wavePatterns, random)
+
+//        println("Observed pattern $observedPattern for wave $selectedWave")
 
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == observedPattern)) {
@@ -269,7 +270,7 @@ open class WfcAlgorithm(
     /**
      * Performs single step to the WFC
      */
-    open fun step(random: Random = RANDOM): Boolean? {
+    open fun step(random: Random = Random.Default): Boolean? {
         val result = observe(random)
         if (result != null) return result
         propagate()
@@ -282,6 +283,7 @@ open class WfcAlgorithm(
      */
     open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backtrackLimit: Int = 0): Boolean {
         val random = Random(seed)
+
         clear()
 
         // TODO: Allow backtracking if bigger than 0

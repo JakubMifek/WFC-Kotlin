@@ -42,14 +42,14 @@ fun formatPropagator(propagator: Array<Array<IntArray>>): String {
     val template = "00"
     for (dir in propagator.indices) {
         result += propagator[dir].joinToString(" ") {
-                when {
-                    it.isEmpty() -> "[X]"
-                    it.size > 1 -> "[?]"
-                    else -> template.slice(
-                        0 until (3 - it[0].toString().length)
-                    ) + it[0].toString()
-                }
-            } + "\n"
+            when {
+                it.isEmpty() -> "[X]"
+                it.size > 1 -> "[?]"
+                else -> template.slice(
+                    0 until (3 - it[0].toString().length)
+                ) + it[0].toString()
+            }
+        } + "\n"
     }
     return result
 }

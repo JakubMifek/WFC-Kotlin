@@ -2,42 +2,47 @@ package org.mifek.wfc
 
 import org.mifek.wfc.adapters.imitateImageUsingOverlappingModel
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class ImageTest {
     @Test
     fun flowerRatioTest() {
-        val tries = 100
+        val tries = 200
         var successes = 0
         for (i in 1..tries) {
             successes += if (imitateImageUsingOverlappingModel(
                     "sources/flowers.png",
                     "outputs/ratio",
-                    16,
-                    16,
-                    outputScale = 8,
+                    42,
+                    42,
+                    outputScale = 1,
                     overlap = 2,
-                    allowRotations = false,
-                    allowFlips = false
+                    allowRotations = true,
+                    allowFlips = true
                 )
             ) 1 else 0
         }
         println("Success ratio: ${successes.toDouble() / tries.toDouble()}")
     }
 
-//    @Test
-//    fun redDotTest() {
-//        assertTrue(
-//            imitateImageUsingOverlappingModel(
-//                "sources/red_rooms.png",
-//                "outputs/encoder_test",
-//                64,
-//                64,
-//                seed = 123456,
-//                outputScale = 8,
-////                useEveryNthStep = 16
-//            ), "Expected algorithm to be successful."
-//        )
-//    }
+    @Test
+    fun redDotTest() {
+        for (i in 0..0) {
+            if (i % 100 == 0) println(i)
+            assertTrue(
+                imitateImageUsingOverlappingModel(
+                    "sources/red_rooms.png",
+                    "outputs/encoder_test",
+                    512,
+                    288,
+                    seed = i,
+                    outputScale = 8,
+                        outputStepsAsAnimation = true,
+                        useEveryNthStep = 16
+                ), "Expected algorithm to be successful."
+            )
+        }
+    }
 //
 //    @Test
 //    fun redDotRectTest() {
@@ -50,7 +55,8 @@ class ImageTest {
 //                seed = 123456789,
 //                outputScale = 8,
 ////                outputStepsAsAnimation = true,
-////                useEveryNthStep = 16
+////                useEveryNthStep = 16,
+//                outputEachStep = true
 //            ), "Expected algorithm to be successful."
 //        )
 //    }

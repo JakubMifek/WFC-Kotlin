@@ -1,5 +1,6 @@
 package org.mifek.wfc.core
 
+import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.Quadruple
 import org.mifek.wfc.models.Patterns
 import org.mifek.wfc.models.Pixels
@@ -64,8 +65,8 @@ class Cartesian2DWfcAlgorithm(
     /**
      * Constructs output from a wave for overlapping model
      */
-    fun constructOutput(): IntArray {
-        return IntArray(waves.size) { waveIndex ->
+    fun constructOutput(): IntArray2D {
+        return IntArray2D(width, height) { waveIndex ->
             val a = 0
             val b = 1
             val sum = waves[waveIndex].sumOf {
@@ -75,25 +76,32 @@ class Cartesian2DWfcAlgorithm(
                 }
             }
             when (sum) {
-                0 -> -1
-                else -> {
-                    val tmp = patterns.indices.filter { waves[waveIndex, it] }.map { intToRgba(patterns[it]) }.fold(
-                        doubleArrayOf(0.0, 0.0, 0.0, 0.0), { acc, it ->
-                            acc[0] += it.first.toDouble() / sum
-                            acc[1] += it.second.toDouble() / sum
-                            acc[2] += it.third.toDouble() / sum
-                            acc[3] += it.fourth.toDouble() / sum
-                            acc
-                        })
-                    rgbaToInt(
-                        Quadruple(
-                            min(tmp[0].roundToInt(), 255).toUByte(),
-                            min(tmp[1].roundToInt(), 255).toUByte(),
-                            min(tmp[2].roundToInt(), 255).toUByte(),
-                            min(tmp[3].roundToInt(), 255).toUByte()
-                        )
-                    )
-                }
+                0 -> -123456789
+                1 -> patterns[patterns.indices.filter { waves[waveIndex, it] }[0]]
+                else -> -2
+//                else -> {
+//                    val tmp = patterns.indices
+//                        .filter { waves[waveIndex, it] }
+//                        .map { intToRgba(patterns[it]) }
+//                        .fold(
+//                            doubleArrayOf(0.0, 0.0, 0.0, 0.0),
+//                            { acc, it ->
+//                                acc[0] += it.first.toDouble() / sum
+//                                acc[1] += it.second.toDouble() / sum
+//                                acc[2] += it.third.toDouble() / sum
+//                                acc[3] += it.fourth.toDouble() / sum
+//                                acc
+//                            }
+//                        )
+//                    rgbaToInt(
+//                        Quadruple(
+//                            min(tmp[0].roundToInt(), 255).toUByte(),
+//                            min(tmp[1].roundToInt(), 255).toUByte(),
+//                            min(tmp[2].roundToInt(), 255).toUByte(),
+//                            min(tmp[3].roundToInt(), 255).toUByte()
+//                        )
+//                    )
+//                }
             }
         }
     }
