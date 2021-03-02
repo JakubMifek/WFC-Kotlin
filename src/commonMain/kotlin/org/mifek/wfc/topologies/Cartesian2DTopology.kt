@@ -2,7 +2,8 @@ package org.mifek.wfc.topologies
 
 import org.mifek.wfc.datatypes.Directions2D
 
-class Cartesian2DTopology(private val width: Int, private val height: Int, private val periodic: Boolean = false) : Topology {
+class Cartesian2DTopology(val width: Int, val height: Int, override val periodic: Boolean = false) :
+    Topology {
     override val totalSize = width * height
     override val maxDegree = 4
 

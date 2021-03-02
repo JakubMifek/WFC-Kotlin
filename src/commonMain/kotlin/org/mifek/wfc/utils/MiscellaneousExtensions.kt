@@ -1,4 +1,4 @@
-package org.mifek.wfc
+package org.mifek.wfc.utils
 
 import org.mifek.wfc.datastructures.Quadruple
 import kotlin.math.min
@@ -34,6 +34,7 @@ fun DoubleArray.randomIndex(random: Random = Random.Default): Int {
  */
 fun <T> Quadruple<T, T, T, T>.toList(): List<T> = listOf(first, second, third, fourth)
 
+@ExperimentalUnsignedTypes
 operator fun Quadruple<UByte, UByte, UByte, UByte>.plus(other: Quadruple<UByte, UByte, UByte, UByte>): Quadruple<UByte, UByte, UByte, UByte> {
     return Quadruple(
         min(first + other.first, 255u).toUByte(),
@@ -43,6 +44,7 @@ operator fun Quadruple<UByte, UByte, UByte, UByte>.plus(other: Quadruple<UByte, 
     )
 }
 
+@ExperimentalUnsignedTypes
 operator fun Quadruple<UByte, UByte, UByte, UByte>.div(value: Int): Quadruple<UByte, UByte, UByte, UByte> {
     return Quadruple(
         ((first + value.toUInt() - 1u) / value.toUInt()).toUByte(),

@@ -3,7 +3,7 @@ package org.mifek.wfc.core
 /**
  * Read-only wrapper around waves array
  */
-class Waves(private val waves: Array<BooleanArray>): Iterable<Sequence<Boolean>> {
+class Waves(private val waves: Array<BooleanArray>) : Iterable<Sequence<Boolean>> {
     val size = waves.size
     val indices = waves.indices
     val lastIndex = waves.lastIndex

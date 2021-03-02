@@ -3,16 +3,6 @@ package org.mifek.wfc.models
 import org.mifek.wfc.core.WfcAlgorithm
 
 interface Model {
-//    /**
-//     * Weights of the patterns from the input
-//     */
-//    val weights: DoubleArray
-//
-//    /**
-//     * Propagator of the patterns from the input
-//     */
-//    val propagator: Array<Array<IntArray>>
-
     /**
      * Builds the WFC Core
      */

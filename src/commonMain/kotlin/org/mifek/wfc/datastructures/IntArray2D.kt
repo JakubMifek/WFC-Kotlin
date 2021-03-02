@@ -1,6 +1,6 @@
 package org.mifek.wfc.datastructures
 
-class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }): Iterable<Int> {
+class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(width * height, init)
     val size = data.size
     val lastIndex = data.lastIndex
@@ -40,6 +40,10 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }): I
 
     fun toIntArray(): IntArray {
         return IntArray(size) { data[it] }
+    }
+
+    fun copyOf(): IntArray2D {
+        return IntArray2D(width, height) { data[it] }
     }
 
     /**

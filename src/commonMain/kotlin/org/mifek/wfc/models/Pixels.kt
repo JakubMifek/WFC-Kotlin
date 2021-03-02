@@ -9,6 +9,10 @@ class Pixels(private val pixels: Map<Int, IntArray>): Iterable<Pixels.Entry> {
     data class Entry(val key: Int, val value: Sequence<Int>)
 
     operator fun get(index: Int): Sequence<Int> {
+//        println("Obtaining patterns for pixel $index.")
+//        for(key in pixels.keys) {
+//            println("$key: ${pixels[key]?.joinToString(", ")}")
+//        }
         return pixels[index]?.asSequence() ?: emptySequence()
     }
 

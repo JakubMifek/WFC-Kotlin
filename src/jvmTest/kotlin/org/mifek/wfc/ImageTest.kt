@@ -1,5 +1,6 @@
 package org.mifek.wfc
 
+import org.mifek.wfc.adapters.ImageAdapterOptions
 import org.mifek.wfc.adapters.imitateImageUsingOverlappingModel
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -7,18 +8,29 @@ import kotlin.test.assertTrue
 class ImageTest {
     @Test
     fun flowerRatioTest() {
-        val tries = 200
+        val tries = 1
         var successes = 0
         for (i in 1..tries) {
+            println("Try $i")
             successes += if (imitateImageUsingOverlappingModel(
                     "sources/flowers.png",
                     "outputs/ratio",
-                    42,
-                    42,
-                    outputScale = 1,
-                    overlap = 2,
-                    allowRotations = true,
-                    allowFlips = true
+                    48,
+                    48,
+                    ImageAdapterOptions(
+                        overlap = 2,
+                        periodicInput = false,
+                        periodicOutput = false,
+                        grounded = true,
+                        roofed = false,
+                        outputScale = 8,
+                        outputPatterns = true,
+                        outputStepsAsAnimation = true,
+                        useEveryNthStep = 16,
+                        repeats = 1,
+                        outputEachStep = true
+//                        seed = 1
+                    )
                 )
             ) 1 else 0
         }
@@ -33,12 +45,19 @@ class ImageTest {
                 imitateImageUsingOverlappingModel(
                     "sources/red_rooms.png",
                     "outputs/encoder_test",
-                    512,
-                    288,
-                    seed = i,
-                    outputScale = 8,
+                    128,
+                    72,
+                    ImageAdapterOptions(
+                        seed = i,
+                        outputScale = 8,
                         outputStepsAsAnimation = true,
-                        useEveryNthStep = 16
+                        useEveryNthStep = 16,
+                        periodicInput = true,
+                        periodicOutput = true,
+                        grounded = true,
+                        roofed = true,
+                        sided = true
+                    )
                 ), "Expected algorithm to be successful."
             )
         }

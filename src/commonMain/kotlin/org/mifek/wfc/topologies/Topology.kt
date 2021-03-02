@@ -1,6 +1,8 @@
 package org.mifek.wfc.topologies
 
 interface Topology {
+    val periodic: Boolean
+
     /**
      * Total number of nodes
      */

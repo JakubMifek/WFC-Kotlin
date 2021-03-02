@@ -1,16 +1,16 @@
 package org.mifek.wfc.core
 
-import org.mifek.wfc.randomIndex
+import org.mifek.wfc.heuristics.SelectionHeuristic
+import org.mifek.wfc.utils.randomIndex
 import org.mifek.wfc.topologies.Topology
 import org.mifek.wfc.utils.EventHandler
-import org.mifek.wfc.utils.LOG_BASE
-import kotlin.math.log
 import kotlin.random.Random
 
 open class WfcAlgorithm(
-    val topology: Topology,
+    protected val topology: Topology,
     protected val weights: DoubleArray,
-    protected val propagator: Array<Array<IntArray>>
+    protected val propagator: Array<Array<IntArray>>,
+    protected val heuristic: SelectionHeuristic,
 ) {
     protected val patternCount = weights.size
 
@@ -28,26 +28,6 @@ open class WfcAlgorithm(
     protected val compatible = Array(wavesArray.size) { Array(patternCount) { IntArray(topology.maxDegree) } }
 
     /**
-     * Used for minimum entropy selection.
-     */
-    protected val weightLogWeights = DoubleArray(patternCount) { weights[it] * log(weights[it], LOG_BASE) }
-
-    /**
-     * Used for minimum entropy selection.
-     */
-    protected val sumOfWeights: Double = weights.sum()
-
-    /**
-     * Used for minimum entropy selection.
-     */
-    protected val sumOfWeightLogWeights: Double = weightLogWeights.sum()
-
-    /**
-     * Used for clearing
-     */
-    protected var startingEntropy: Double = log(sumOfWeights, LOG_BASE) - sumOfWeightLogWeights / sumOfWeights
-
-    /**
      * Help variable for propagate
      */
     protected var stacksize: Int = 0
@@ -57,27 +37,12 @@ open class WfcAlgorithm(
      */
     protected val stack = arrayOfNulls<Pair<Int, Int>?>(wavesArray.size * patternCount)
 
-    /**
-     * Used for minimum entropy selection.
-     */
-    protected val sumsOfOnes = IntArray(wavesArray.size) { weights.size }
-
-    /**
-     * Used for minimum entropy selection.
-     */
-    protected val sumsOfWeights = DoubleArray(wavesArray.size) { sumOfWeights }
-
-    /**
-     * Used for minimum entropy selection.
-     */
-    protected val sumsOfWeightLogWeights = DoubleArray(wavesArray.size) { sumOfWeightLogWeights }
-
-    /**
-     * Used for minimum entropy selection.
-     */
-    protected val entropies = DoubleArray(wavesArray.size) { startingEntropy }
-
     // EVENTS
+
+    /**
+     * Triggered *after* core initialization but before anything is processed.
+     */
+    val onStart = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered *after* core cleanup.
@@ -87,7 +52,12 @@ open class WfcAlgorithm(
     /**
      * Triggered *after* wave observation
      */
-    val onObserve = EventHandler<WfcAlgorithm>()
+    val onObserve = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
+
+    /**
+     * Triggered *after* core cleanup.
+     */
+    val onBan = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
 
     /**
      * Triggered *after* the algorithm fails
@@ -121,11 +91,6 @@ open class WfcAlgorithm(
                         propagator[(n + topology.maxDegree / 2) % topology.maxDegree][p].size // opposite direction number of same patterns
                 }
             }
-
-            sumsOfOnes[w] = weights.size
-            sumsOfWeights[w] = sumOfWeights
-            sumsOfWeightLogWeights[w] = sumOfWeightLogWeights
-            entropies[w] = startingEntropy
         }
 
         onClear(this)
@@ -135,6 +100,8 @@ open class WfcAlgorithm(
      * Bans the pattern in selected wave
      */
     open fun ban(wave: Int, pattern: Int) {
+        if(!wavesArray[wave][pattern]) return
+
         wavesArray[wave][pattern] = false
 
         val compatiblePatterns = compatible[wave][pattern]
@@ -142,35 +109,7 @@ open class WfcAlgorithm(
 
         stack[stacksize++] = Pair(wave, pattern)
 
-        sumsOfOnes[wave]--
-        sumsOfWeights[wave] -= weights[pattern]
-        sumsOfWeightLogWeights[wave] -= weightLogWeights[pattern]
-        entropies[wave] =
-            log(sumsOfWeights[wave], LOG_BASE) - sumsOfWeightLogWeights[wave] / sumsOfWeights[wave]
-    }
-
-    /**
-     * Returns wave index with lowest entropy
-     */
-    open fun selectWave(random: Random = Random.Default): Int? {
-        var min = Double.MAX_VALUE
-        var argmin: Int = -1
-
-        for (waveIndex in wavesArray.indices) {
-            val amount = sumsOfOnes[waveIndex]
-            if (amount == 0) return null
-
-            val entropy = entropies[waveIndex]
-            if (amount > 1 && entropy <= min) {
-                val noise = 1e-6 * random.nextDouble()
-                if (entropy + noise < min) {
-                    min = entropy + noise
-                    argmin = waveIndex
-                }
-            }
-        }
-
-        return argmin
+        onBan(Triple(this, wave, pattern))
     }
 
     protected fun observePatternUsingWeights(patterns: BooleanArray, random: Random = Random.Default): Int {
@@ -182,9 +121,8 @@ open class WfcAlgorithm(
      * Observes a pattern in a wave using given random
      */
     open fun observe(random: Random = Random.Default): Boolean? {
-        // TODO: Better heuristic integration
-        // TODO: Reset bounds to patterns from original image
-        val selectedWave = selectWave(random)
+        val selectedWave = heuristic.select()
+//        println("Observed wave ${selectedWave}")
 
         if (selectedWave == null) {
             onFail(this)
@@ -195,7 +133,6 @@ open class WfcAlgorithm(
 
         val wavePatterns = wavesArray[selectedWave]
         val observedPattern = observePatternUsingWeights(wavePatterns, random)
-
 //        println("Observed pattern $observedPattern for wave $selectedWave")
 
         for (patternIndex in 0 until patternCount) {
@@ -204,7 +141,7 @@ open class WfcAlgorithm(
             }
         }
 
-        onObserve(this)
+        onObserve(Triple(this, selectedWave, observedPattern))
 
         return null
     }
@@ -225,6 +162,8 @@ open class WfcAlgorithm(
             }
         }
 
+        onObserve(Triple(this, index, pattern))
+
         return null
     }
 
@@ -232,14 +171,13 @@ open class WfcAlgorithm(
      * Propagates consequences of bans
      */
     open fun propagate() {
+//        println("Propagating $stacksize items")
         var original = stacksize
         while (stacksize > 0) {
             // pop item
             stacksize--
             original--
             val actual = stack[stacksize] ?: continue
-
-            // TODO: Add support for 'periodic' parameter
 
             // we have banned patternIndex in waveIndex location
             val (waveIndex, patternIndex) = actual
@@ -283,8 +221,12 @@ open class WfcAlgorithm(
      */
     open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backtrackLimit: Int = 0): Boolean {
         val random = Random(seed)
+        heuristic.initialize(this, random)
 
+//        println("Clearing...")
         clear()
+
+        onStart(this)
 
         // TODO: Allow backtracking if bigger than 0
         if (limit != 0) {
@@ -299,6 +241,7 @@ open class WfcAlgorithm(
             }
         } else {
             while (true) {
+//                println("stepping...")
                 val result = step(random)
                 if (result != null) {
                     onFinished(this)
@@ -310,24 +253,4 @@ open class WfcAlgorithm(
         onFinished(this)
         return true
     }
-
-//    /**
-//     * Decodes waves into output patterns, leaves null if not determined yet. Returns null if any wave has no options left.
-//     */
-//    fun constructOutput(): Array<Int?>? {
-//        return Array(topology.totalSize) {
-//            val candidates = wavesArray[it]
-//            val a = 1
-//            val b = 0
-//            val sum: Int = candidates.sumOf { item ->
-//                when (item) {
-//                    true -> a
-//                    false -> b
-//                }
-//            }
-//            if (sum == 0) return null
-//            if (sum > 1) return null
-//            candidates.indexOf(true)
-//        }
-//    }
 }

@@ -53,3 +53,15 @@ fun formatPropagator(propagator: Array<Array<IntArray>>): String {
     }
     return result
 }
+
+fun formatNeighbours(propagator: Array<Array<IntArray>>): String {
+    var ret = ""
+    for (patternIndex in propagator[0].indices) {
+        ret += "Pattern $patternIndex:\n"
+        for (dir in propagator.indices) {
+            ret += "\t${propagator[dir][patternIndex].joinToString(", ")}\n"
+        }
+        ret += "\n"
+    }
+    return ret
+}
