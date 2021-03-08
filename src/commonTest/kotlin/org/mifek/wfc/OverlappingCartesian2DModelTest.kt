@@ -18,18 +18,9 @@ class OverlappingCartesian2DModelTest {
     fun createImageModel(source: IntArray2D, width: Int, height: Int, overlap: Int, seed: Int): IntArray2D {
         val model = OverlappingCartesian2DModel(source, overlap, width, height)
         val algorithm = model.build()
-//        algorithm.onObserve += {
-//            println("\n\n")
-//            printGrid(algorithm.constructOutput())
-//        }
-//        algorithm.onPropagationStep += {
-//            println()
-//            printGrid(algorithm.constructOutput())
-//        }
         val result = algorithm.run(seed)
-//        println(formatPatterns(model.patternsArray.map { it.asIntArray() }.toTypedArray()))
         assertTrue(result, "Expected algorithm to be successful. Seed $seed")
-        return algorithm.constructOutput()
+        return model.constructOutput(algorithm)
     }
 
     @Test
@@ -45,9 +36,7 @@ class OverlappingCartesian2DModelTest {
         val result = createImageModel(
             IntArray2D(6, 6) {data[it]}, 4, 4, 1, 123456789
         )
-        for (i in 0 until 4) {
-            println(result.data.slice(i * 4 until (i + 1) * 4).joinToString(" "))
-        }
+        printGrid(result)
         for (i in 0 until 4) {
             assertEquals(2, result.row(i).sum())
             assertEquals(2, result.column(i).sum())
@@ -67,26 +56,6 @@ class OverlappingCartesian2DModelTest {
         var result2 = createImageModel(
             IntArray2D(6, 6) {data[it]}, 16, 16, 1, 0
         )
-//        var last = 0
-//        val total = 2000000
-//        val step = total / 100.0
-//        println("Done $last%")
-//        for (i in 0..total) {
-//            result2 = createImageModel(
-//                intArrayOf(
-//                    8, 8, 0, 0, 8, 8,
-//                    8, 8, 0, 0, 8, 8,
-//                    0, 0, 8, 8, 0, 0,
-//                    0, 0, 8, 8, 0, 0,
-//                    8, 8, 0, 0, 8, 8,
-//                    8, 8, 0, 0, 8, 8,
-//                ), 6, 16, 16, 2, i
-//            )
-//            if((i/step).toInt() != last) {
-//                last = (i/step).toInt()
-//                println("Done $last%")
-//            }
-//        }
         printGrid(result2)
     }
 

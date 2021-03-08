@@ -1,12 +1,9 @@
 package org.mifek.wfc.models
 
-import org.mifek.wfc.utils.chain
 import org.mifek.wfc.core.Cartesian2DWfcAlgorithm
 import org.mifek.wfc.datastructures.IntArray2D
-import org.mifek.wfc.datastructures.IntHolder
 import org.mifek.wfc.datastructures.Quadruple
-import org.mifek.wfc.datatypes.Directions2D
-import org.mifek.wfc.topologies.Cartesian2DTopology
+import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import org.mifek.wfc.utils.intToRgba
 import org.mifek.wfc.utils.rgbaToInt
 import kotlin.math.min
@@ -17,14 +14,14 @@ class OverlappingImageModel(
     overlap: Int,
     outputWidth: Int,
     outputHeight: Int,
-    options: ModelOptions = ModelOptions(),
+    options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
 ) : OverlappingCartesian2DModel(input, overlap, outputWidth, outputHeight, options) {
     override fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
         return IntArray2D(outputWidth, outputHeight) { waveIndex ->
             var index = waveIndex
             var shiftX = 0
             var shiftY = 0
-            
+
             if (!options.periodicOutput) {
                 if (onBoundary(waveIndex)) {
                     val x = waveIndex % outputWidth

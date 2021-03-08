@@ -3,20 +3,21 @@ package org.mifek.wfc.models
 import org.mifek.wfc.core.Cartesian2DWfcAlgorithm
 import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.IntHolder
-import org.mifek.wfc.datastructures.Quadruple
+import org.mifek.wfc.datastructures.PatternsArrayBuilder
 import org.mifek.wfc.datatypes.Directions2D
+import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import org.mifek.wfc.topologies.Cartesian2DTopology
-import org.mifek.wfc.utils.*
-import kotlin.math.min
-import kotlin.math.roundToInt
+import org.mifek.wfc.utils.chain
 
 open class OverlappingCartesian2DModel(
     val input: IntArray2D,
     val overlap: Int,
     val outputWidth: Int,
     val outputHeight: Int,
-    val options: ModelOptions = ModelOptions(),
+    val options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
 ) : OverlappingModel {
+    private val patternSideSize = overlap + 1
+
     private val firstRowPatterns = ArrayList<Int>()
     private val lastRowPatterns = ArrayList<Int>()
     private val patternCounts = loadPatterns(
@@ -25,7 +26,6 @@ open class OverlappingCartesian2DModel(
     )
 
     private val sum = patternCounts.map { it.second.item }.sum()
-    private val patternSideSize = overlap + 1
 
     protected val patternsArray = patternCounts.map { it.first }.toTypedArray()
     override val patterns = Patterns(patternsArray)
@@ -61,8 +61,6 @@ open class OverlappingCartesian2DModel(
     }
 
     override fun build(): Cartesian2DWfcAlgorithm {
-        println(formatNeighbours(propagator))
-
         val topology = Cartesian2DTopology(
             outputWidth - if (options.periodicOutput) 0 else overlap, // We can compute smaller array, missing pixels are fixed by boundary patterns
             outputHeight - if (options.periodicOutput) 0 else overlap, // But if output is periodic, this is not desirable because it would scale down the output
@@ -84,10 +82,34 @@ open class OverlappingCartesian2DModel(
                 )
             }
         }
+        if (options.banGroundElsewhere) {
+            algorithm.onStart += {
+                algorithm.banMultiplePatterns(
+                    (0 until topology.width - if (options.periodicOutput) overlap else 0).map { x ->
+                        (0 until topology.height - 1 - if (options.periodicOutput) overlap else 0).map { y ->
+                            Pair(x, y)
+                        }
+                    }.reduce { acc, list -> acc.plus(list) },
+                    lastRowPatterns
+                )
+            }
+        }
         if (options.roofed) {
             algorithm.onStart += {
                 algorithm.setMultiplePatterns(
-                    (0 until topology.width).map { Pair(it, 0) },
+                    (0 until topology.width - if (options.periodicOutput) overlap else 0).map { Pair(it, 0) },
+                    firstRowPatterns
+                )
+            }
+        }
+        if (options.banRoofElsewhere) {
+            algorithm.onStart += {
+                algorithm.banMultiplePatterns(
+                    (0 until topology.width - if (options.periodicOutput) overlap else 0).map { x ->
+                        (1 until topology.height - if (options.periodicOutput) overlap else 0).map { y ->
+                            Pair(x, y)
+                        }
+                    }.reduce { acc, list -> acc.plus(list) },
                     firstRowPatterns
                 )
             }
@@ -96,8 +118,31 @@ open class OverlappingCartesian2DModel(
             algorithm.onStart += {
                 val possiblePixels = input.column(0).plus(input.column(input.width - 1)).distinct()
                 algorithm.setMultiplePixels(
-                    (0 until topology.height).map { Pair(0, it) }
-                        .plus((0 until topology.height).map { Pair(topology.width - 1, it) }),
+                    (0 until topology.height - if (options.periodicOutput) overlap else 0).map { Pair(0, it) }
+                        .plus((0 until topology.height - if (options.periodicOutput) overlap else 0).map {
+                            Pair(
+                                topology.width - 1 - if (options.periodicOutput) overlap else 0,
+                                it
+                            )
+                        }),
+                    possiblePixels
+                )
+            }
+        }
+        if (options.banSidesElsewhere) {
+            algorithm.onStart += {
+                val possiblePixels = input.column(0).plus(input.column(input.width - 1)).distinct()
+                algorithm.setMultiplePixels(
+                    (0 until topology.height - if (options.periodicOutput) overlap else 0)
+                        .map { y ->
+                            (1 until topology.width - 1 - if (options.periodicOutput) overlap else 0).map { x ->
+                                Pair(
+                                    x,
+                                    y
+                                )
+                            }
+                        }
+                        .reduce { acc, list -> acc.plus(list) },
                     possiblePixels
                 )
             }
@@ -142,65 +187,32 @@ open class OverlappingCartesian2DModel(
 
 
     /**
-     * Adds pattern to accumulator (patterns). Indices used for faster search.
-     */
-    private fun addPattern(
-        indices: HashMap<Int, MutableList<Int>>,
-        pattern: IntArray2D,
-        patterns: MutableList<Pair<IntArray2D, IntHolder>>
-    ): Int {
-        val hash = pattern.contentHashCode()
-
-        // Check whether pattern exists
-        if (indices.containsKey(hash)) {
-
-            // If so, try to find it among hashed arguments
-            val candidate = indices[hash]!!.find { patterns[it].first.contentEquals(pattern) }
-            if (candidate != null) {
-                // Increase counter if found [We expect this to be the case most often]
-                patterns[candidate].second.item++
-                return candidate
-            }
-
-            // Add the pattern if not found
-            indices[hash]!!.add(patterns.size)
-            patterns.add(Pair(pattern, IntHolder(1)))
-            return patterns.size - 1
-        }
-
-        // Add the pattern and create hash table for
-        indices[hash] = arrayListOf(patterns.size)
-        patterns.add(Pair(pattern, IntHolder(1)))
-        return patterns.size - 1
-    }
-
-    /**
      * Loads patterns and number of their occurrences in the input image
      */
     private fun loadPatterns(
         data: IntArray2D,
         overlap: Int,
-    ): ArrayList<Pair<IntArray2D, IntHolder>> {
-        val size = overlap + 1
-        val patterns = ArrayList<Pair<IntArray2D, IntHolder>>()
-        val indices = HashMap<Int, MutableList<Int>>()
+    ): List<Pair<IntArray2D, IntHolder>> {
+        val pab = PatternsArrayBuilder()
 
         // Go through input image without borders
-        val ymax = (data.height - if (options.periodicInput) 0 else overlap)
-        val xmax = (data.width - if (options.periodicInput) 0 else overlap)
+        val yMax = (data.height - if (options.periodicInput) 0 else overlap)
+        val xMax = (data.width - if (options.periodicInput) 0 else overlap)
 
-        for (yOffset in 0 until ymax) {
+        for (yOffset in 0 until yMax) {
             val preIndex = yOffset * data.width
-            for (xOffset in 0 until xmax) {
+            for (xOffset in 0 until xMax) {
                 val index = preIndex + xOffset
 
                 // Create pattern
-                val pattern = IntArray2D(size, size)
+                val pattern = IntArray2D(patternSideSize, patternSideSize)
                 var patternIndex = 0
                 for (y in 0..overlap) {
                     val postIndex = (index + y * data.width) % data.size
                     for (x in 0..overlap) {
-                        pattern[patternIndex] = data[(postIndex + x) % data.size]
+                        val height = postIndex / data.width
+                        val position = ((postIndex % data.width) + x) % data.width
+                        pattern[patternIndex] = data[height * data.width + position]
                         patternIndex++
                     }
                 }
@@ -259,18 +271,24 @@ open class OverlappingCartesian2DModel(
                 }
 
                 foundPatterns.forEach {
-                    val idx = addPattern(indices, it, patterns)
-                    if (options.roofed && yOffset == 0 && idx !in firstRowPatterns) {
-                        firstRowPatterns.add(idx)
+                    val prevSize = pab.size
+                    pab.add(it.asIntArray())
+                    if (options.roofed && yOffset == 0 && prevSize != pab.size) {
+                        firstRowPatterns.add(prevSize)
                     }
-                    if (options.grounded && yOffset == data.height - 1 - overlap && idx !in lastRowPatterns) {
-                        lastRowPatterns.add(idx)
+                    if (options.grounded && yOffset == data.height - 1 - overlap && prevSize != pab.size) {
+                        lastRowPatterns.add(prevSize)
                     }
                 }
             }
         }
 
-        return patterns
+        return pab.patterns.map { pair ->
+            Pair(
+                IntArray2D(patternSideSize, patternSideSize) { pair.first[it] },
+                pair.second
+            )
+        }
     }
 
     protected fun onBoundary(waveIndex: Int): Boolean {

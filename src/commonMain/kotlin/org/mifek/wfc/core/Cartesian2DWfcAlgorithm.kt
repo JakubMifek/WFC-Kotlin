@@ -1,7 +1,6 @@
 package org.mifek.wfc.core
 
 import org.mifek.wfc.datastructures.IntArray2D
-import org.mifek.wfc.datatypes.ArrayIndexOutOfBoundsException
 import org.mifek.wfc.heuristics.LowestEntropyHeuristic
 import org.mifek.wfc.models.Patterns
 import org.mifek.wfc.models.Pixels
@@ -24,7 +23,7 @@ class Cartesian2DWfcAlgorithm(
      */
     private fun setPixel(waveIndex: Int, pixel: Int) {
         (0 until patterns.size).minus(pixels[pixel]).forEach {
-            this.ban(waveIndex, it)
+            ban(waveIndex, it)
         }
         propagate()
     }
@@ -40,7 +39,7 @@ class Cartesian2DWfcAlgorithm(
                     .reduce { acc: Sequence<Int>, sequence: Sequence<Int> -> acc.plus(sequence) }
             )
             .forEach {
-                this.ban(waveIndex, it)
+                ban(waveIndex, it)
             }
         propagate()
     }
@@ -49,8 +48,15 @@ class Cartesian2DWfcAlgorithm(
         (0 until this.patterns.size)
             .minus(patterns)
             .forEach {
-                this.ban(waveIndex, it)
+                ban(waveIndex, it)
             }
+        propagate()
+    }
+
+    private fun banPatterns(waveIndex: Int, patterns: Iterable<Int>) {
+        patterns.forEach {
+            ban(waveIndex, it)
+        }
         propagate()
     }
 
@@ -66,23 +72,29 @@ class Cartesian2DWfcAlgorithm(
             )
             .forEach { pattern ->
                 waveIndices.forEach {
-                    this.ban(it, pattern)
+                    ban(it, pattern)
                 }
             }
         propagate()
     }
 
     private fun setPatterns(waveIndices: Iterable<Int>, patterns: Iterable<Int>) {
-//        println("Patterns size ${this.patterns.size}")
         (0 until this.patterns.size)
             .minus(patterns)
             .forEach { pattern ->
-//                println("Banning $pattern")
                 waveIndices.forEach {
-//                    println("\tfor $it")
-                    this.ban(it, pattern)
+                    ban(it, pattern)
                 }
             }
+        propagate()
+    }
+
+    private fun banPatterns(waveIndices: Iterable<Int>, patterns: Iterable<Int>) {
+        patterns.forEach { pattern ->
+            waveIndices.forEach {
+                ban(it, pattern)
+            }
+        }
         propagate()
     }
 
@@ -115,10 +127,24 @@ class Cartesian2DWfcAlgorithm(
     }
 
     /**
+     * Bans given patterns
+     */
+    fun banPatterns(x: Int, y: Int, patterns: Iterable<Int>) {
+        this.setPatterns(x + y * topology2D.width, patterns)
+    }
+
+    /**
      * Bans other than given patterns
      */
     fun setMultiplePatterns(coords: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
         this.setPatterns(coords.map { pair -> pair.first + pair.second * topology2D.width }, patterns)
+    }
+
+    /**
+     * Bans given patterns
+     */
+    fun banMultiplePatterns(coords: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
+        this.banPatterns(coords.map { pair -> pair.first + pair.second * topology2D.width }, patterns)
     }
 
     /**

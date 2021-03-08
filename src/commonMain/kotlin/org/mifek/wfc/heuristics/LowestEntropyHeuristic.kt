@@ -63,7 +63,6 @@ class LowestEntropyHeuristic(
     }
 
     private fun onClear() {
-//        println("Clearing heuristic")
         for (w in sumsOfOnes.indices) {
             sumsOfOnes[w] = weights.size
             sumsOfWeights[w] = sumOfWeights

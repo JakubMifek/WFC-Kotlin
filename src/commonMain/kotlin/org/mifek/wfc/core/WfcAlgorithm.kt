@@ -1,9 +1,9 @@
 package org.mifek.wfc.core
 
 import org.mifek.wfc.heuristics.SelectionHeuristic
-import org.mifek.wfc.utils.randomIndex
 import org.mifek.wfc.topologies.Topology
 import org.mifek.wfc.utils.EventHandler
+import org.mifek.wfc.utils.randomIndex
 import kotlin.random.Random
 
 open class WfcAlgorithm(
@@ -99,8 +99,8 @@ open class WfcAlgorithm(
     /**
      * Bans the pattern in selected wave
      */
-    open fun ban(wave: Int, pattern: Int) {
-        if(!wavesArray[wave][pattern]) return
+    open fun ban(wave: Int, pattern: Int): Boolean? {
+        if (!wavesArray[wave][pattern]) return false
 
         wavesArray[wave][pattern] = false
 
@@ -110,6 +110,10 @@ open class WfcAlgorithm(
         stack[stacksize++] = Pair(wave, pattern)
 
         onBan(Triple(this, wave, pattern))
+
+        if (!wavesArray[wave].filter { it }.any()) return null
+
+        return true
     }
 
     protected fun observePatternUsingWeights(patterns: BooleanArray, random: Random = Random.Default): Int {
@@ -122,7 +126,6 @@ open class WfcAlgorithm(
      */
     open fun observe(random: Random = Random.Default): Boolean? {
         val selectedWave = heuristic.select()
-//        println("Observed wave ${selectedWave}")
 
         if (selectedWave == null) {
             onFail(this)
@@ -133,11 +136,13 @@ open class WfcAlgorithm(
 
         val wavePatterns = wavesArray[selectedWave]
         val observedPattern = observePatternUsingWeights(wavePatterns, random)
-//        println("Observed pattern $observedPattern for wave $selectedWave")
 
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == observedPattern)) {
-                ban(selectedWave, patternIndex)
+                if (ban(selectedWave, patternIndex) == null) {
+                    onFail(this)
+                    return false
+                }
             }
         }
 
@@ -158,7 +163,9 @@ open class WfcAlgorithm(
 
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == pattern)) {
-                ban(index, patternIndex)
+                if (ban(index, patternIndex) == null) {
+                    return false
+                }
             }
         }
 
@@ -170,8 +177,7 @@ open class WfcAlgorithm(
     /**
      * Propagates consequences of bans
      */
-    open fun propagate() {
-//        println("Propagating $stacksize items")
+    open fun propagate(): Boolean {
         var original = stacksize
         while (stacksize > 0) {
             // pop item
@@ -181,18 +187,25 @@ open class WfcAlgorithm(
 
             // we have banned patternIndex in waveIndex location
             val (waveIndex, patternIndex) = actual
-            topology.neighbourIterator(waveIndex).forEach { neighbour ->
+            for (neighbour in topology.neighbourIterator(waveIndex)) {
                 val direction = neighbour.first
                 val neighbourIndex = neighbour.second
                 val neighbourPatterns = propagator[direction][patternIndex]
                 val compatibles = compatible[neighbourIndex]
 
-                for (neighbourPatternIndex in neighbourPatterns) {
+                for (neighbourPatternIndex in 0 until patternCount) {
+                    if ((compatibles[neighbourPatternIndex][direction] != 0 || !wavesArray[neighbourIndex][neighbourPatternIndex]) && neighbourPatternIndex !in neighbourPatterns) {
+                        continue
+                    }
                     val optionCompatible = compatibles[neighbourPatternIndex]
-
-                    optionCompatible[direction]--
+                    if (optionCompatible[direction] > 0) {
+                        optionCompatible[direction]--
+                    }
                     if (optionCompatible[direction] == 0) {
-                        ban(neighbourIndex, neighbourPatternIndex)
+                        if (ban(neighbourIndex, neighbourPatternIndex) == null) {
+                            onFail(this)
+                            return false
+                        }
                     }
                 }
             }
@@ -202,8 +215,8 @@ open class WfcAlgorithm(
                 onPropagationStep(this)
             }
         }
+        return true
     }
-
 
     /**
      * Performs single step to the WFC
@@ -211,7 +224,9 @@ open class WfcAlgorithm(
     open fun step(random: Random = Random.Default): Boolean? {
         val result = observe(random)
         if (result != null) return result
-        propagate()
+        if (!propagate()) {
+            return false
+        }
         onStep(this)
         return null
     }
@@ -223,7 +238,6 @@ open class WfcAlgorithm(
         val random = Random(seed)
         heuristic.initialize(this, random)
 
-//        println("Clearing...")
         clear()
 
         onStart(this)
@@ -241,7 +255,6 @@ open class WfcAlgorithm(
             }
         } else {
             while (true) {
-//                println("stepping...")
                 val result = step(random)
                 if (result != null) {
                     onFinished(this)
