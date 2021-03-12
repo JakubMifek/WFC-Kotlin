@@ -1,19 +1,17 @@
 package org.mifek.wfc.models
 
-import org.mifek.wfc.datastructures.IntArray2D
-
-class Patterns(private val patterns: Array<IntArray2D>) : Iterable<IntArray2D> {
+class Patterns(private val patterns: Array<IntArray>) : Iterable<IntArray> {
     val size = patterns.size
     val indices = patterns.indices
     val lastIndex = patterns.lastIndex
 
     val pixels = patterns.map { it[0] }
 
-    operator fun get(index: Int): IntArray2D {
+    operator fun get(index: Int): IntArray {
         return patterns[index].copyOf()
     }
 
-    override fun iterator(): Iterator<IntArray2D> {
+    override fun iterator(): Iterator<IntArray> {
         return patterns.iterator()
     }
 }

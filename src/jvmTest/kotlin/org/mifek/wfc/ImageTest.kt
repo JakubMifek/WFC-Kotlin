@@ -35,6 +35,9 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicInput = true
                     ),
+                    debugOptions = DebugOptions(
+                        "outputs/cat/debug",true,16
+                    ),
                     outputImageOptions = ImageOptions(
                         "outputs/cat",
                         "0_result",
@@ -91,6 +94,9 @@ class ImageTest {
                         grounded = true,
                         banGroundElsewhere = true,
                         roofed = true
+                    ),
+                    debugOptions = DebugOptions(
+                        "outputs/flowers/debug",true,16
                     ),
                     outputImageOptions = ImageOptions(
                         "outputs/flowers",
@@ -183,6 +189,9 @@ class ImageTest {
                         allowFlips = true,
                         allowRotations = true,
                     ),
+                    debugOptions = DebugOptions(
+                        "outputs/link/debug",true,16
+                    ),
                     outputImageOptions = ImageOptions(
                         "outputs/link",
                         "0_result",
@@ -217,6 +226,9 @@ class ImageTest {
                         grounded = true,
                         roofed = true
                     ),
+                    debugOptions = DebugOptions(
+                        "outputs/more_flowers/debug",true,16
+                    ),
                     outputImageOptions = ImageOptions(
                         "outputs/more_flowers",
                         "0_result",
@@ -249,6 +261,9 @@ class ImageTest {
                         "0_result",
                         8
                     ),
+                    debugOptions = DebugOptions(
+                        "outputs/more_skyline/debug",true,16
+                    ),
                     outputAnimationOptions = AnimationOptions(
                         "outputs/more_skyline",
                         "1_animation",
@@ -276,6 +291,9 @@ class ImageTest {
                         allowFlips = true,
                         periodicInput = true,
                         periodicOutput = true
+                    ),
+                    debugOptions = DebugOptions(
+                        "outputs/red_rooms/debug",true,16
                     ),
                     outputImageOptions = ImageOptions(
                         "outputs/red_rooms",

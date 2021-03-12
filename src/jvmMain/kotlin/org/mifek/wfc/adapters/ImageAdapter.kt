@@ -35,7 +35,11 @@ class ImageAdapter {
                 var path = "$outputPath/${index}.png"
                 val outputFile = File(path)
                 outputFile.mkdirs()
-                ImageIO.write(pattern.upScaled(scale).toBufferedImage(), "png", outputFile)
+                ImageIO.write(
+                    IntArray2D(model.outputWidth, model.outputHeight) { pattern[it] }.upScaled(scale).toBufferedImage(),
+                    "png",
+                    outputFile
+                )
             }
         }
 

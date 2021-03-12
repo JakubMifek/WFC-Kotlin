@@ -46,6 +46,25 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
         return IntArray2D(width, height) { data[it] }
     }
 
+    fun slice(startIndex: Int, xRange: IntRange?, yRange: IntRange?): IntArray2D {
+        val xRange2 = (xRange ?: 0 until width).iterator().asSequence().toList()
+        val yRange2 = (yRange ?: 0 until height).iterator().asSequence().toList()
+
+        val slice = IntArray2D(xRange2.size, yRange2.size)
+        var sliceIndex = 0
+        for (y in yRange2) {
+            val postIndex = (startIndex + y * width) % size
+            for (x in xRange2) {
+                val height = postIndex / width
+                val position = ((postIndex % width) + x) % width
+                slice[sliceIndex] = data[height * width + position]
+                sliceIndex++
+            }
+        }
+
+        return slice
+    }
+
     /**
      * Returns the specified column
      */
@@ -91,11 +110,11 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
      *
      * Returned a new array
      */
-    fun rotated(): IntArray2D {
+    fun rotated(positive: Boolean = true): IntArray2D {
         val res = IntArray2D(height, width)
         for (y in 0 until res.height) {
             for (x in 0 until res.width) {
-                res[x, y] = this[y, height - x - 1]
+                res[x, y] = this[if (positive) y else height - 1 - y, if (positive) width - 1 - x else x]
             }
         }
         return res

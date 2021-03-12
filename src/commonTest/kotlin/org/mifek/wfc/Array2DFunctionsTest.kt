@@ -11,10 +11,6 @@ import kotlin.test.assertTrue
 
 class Array2DFunctionsTest {
     @Test
-    fun playground() {
-    }
-
-    @Test
     fun rgbaSerialization() {
         val rgb = ubyteArrayOf(102u, 103u, 104u, 255u)
         val int = rgbaToInt(rgb[0], rgb[1], rgb[2], rgb[3])

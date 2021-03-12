@@ -4,7 +4,7 @@ import org.mifek.wfc.core.Cartesian2DWfcAlgorithm
 import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.IntHolder
 import org.mifek.wfc.datastructures.PatternsArrayBuilder
-import org.mifek.wfc.datatypes.Directions2D
+import org.mifek.wfc.datatypes.Direction2D
 import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import org.mifek.wfc.topologies.Cartesian2DTopology
 import org.mifek.wfc.utils.chain
@@ -28,7 +28,7 @@ open class OverlappingCartesian2DModel(
     private val sum = patternCounts.map { it.second.item }.sum()
 
     protected val patternsArray = patternCounts.map { it.first }.toTypedArray()
-    override val patterns = Patterns(patternsArray)
+    override val patterns = Patterns(patternsArray.map { it.asIntArray() }.toTypedArray())
     override val pixels = Pixels(
         mapOf(
             *patterns.pixels.map { it }.distinct().map { pixel ->
@@ -47,7 +47,7 @@ open class OverlappingCartesian2DModel(
     private val weights = DoubleArray(patternCounts.size) { patternCounts[it].second.item / sum.toDouble() }
     private val propagator = Array(4) { dir ->
         Array(patternsArray.size) { patternIndex ->
-            val d = Directions2D.fromInt(dir)
+            val d = Direction2D.fromInt(dir)
             patternsArray.indices.filter {
                 agrees(
                     patternsArray[patternIndex],
@@ -159,27 +159,27 @@ open class OverlappingCartesian2DModel(
         pattern1: IntArray2D,
         pattern2: IntArray2D,
         size: Int,
-        direction: Directions2D,
+        direction: Direction2D,
         overlap: Int
     ): Boolean {
         val line1 = when (direction) {
-            Directions2D.NORTH -> pattern1.rows(0 until overlap).iterator().asSequence()
+            Direction2D.NORTH -> pattern1.rows(0 until overlap).iterator().asSequence()
                 .chain(overlap, size)
-            Directions2D.EAST -> pattern1.columns((size - overlap) until size).iterator().asSequence()
+            Direction2D.EAST -> pattern1.columns((size - overlap) until size).iterator().asSequence()
                 .chain(overlap, size)
-            Directions2D.SOUTH -> pattern1.rows((size - overlap) until size).iterator().asSequence()
+            Direction2D.SOUTH -> pattern1.rows((size - overlap) until size).iterator().asSequence()
                 .chain(overlap, size)
-            Directions2D.WEST -> pattern1.columns(0 until overlap).iterator().asSequence()
+            Direction2D.WEST -> pattern1.columns(0 until overlap).iterator().asSequence()
                 .chain(overlap, size)
         }
         val line2 = when (direction) {
-            Directions2D.NORTH -> pattern2.rows((size - overlap) until size).iterator().asSequence()
+            Direction2D.NORTH -> pattern2.rows((size - overlap) until size).iterator().asSequence()
                 .chain(overlap, size)
-            Directions2D.EAST -> pattern2.columns(0 until overlap).iterator().asSequence()
+            Direction2D.EAST -> pattern2.columns(0 until overlap).iterator().asSequence()
                 .chain(overlap, size)
-            Directions2D.SOUTH -> pattern2.rows(0 until overlap).iterator().asSequence()
+            Direction2D.SOUTH -> pattern2.rows(0 until overlap).iterator().asSequence()
                 .chain(overlap, size)
-            Directions2D.WEST -> pattern2.columns((size - overlap) until size).iterator().asSequence()
+            Direction2D.WEST -> pattern2.columns((size - overlap) until size).iterator().asSequence()
                 .chain(overlap, size)
         }
         return line1.contentEquals(line2)
@@ -205,18 +205,7 @@ open class OverlappingCartesian2DModel(
                 val index = preIndex + xOffset
 
                 // Create pattern
-                val pattern = IntArray2D(patternSideSize, patternSideSize)
-                var patternIndex = 0
-                for (y in 0..overlap) {
-                    val postIndex = (index + y * data.width) % data.size
-                    for (x in 0..overlap) {
-                        val height = postIndex / data.width
-                        val position = ((postIndex % data.width) + x) % data.width
-                        pattern[patternIndex] = data[height * data.width + position]
-                        patternIndex++
-                    }
-                }
-
+                val pattern = data.slice(index, 0..overlap, 0..overlap)
                 val foundPatterns = mutableListOf(pattern)
 
                 if (options.allowFlips) {

@@ -11,6 +11,28 @@ fun IntArray.product(): Int {
     return this.reduce { acc, it -> acc * it }
 }
 
+fun IntArray.toIndex(sizes: IntArray): Int {
+    var res = 0
+    var i = 0
+    for (size in sizes.reversed()) {
+        res = res * size + this[i++]
+    }
+    return res
+}
+
+fun Int.toCoordinates(sizes: IntArray): IntArray {
+    // X first, then Y, Z, ... We don't need the last dimension size
+    val res = IntArray(sizes.size)
+    var rest = this
+    for (i in 0 until sizes.size - 1) {
+        res[i] = rest % sizes[i]
+        rest /= sizes[i]
+    }
+    res[res.size - 1] = rest
+
+    return res
+}
+
 /**
  * Return index of random element based on given distribution
  */
