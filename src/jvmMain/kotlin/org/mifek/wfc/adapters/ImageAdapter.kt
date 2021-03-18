@@ -111,17 +111,17 @@ class ImageAdapter {
                     options.debugOptions.outputAnimation.loop
                 )
 
-                algorithm.onFail += {
+                algorithm.afterFail += {
                     lock = true
                 }
-                algorithm.onStart += {
+                algorithm.beforeStart += {
                     lock = false
                 }
 
                 for (event in options.debugOptions.outputAnimation.events) {
                     when (event) {
                         EventType.STEP ->
-                            algorithm.onStep += {
+                            algorithm.afterStep += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -131,7 +131,7 @@ class ImageAdapter {
                                 }
                             }
                         EventType.PROPAGATION_STEP ->
-                            algorithm.onPropagationStep += {
+                            algorithm.afterPropagationStep += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -141,7 +141,7 @@ class ImageAdapter {
                                 }
                             }
                         EventType.OBSERVATION ->
-                            algorithm.onObserve += {
+                            algorithm.afterObserve += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -151,7 +151,7 @@ class ImageAdapter {
                                 }
                             }
                         EventType.BAN ->
-                            algorithm.onBan += {
+                            algorithm.afterBan += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -164,7 +164,7 @@ class ImageAdapter {
                 }
             }
 
-            algorithm.onClear += {
+            algorithm.afterClear += {
                 saveCurrentOutputImage(
                     algorithm,
                     model,
@@ -180,7 +180,7 @@ class ImageAdapter {
                 )
             }
 
-            algorithm.onFinished += {
+            algorithm.afterFinished += {
                 saveCurrentOutputImage(
                     algorithm,
                     model,
@@ -203,7 +203,7 @@ class ImageAdapter {
             for (event in options.debugOptions.outputImagesFromEvents) {
                 when (event) {
                     EventType.STEP ->
-                        algorithm.onStep += {
+                        algorithm.afterStep += {
                             saveCurrentOutputImage(
                                 algorithm,
                                 model,
@@ -212,7 +212,7 @@ class ImageAdapter {
                             )
                         }
                     EventType.PROPAGATION_STEP ->
-                        algorithm.onPropagationStep += {
+                        algorithm.afterPropagationStep += {
                             saveCurrentOutputImage(
                                 algorithm,
                                 model,
@@ -221,7 +221,7 @@ class ImageAdapter {
                             )
                         }
                     EventType.OBSERVATION ->
-                        algorithm.onObserve += {
+                        algorithm.afterObserve += {
                             saveCurrentOutputImage(
                                 algorithm,
                                 model,
@@ -231,7 +231,7 @@ class ImageAdapter {
                             )
                         }
                     EventType.BAN ->
-                        algorithm.onBan += {
+                        algorithm.afterBan += {
                             saveCurrentOutputImage(
                                 algorithm,
                                 model,
@@ -278,11 +278,11 @@ class ImageAdapter {
                     options.outputAnimationOptions.loop
                 )
 
-                algorithm.onFail += {
+                algorithm.afterFail += {
                     lock = true
                 }
 
-                algorithm.onStart += {
+                algorithm.beforeStart += {
                     writer.writeToSequence(
                         model.constructOutput(algorithm)
                             .upScaled(options.outputAnimationOptions.outputScale)
@@ -291,7 +291,7 @@ class ImageAdapter {
                     lock = false
                 }
 
-                algorithm.onFinished += {
+                algorithm.afterFinished += {
                     writer.writeToSequence(
                         model.constructOutput(algorithm)
                             .upScaled(options.outputAnimationOptions.outputScale)
@@ -306,7 +306,7 @@ class ImageAdapter {
                 for (event in options.outputAnimationOptions.events) {
                     when (event) {
                         EventType.STEP ->
-                            algorithm.onStep += {
+                            algorithm.afterStep += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -316,7 +316,7 @@ class ImageAdapter {
                                 }
                             }
                         EventType.PROPAGATION_STEP ->
-                            algorithm.onPropagationStep += {
+                            algorithm.afterPropagationStep += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -326,7 +326,7 @@ class ImageAdapter {
                                 }
                             }
                         EventType.OBSERVATION ->
-                            algorithm.onObserve += {
+                            algorithm.afterObserve += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)
@@ -336,7 +336,7 @@ class ImageAdapter {
                                 }
                             }
                         EventType.BAN ->
-                            algorithm.onBan += {
+                            algorithm.afterBan += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
                                         model.constructOutput(algorithm)

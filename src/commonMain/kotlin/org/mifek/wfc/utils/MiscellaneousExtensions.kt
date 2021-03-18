@@ -13,9 +13,9 @@ fun IntArray.product(): Int {
 
 fun IntArray.toIndex(sizes: IntArray): Int {
     var res = 0
-    var i = 0
+    var i = size-1
     for (size in sizes.reversed()) {
-        res = res * size + this[i++]
+        res = res * size + this[i--]
     }
     return res
 }

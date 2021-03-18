@@ -1,14 +1,15 @@
 package org.mifek.wfc.models
 
-import org.mifek.wfc.core.Cartesian2DWfcAlgorithm
 import org.mifek.wfc.core.Cartesian3DWfcAlgorithm
-import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.IntArray3D
 import org.mifek.wfc.datastructures.IntHolder
 import org.mifek.wfc.datastructures.PatternsArrayBuilder
 import org.mifek.wfc.datatypes.Direction3D
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
 import org.mifek.wfc.topologies.Cartesian3DTopology
+import org.mifek.wfc.utils.formatNeighbours
+import org.mifek.wfc.utils.toCoordinates
+import org.mifek.wfc.utils.toIndex
 
 open class OverlappingCartesian3DModel(
     val input: IntArray3D,
@@ -52,9 +53,7 @@ open class OverlappingCartesian3DModel(
                 agrees(
                     patternsArray[patternIndex],
                     patternsArray[it],
-                    patternSideSize,
                     d,
-                    overlap
                 )
             }.toIntArray()
         }
@@ -81,26 +80,25 @@ open class OverlappingCartesian3DModel(
     private fun agrees(
         pattern1: IntArray3D,
         pattern2: IntArray3D,
-        size: Int,
-        direction: Direction3D,
-        overlap: Int
+        direction: Direction3D
     ): Boolean {
         val sequence1 = when (direction) {
             Direction3D.UP -> pattern1[null, 0 until overlap, null]
-            Direction3D.DOWN -> pattern1[null, size - overlap until size, null]
-            Direction3D.FORWARD -> pattern1[null, null, size - overlap until size]
+            Direction3D.DOWN -> pattern1[null, patternSideSize - overlap until patternSideSize, null]
+            Direction3D.FORWARD -> pattern1[null, null, patternSideSize - overlap until patternSideSize]
             Direction3D.BACKWARD -> pattern1[null, null, 0 until overlap]
-            Direction3D.LEFT -> pattern1[null, null, 0 until overlap]
-            Direction3D.RIGHT -> pattern1[null, null, size - overlap until size]
+            Direction3D.LEFT -> pattern1[0 until overlap, null, null]
+            Direction3D.RIGHT -> pattern1[patternSideSize - overlap until patternSideSize, null, null]
         }
         val sequence2 = when (direction) {
-            Direction3D.UP -> pattern2[null, size - overlap until size, null]
+            Direction3D.UP -> pattern2[null, patternSideSize - overlap until patternSideSize, null]
             Direction3D.DOWN -> pattern2[null, 0 until overlap, null]
             Direction3D.FORWARD -> pattern2[null, null, 0 until overlap]
-            Direction3D.BACKWARD -> pattern2[null, null, size - overlap until size]
-            Direction3D.LEFT -> pattern2[null, null, size - overlap until size]
-            Direction3D.RIGHT -> pattern2[null, null, 0 until overlap]
+            Direction3D.BACKWARD -> pattern2[null, null, patternSideSize - overlap until patternSideSize]
+            Direction3D.LEFT -> pattern2[patternSideSize - overlap until patternSideSize, null, null]
+            Direction3D.RIGHT -> pattern2[0 until overlap, null, null]
         }
+
         return sequence1.zip(sequence2)
             .all {
                 it.first.zip(it.second)
@@ -129,7 +127,7 @@ open class OverlappingCartesian3DModel(
         val xMax = (data.width - if (options.periodicInput) 0 else overlap)
 
         for (zOffset in 0 until zMax) {
-            val prePreIndex = zOffset * data.depth
+            val prePreIndex = zOffset * data.height
             for (yOffset in 0 until yMax) {
                 val preIndex = (prePreIndex + yOffset) * data.width
                 for (xOffset in 0 until xMax) {
@@ -217,38 +215,49 @@ open class OverlappingCartesian3DModel(
         if (waveIndex % outputWidth >= outputWidth - overlap) {
             return true
         }
-        if (waveIndex >= outputWidth * (outputHeight - overlap)) {
+        if ((waveIndex / outputWidth) % outputHeight >= outputHeight - overlap) {
+            return true
+        }
+        if ((waveIndex / outputWidth) / outputHeight >= outputDepth - overlap) {
             return true
         }
         return false
     }
 
     @ExperimentalUnsignedTypes
-    open fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
-        return IntArray2D(outputWidth, outputHeight) { waveIndex ->
+    open fun constructOutput(algorithm: Cartesian3DWfcAlgorithm): IntArray3D {
+        return IntArray3D(outputWidth, outputHeight, outputDepth) { waveIndex ->
             var index = waveIndex
             var shiftX = 0
             var shiftY = 0
+            var shiftZ = 0
+            val sizes = intArrayOf(outputWidth, outputHeight, outputDepth)
+            val faceSize = outputWidth * outputHeight
 
             if (!options.periodicOutput) {
                 if (onBoundary(waveIndex)) {
-                    val x = waveIndex % outputWidth
-                    val y = waveIndex / outputWidth
+                    // TODO: Fix
+                    val coords = waveIndex.toCoordinates(sizes)
 
-                    if (x >= outputWidth - overlap) {
-                        shiftX = x - outputWidth + overlap + 1
+                    if (coords[0] >= outputWidth - overlap) {
+                        shiftX = coords[0] - outputWidth + overlap + 1
                         index -= shiftX
                     }
-                    if (y >= outputHeight - overlap) {
-                        shiftY = y - outputHeight + overlap + 1
+                    if (coords[1] >= outputHeight - overlap) {
+                        shiftY = coords[1] - outputHeight + overlap + 1
                         index -= shiftY * outputWidth
+                    }
+                    if (coords[2] >= outputDepth - overlap) {
+                        shiftZ = coords[2] - outputDepth + overlap + 1
+                        index -= shiftZ * faceSize
                     }
                 }
 
-                index -= index / outputWidth
+                index -= (((index % faceSize) / outputWidth)) * overlap +
+                        (index / faceSize) * (outputHeight - overlap + outputWidth) * overlap
             }
 
-            val shift = shiftY * (overlap + 1) + shiftX
+            val shift = (shiftZ * patternSideSize + shiftY) * patternSideSize + shiftX
 
             val a = 0
             val b = 1

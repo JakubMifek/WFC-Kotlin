@@ -5,14 +5,6 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-fun IntArray3D.serialized(): String {
-    return ((0 until depth).joinToString("\n\n") { z ->
-        (0 until height).joinToString("\n") { y ->
-            this[null, y, z].joinToString(", ")
-        }
-    })
-}
-
 class Array3DFunctionsTest {
     @Test
     fun positiveRotationX() {

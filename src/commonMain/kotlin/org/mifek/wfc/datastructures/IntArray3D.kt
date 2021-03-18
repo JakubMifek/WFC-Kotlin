@@ -1,12 +1,15 @@
 package org.mifek.wfc.datastructures
 
 import org.mifek.wfc.datatypes.Axis3D
+import org.mifek.wfc.utils.toCoordinates
+import org.mifek.wfc.utils.toIndex
 
 class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(width * height * depth, init)
     val size = data.size
     val lastIndex = data.lastIndex
     val indices = data.indices
+    private val sizes = intArrayOf(width, height, depth)
 
     override inline fun iterator(): IntIterator {
         return data.iterator()
@@ -241,21 +244,13 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
 
         val slice = IntArray3D(xRange2.size, yRange2.size, zRange2.size)
         var sliceIndex = 0
-        val faceSize = width * height
-
+        val coords = startIndex.toCoordinates(sizes)
         for (z in xRange2) {
-            val prePostIndex = (startIndex + z * height) % size
-
+            val Z = (coords[2] + z) % depth
             for (y in yRange2) {
-                val z = prePostIndex / faceSize
-                val pos2D = prePostIndex % faceSize
-                val postIndex2D = (pos2D + y * width) % faceSize
-                val y = postIndex2D / width
-
+                val Y = (coords[1] + y) % height
                 for (x in xRange2) {
-                    val x = ((postIndex2D % width) + x) % width
-                    slice[sliceIndex] = data[(z * height + y) * width + x]
-                    sliceIndex++
+                    slice[sliceIndex++] = data[intArrayOf((coords[0] + x) % width, Y, Z).toIndex(sizes)]
                 }
             }
         }

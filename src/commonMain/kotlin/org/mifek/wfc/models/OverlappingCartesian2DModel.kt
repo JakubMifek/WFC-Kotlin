@@ -52,9 +52,7 @@ open class OverlappingCartesian2DModel(
                 agrees(
                     patternsArray[patternIndex],
                     patternsArray[it],
-                    patternSideSize,
                     d,
-                    overlap
                 )
             }.toIntArray()
         }
@@ -70,7 +68,7 @@ open class OverlappingCartesian2DModel(
             topology, weights, propagator, patterns, pixels
         )
         if (options.grounded) {
-            algorithm.onStart += {
+            algorithm.beforeStart += {
                 algorithm.setMultiplePatterns(
                     (0 until topology.width).map {
                         Pair(
@@ -83,7 +81,7 @@ open class OverlappingCartesian2DModel(
             }
         }
         if (options.banGroundElsewhere) {
-            algorithm.onStart += {
+            algorithm.beforeStart += {
                 algorithm.banMultiplePatterns(
                     (0 until topology.width - if (options.periodicOutput) overlap else 0).map { x ->
                         (0 until topology.height - 1 - if (options.periodicOutput) overlap else 0).map { y ->
@@ -95,7 +93,7 @@ open class OverlappingCartesian2DModel(
             }
         }
         if (options.roofed) {
-            algorithm.onStart += {
+            algorithm.beforeStart += {
                 algorithm.setMultiplePatterns(
                     (0 until topology.width - if (options.periodicOutput) overlap else 0).map { Pair(it, 0) },
                     firstRowPatterns
@@ -103,7 +101,7 @@ open class OverlappingCartesian2DModel(
             }
         }
         if (options.banRoofElsewhere) {
-            algorithm.onStart += {
+            algorithm.beforeStart += {
                 algorithm.banMultiplePatterns(
                     (0 until topology.width - if (options.periodicOutput) overlap else 0).map { x ->
                         (1 until topology.height - if (options.periodicOutput) overlap else 0).map { y ->
@@ -115,7 +113,7 @@ open class OverlappingCartesian2DModel(
             }
         }
         if (options.sided) {
-            algorithm.onStart += {
+            algorithm.beforeStart += {
                 val possiblePixels = input.column(0).plus(input.column(input.width - 1)).distinct()
                 algorithm.setMultiplePixels(
                     (0 until topology.height - if (options.periodicOutput) overlap else 0).map { Pair(0, it) }
@@ -130,7 +128,7 @@ open class OverlappingCartesian2DModel(
             }
         }
         if (options.banSidesElsewhere) {
-            algorithm.onStart += {
+            algorithm.beforeStart += {
                 val possiblePixels = input.column(0).plus(input.column(input.width - 1)).distinct()
                 algorithm.setMultiplePixels(
                     (0 until topology.height - if (options.periodicOutput) overlap else 0)
@@ -158,29 +156,31 @@ open class OverlappingCartesian2DModel(
     private fun agrees(
         pattern1: IntArray2D,
         pattern2: IntArray2D,
-        size: Int,
         direction: Direction2D,
-        overlap: Int
     ): Boolean {
         val line1 = when (direction) {
             Direction2D.NORTH -> pattern1.rows(0 until overlap).iterator().asSequence()
-                .chain(overlap, size)
-            Direction2D.EAST -> pattern1.columns((size - overlap) until size).iterator().asSequence()
-                .chain(overlap, size)
-            Direction2D.SOUTH -> pattern1.rows((size - overlap) until size).iterator().asSequence()
-                .chain(overlap, size)
+                .chain(overlap, patternSideSize)
+            Direction2D.EAST -> pattern1.columns((patternSideSize - overlap) until patternSideSize).iterator()
+                .asSequence()
+                .chain(overlap, patternSideSize)
+            Direction2D.SOUTH -> pattern1.rows((patternSideSize - overlap) until patternSideSize).iterator()
+                .asSequence()
+                .chain(overlap, patternSideSize)
             Direction2D.WEST -> pattern1.columns(0 until overlap).iterator().asSequence()
-                .chain(overlap, size)
+                .chain(overlap, patternSideSize)
         }
         val line2 = when (direction) {
-            Direction2D.NORTH -> pattern2.rows((size - overlap) until size).iterator().asSequence()
-                .chain(overlap, size)
+            Direction2D.NORTH -> pattern2.rows((patternSideSize - overlap) until patternSideSize).iterator()
+                .asSequence()
+                .chain(overlap, patternSideSize)
             Direction2D.EAST -> pattern2.columns(0 until overlap).iterator().asSequence()
-                .chain(overlap, size)
+                .chain(overlap, patternSideSize)
             Direction2D.SOUTH -> pattern2.rows(0 until overlap).iterator().asSequence()
-                .chain(overlap, size)
-            Direction2D.WEST -> pattern2.columns((size - overlap) until size).iterator().asSequence()
-                .chain(overlap, size)
+                .chain(overlap, patternSideSize)
+            Direction2D.WEST -> pattern2.columns((patternSideSize - overlap) until patternSideSize).iterator()
+                .asSequence()
+                .chain(overlap, patternSideSize)
         }
         return line1.contentEquals(line2)
     }
@@ -312,7 +312,7 @@ open class OverlappingCartesian2DModel(
                     }
                 }
 
-                index -= index / outputWidth
+                index -= (index / outputWidth) * overlap
             }
 
             val shift = shiftY * (overlap + 1) + shiftX

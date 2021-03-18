@@ -1,9 +1,12 @@
 package org.mifek.wfc.datastructures
 
+import jdk.jfr.Experimental
 import org.mifek.wfc.utils.product
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
+import java.security.InvalidParameterException
 
+@Experimental
 class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(sizes.product(), init)
     val size = data.size
@@ -66,17 +69,40 @@ class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int
      *
      * Returns a new array
      */
-    fun rotated(axis: Int, positive: Boolean = true): IntArrayND {
-        // TODO: rotations
-        throw Error()
+    fun rotated(plane: Pair<Int, Int>, positive: Boolean = true): IntArrayND {
+        if(plane.first == plane.second) {
+            throw InvalidParameterException("Rotation plane consists of two different axis.")
+        }
+
+        val axis1 = if(plane.first > plane.second) plane.second else plane.first
+        val axis2 = if(plane.first > plane.second) plane.first else plane.second
+
+        val newSizes = sizes.clone()
+        val tmpS = newSizes[axis1]
+        newSizes[axis1] = newSizes[axis2]
+        newSizes[axis2] = tmpS
+
+        return IntArrayND(newSizes) {
+            val coords = it.toCoordinates(newSizes)
+
+            // Rotate
+            val tmp = coords[axis1]
+            coords[axis1] = if (!positive) coords[axis2] else sizes[axis1] - 1 - coords[axis2]
+            coords[axis2] = if (!positive) sizes[axis2] - 1 - tmp else tmp
+
+            get(coords)
+        }
     }
 
     /**
      * Returns a new array
      */
     fun flipped(axis: Int): IntArrayND {
-        // TODO: Flips
-        throw Error()
+        return IntArrayND(sizes) {
+            val coordinates = it.toCoordinates(sizes)
+            coordinates[axis] = sizes[axis] - 1 - coordinates[axis]
+            this[coordinates]
+        }
     }
 
     fun clone(): IntArrayND {

@@ -25,11 +25,11 @@ class LowestEntropyHeuristic(
 
     override fun initialize(algorithm: WfcAlgorithm, random: Random) {
         this.random = random
-        if(onBanLambda !in algorithm.onBan) {
-            algorithm.onBan += onBanLambda
+        if(onBanLambda !in algorithm.afterBan) {
+            algorithm.afterBan += onBanLambda
         }
-        if(onClearLambda !in algorithm.onClear) {
-            algorithm.onClear += onClearLambda
+        if(onClearLambda !in algorithm.afterClear) {
+            algorithm.afterClear += onClearLambda
         }
     }
 

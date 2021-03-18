@@ -333,6 +333,20 @@ class ImageTest {
                         "0_result",
                         8
                     ),
+                    outputAnimationOptions = AnimationOptions(
+                        "outputs/rooms",
+                        "1_animation",
+                        8,
+                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+                        16,
+                        16,
+                        true
+                    ),
+                    debugOptions = DebugOptions(
+                        "outputs/rooms/debug",
+                        true,
+                        16,
+                    ),
                     seed = 1123890487
                 ),
             )
@@ -552,6 +566,11 @@ class ImageTest {
                         16,
                         16,
                         true
+                    ),
+                    debugOptions = DebugOptions(
+                        "outputs/office/debug",
+                        true,
+                        16,
                     ),
                     seed = 12431512
                 ),

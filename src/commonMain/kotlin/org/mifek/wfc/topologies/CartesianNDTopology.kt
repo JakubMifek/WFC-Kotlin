@@ -1,9 +1,11 @@
 package org.mifek.wfc.topologies
 
+import jdk.jfr.Experimental
 import org.mifek.wfc.utils.product
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 
+@Experimental
 class CartesianNDTopology(val sizes: IntArray, override val periodic: Boolean = false) :
     Topology {
     val dimension = sizes.size
@@ -15,7 +17,7 @@ class CartesianNDTopology(val sizes: IntArray, override val periodic: Boolean = 
         return sequence {
             var dir = 0
             for (i in sizes.indices) {
-                if (periodic || coords[i] > 0) {
+                if (periodic || coords[i] > 0 && sizes[i] > 1) {
                     yield(
                         Pair(
                             dir,
@@ -28,7 +30,7 @@ class CartesianNDTopology(val sizes: IntArray, override val periodic: Boolean = 
                 dir++
             }
             for (i in sizes.indices) {
-                if (periodic || coords[i] < sizes[i] - 1) {
+                if (periodic || coords[i] < sizes[i] - 1 && sizes[i] > 1) {
                     yield(
                         Pair(
                             dir,

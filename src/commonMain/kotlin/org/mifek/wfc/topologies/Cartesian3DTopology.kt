@@ -19,7 +19,7 @@ class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, overr
     override fun neighbourIterator(index: Int): Sequence<Pair<Int, Int>> {
         val triple = deserializeCoordinates(index)
         return sequence {
-            if (periodic || triple.second > 0) {
+            if (periodic || triple.second > 0 && height > 1) {
                 yield(
                     Pair(
                         Direction3D.UP.toInt(),
@@ -27,7 +27,7 @@ class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, overr
                     )
                 )
             }
-            if (periodic || triple.first < width - 1) {
+            if (periodic || triple.first < width - 1  && width > 1) {
                 yield(
                     Pair(
                         Direction3D.RIGHT.toInt(),
@@ -35,7 +35,7 @@ class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, overr
                     )
                 )
             }
-            if (periodic || triple.third > 0) {
+            if (periodic || triple.third < depth - 1 && depth > 1) {
                 yield(
                     Pair(
                         Direction3D.FORWARD.toInt(),
@@ -43,7 +43,7 @@ class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, overr
                     )
                 )
             }
-            if (periodic || triple.second < height - 1) {
+            if (periodic || triple.second < height - 1 && height > 1) {
                 yield(
                     Pair(
                         Direction3D.DOWN.toInt(),
@@ -51,7 +51,7 @@ class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, overr
                     )
                 )
             }
-            if (periodic || triple.first > 0) {
+            if (periodic || triple.first > 0 && width > 1) {
                 yield(
                     Pair(
                         Direction3D.LEFT.toInt(),
@@ -59,7 +59,7 @@ class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, overr
                     )
                 )
             }
-            if (periodic || triple.third <= depth - 1) {
+            if (periodic || triple.third > 0 && depth > 1) {
                 yield(
                     Pair(
                         Direction3D.BACKWARD.toInt(),

@@ -9,13 +9,13 @@ class Cartesian2DTopology(val width: Int, val height: Int, override val periodic
 
     override fun neighbourIterator(index: Int): Sequence<Pair<Int, Int>> {
         return sequence {
-            if (periodic || index >= width)
+            if (periodic || index >= width && height > 1)
                 yield(Pair(Direction2D.NORTH.toInt(), (index - width + totalSize) % totalSize))
-            if (periodic || (index + 1) % width != 0)
+            if (periodic || (index + 1) % width != 0 && width  > 1)
                 yield(Pair(Direction2D.EAST.toInt(), if ((index + 1) % width == 0) index + 1 - width else index + 1))
-            if (periodic || index < totalSize - width)
+            if (periodic || index < totalSize - width && height  > 1)
                 yield(Pair(Direction2D.SOUTH.toInt(), (index + width) % totalSize))
-            if (periodic || index % width != 0)
+            if (periodic || index % width != 0 && width  > 1)
                 yield(Pair(Direction2D.WEST.toInt(), if (index % width == 0) index - 1 + width else index - 1))
         }
     }

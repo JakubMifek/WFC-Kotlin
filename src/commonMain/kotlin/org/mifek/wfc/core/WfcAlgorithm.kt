@@ -42,47 +42,78 @@ open class WfcAlgorithm(
     /**
      * Triggered *after* core initialization but before anything is processed.
      */
-    val onStart = EventHandler<WfcAlgorithm>()
+    val beforeStart = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *before* core cleanup.
+     */
+    val beforeClear = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered *after* core cleanup.
      */
-    val onClear = EventHandler<WfcAlgorithm>()
+    val afterClear = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *before* wave observation.
+     */
+    val beforeObserve = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered *after* wave observation
      */
-    val onObserve = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
+    val afterObserve = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
 
     /**
-     * Triggered *after* core cleanup.
+     * Triggered *before* wave-pattern ban.
      */
-    val onBan = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
+    val beforeBan = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
+
+    /**
+     * Triggered *after* wave-pattern ban.
+     */
+    val afterBan = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
 
     /**
      * Triggered *after* the algorithm fails
      */
-    val onFail = EventHandler<WfcAlgorithm>()
+    val afterFail = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *before* any propagation step
+     */
+    val beforePropagation = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered *after* each propagation step (when original stack-size reaches 0)
      */
-    val onPropagationStep = EventHandler<WfcAlgorithm>()
+    val afterPropagationStep = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *after* all propagation steps
+     */
+    val afterPropagation = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *before* each step of the algorithm (observation + propagation)
+     */
+    val beforeStep = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered *after* each step of the algorithm (observation + propagation)
      */
-    val onStep = EventHandler<WfcAlgorithm>()
+    val afterStep = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered at the end of algorithm run (whatever the result)
      */
-    val onFinished = EventHandler<WfcAlgorithm>()
+    val afterFinished = EventHandler<WfcAlgorithm>()
 
     /**
      * Clears the calculations made in the network
      */
     open fun clear() {
+        beforeClear(this)
         for (w in wavesArray.indices) {
             for (p in 0 until patternCount) {
                 wavesArray[w][p] = true
@@ -93,7 +124,7 @@ open class WfcAlgorithm(
             }
         }
 
-        onClear(this)
+        afterClear(this)
     }
 
     /**
@@ -101,6 +132,7 @@ open class WfcAlgorithm(
      */
     open fun ban(wave: Int, pattern: Int): Boolean? {
         if (!wavesArray[wave][pattern]) return false
+        beforeBan(Triple(this, wave, pattern))
 
         wavesArray[wave][pattern] = false
 
@@ -109,10 +141,14 @@ open class WfcAlgorithm(
 
         stack[stacksize++] = Pair(wave, pattern)
 
-        onBan(Triple(this, wave, pattern))
+        afterBan(Triple(this, wave, pattern))
 
-        if (!wavesArray[wave].filter { it }.any()) return null
+        if (!wavesArray[wave].filter { it }.any()) {
+            afterBan(Triple(this, wave, pattern))
+            return null
+        }
 
+        afterBan(Triple(this, wave, pattern))
         return true
     }
 
@@ -125,10 +161,11 @@ open class WfcAlgorithm(
      * Observes a pattern in a wave using given random
      */
     open fun observe(random: Random = Random.Default): Boolean? {
+        beforeObserve(this)
         val selectedWave = heuristic.select()
 
         if (selectedWave == null) {
-            onFail(this)
+            afterFail(this)
             return false
         } else if (selectedWave == -1) {
             return true
@@ -140,13 +177,14 @@ open class WfcAlgorithm(
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == observedPattern)) {
                 if (ban(selectedWave, patternIndex) == null) {
-                    onFail(this)
+                    afterObserve(Triple(this, selectedWave, observedPattern))
+                    afterFail(this)
                     return false
                 }
             }
         }
 
-        onObserve(Triple(this, selectedWave, observedPattern))
+        afterObserve(Triple(this, selectedWave, observedPattern))
 
         return null
     }
@@ -157,6 +195,7 @@ open class WfcAlgorithm(
      * This function is intended for user-interaction.
      */
     open fun forceObserve(index: Int, pattern: Int): Boolean? {
+        beforeObserve(this)
         val wavePatterns = wavesArray[index]
 
         if (!wavePatterns[pattern]) return false
@@ -164,12 +203,14 @@ open class WfcAlgorithm(
         for (patternIndex in 0 until patternCount) {
             if (wavePatterns[patternIndex] != (patternIndex == pattern)) {
                 if (ban(index, patternIndex) == null) {
+                    afterObserve(Triple(this, index, pattern))
+                    afterFail(this)
                     return false
                 }
             }
         }
 
-        onObserve(Triple(this, index, pattern))
+        afterObserve(Triple(this, index, pattern))
 
         return null
     }
@@ -178,6 +219,7 @@ open class WfcAlgorithm(
      * Propagates consequences of bans
      */
     open fun propagate(): Boolean {
+        beforePropagation(this)
         var original = stacksize
         while (stacksize > 0) {
             // pop item
@@ -203,7 +245,8 @@ open class WfcAlgorithm(
                     }
                     if (optionCompatible[direction] == 0) {
                         if (ban(neighbourIndex, neighbourPatternIndex) == null) {
-                            onFail(this)
+                            afterPropagation(this)
+                            afterFail(this)
                             return false
                         }
                     }
@@ -212,9 +255,10 @@ open class WfcAlgorithm(
 
             if (original == 0) {
                 original = stacksize
-                onPropagationStep(this)
+                afterPropagationStep(this)
             }
         }
+        afterPropagation(this)
         return true
     }
 
@@ -222,12 +266,13 @@ open class WfcAlgorithm(
      * Performs single step to the WFC
      */
     open fun step(random: Random = Random.Default): Boolean? {
+        beforeStep(this)
         val result = observe(random)
         if (result != null) return result
         if (!propagate()) {
             return false
         }
-        onStep(this)
+        afterStep(this)
         return null
     }
 
@@ -240,7 +285,7 @@ open class WfcAlgorithm(
 
         clear()
 
-        onStart(this)
+        beforeStart(this)
 
         // TODO: Allow backtracking if bigger than 0
         if (limit != 0) {
@@ -248,7 +293,7 @@ open class WfcAlgorithm(
             while (l < limit) {
                 val result = step(random)
                 if (result != null) {
-                    onFinished(this)
+                    afterFinished(this)
                     return result
                 }
                 l++
@@ -257,13 +302,13 @@ open class WfcAlgorithm(
             while (true) {
                 val result = step(random)
                 if (result != null) {
-                    onFinished(this)
+                    afterFinished(this)
                     return result
                 }
             }
         }
 
-        onFinished(this)
+        afterFinished(this)
         return true
     }
 }
