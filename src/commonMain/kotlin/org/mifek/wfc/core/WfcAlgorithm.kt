@@ -144,11 +144,9 @@ open class WfcAlgorithm(
         afterBan(Triple(this, wave, pattern))
 
         if (!wavesArray[wave].filter { it }.any()) {
-            afterBan(Triple(this, wave, pattern))
             return null
         }
 
-        afterBan(Triple(this, wave, pattern))
         return true
     }
 
@@ -236,7 +234,9 @@ open class WfcAlgorithm(
                 val compatibles = compatible[neighbourIndex]
 
                 for (neighbourPatternIndex in 0 until patternCount) {
-                    if ((compatibles[neighbourPatternIndex][direction] != 0 || !wavesArray[neighbourIndex][neighbourPatternIndex]) && neighbourPatternIndex !in neighbourPatterns) {
+                    if ((compatibles[neighbourPatternIndex][direction] != 0 || !wavesArray[neighbourIndex][neighbourPatternIndex]) &&
+                        neighbourPatternIndex !in neighbourPatterns
+                    ) {
                         continue
                     }
                     val optionCompatible = compatibles[neighbourPatternIndex]
@@ -268,8 +268,12 @@ open class WfcAlgorithm(
     open fun step(random: Random = Random.Default): Boolean? {
         beforeStep(this)
         val result = observe(random)
-        if (result != null) return result
+        if (result != null) {
+            afterStep(this)
+            return result
+        }
         if (!propagate()) {
+            afterStep(this)
             return false
         }
         afterStep(this)
