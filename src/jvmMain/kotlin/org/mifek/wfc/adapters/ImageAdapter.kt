@@ -43,6 +43,7 @@ class ImageAdapter {
             }
         }
 
+        @ExperimentalUnsignedTypes
         fun saveCurrentOutputImage(
             algorithm: Cartesian2DWfcAlgorithm,
             model: OverlappingImageModel,
@@ -64,6 +65,7 @@ class ImageAdapter {
             ImageIO.write(output.toBufferedImage(), "png", outputFile)
         }
 
+        @ExperimentalUnsignedTypes
         private fun setupDebug(
             source: IntArray2D,
             algorithm: Cartesian2DWfcAlgorithm,
@@ -243,6 +245,7 @@ class ImageAdapter {
             }
         }
 
+        @ExperimentalUnsignedTypes
         fun imitateImageUsingOverlappingModel(
             sourcePath: String,
             outputWidth: Int,

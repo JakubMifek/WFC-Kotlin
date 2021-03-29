@@ -7,6 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ImageTest {
+    @ExperimentalUnsignedTypes
     @Test
     fun bricks() {
         assertTrue(
@@ -14,17 +15,18 @@ class ImageTest {
                 "sources/bricks.png", 68, 68,
                 ImageAdapterOptions(
                     overlap = 2,
-                    outputImageOptions = ImageOptions(
-                        "outputs/bricks",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/bricks",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun cat() {
         assertTrue(
@@ -35,23 +37,23 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicInput = true
                     ),
-                    debugOptions = DebugOptions(
-                        "outputs/cat/debug",true,16
-                    ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/cat",
-                        "0_result",
-                        8,
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/cat",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/cat/debug",true,16
+//                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/cat",
+//                        "0_result",
+//                        8,
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/cat",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     repeats = 5,
                     seed = 123151
                 ),
@@ -59,6 +61,7 @@ class ImageTest {
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun dungeon() {
         assertTrue(
@@ -72,17 +75,18 @@ class ImageTest {
                         allowFlips = true,
                         allowRotations = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/dungeon",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/dungeon",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun flowers() {
         assertTrue(
@@ -95,29 +99,30 @@ class ImageTest {
                         banGroundElsewhere = true,
                         roofed = true
                     ),
-                    debugOptions = DebugOptions(
-                        "outputs/flowers/debug",true,16
-                    ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/flowers",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/flowers",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/flowers/debug",true,16
+//                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/flowers",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/flowers",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 321123123
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun knot() {
         assertTrue(
@@ -129,17 +134,18 @@ class ImageTest {
                         periodicInput = true,
                         periodicOutput = true,
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/knot",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/knot",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 123414
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun lake() {
         assertTrue(
@@ -147,17 +153,18 @@ class ImageTest {
                 "sources/lake.png", 48, 48,
                 ImageAdapterOptions(
                     overlap = 2,
-                    outputImageOptions = ImageOptions(
-                        "outputs/lake",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/lake",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun lessRooms() {
         assertTrue(
@@ -165,17 +172,18 @@ class ImageTest {
                 "sources/less_rooms.png", 48, 48,
                 ImageAdapterOptions(
                     overlap = 2,
-                    outputImageOptions = ImageOptions(
-                        "outputs/less_rooms",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/less_rooms",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun link() {
         assertTrue(
@@ -189,29 +197,30 @@ class ImageTest {
                         allowFlips = true,
                         allowRotations = true,
                     ),
-                    debugOptions = DebugOptions(
-                        "outputs/link/debug",true,16
-                    ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/link",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/link",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.STEP),
-                        1,
-                        200,
-                        true
-                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/link/debug",true,16
+//                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/link",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/link",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.STEP),
+//                        1,
+//                        200,
+//                        true
+//                    ),
                     seed = 515987
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun moreFlowers() {
         assertTrue(
@@ -226,29 +235,30 @@ class ImageTest {
                         grounded = true,
                         roofed = true
                     ),
-                    debugOptions = DebugOptions(
-                        "outputs/more_flowers/debug",true,16
-                    ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/more_flowers",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/more_flowers",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/more_flowers/debug",true,16
+//                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/more_flowers",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/more_flowers",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 123125124
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun moreSkyline() {
         assertTrue(
@@ -256,29 +266,30 @@ class ImageTest {
                 "sources/more_skyline.png", 48, 48,
                 ImageAdapterOptions(
                     overlap = 2,
-                    outputImageOptions = ImageOptions(
-                        "outputs/more_skyline",
-                        "0_result",
-                        8
-                    ),
-                    debugOptions = DebugOptions(
-                        "outputs/more_skyline/debug",true,16
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/more_skyline",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/more_skyline",
+//                        "0_result",
+//                        8
+//                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/more_skyline/debug",true,16
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/more_skyline",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun redRooms() {
         assertTrue(
@@ -292,29 +303,30 @@ class ImageTest {
                         periodicInput = true,
                         periodicOutput = true
                     ),
-                    debugOptions = DebugOptions(
-                        "outputs/red_rooms/debug",true,16
-                    ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/red_rooms",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/red_rooms",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/red_rooms/debug",true,16
+//                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/red_rooms",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/red_rooms",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 123456
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun rooms() {
         assertTrue(
@@ -328,31 +340,32 @@ class ImageTest {
                         periodicOutput = true,
                         periodicInput = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/rooms",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/rooms",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
-                    debugOptions = DebugOptions(
-                        "outputs/rooms/debug",
-                        true,
-                        16,
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/rooms",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/rooms",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/rooms/debug",
+//                        true,
+//                        16,
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun simpleKnot() {
         assertTrue(
@@ -366,26 +379,27 @@ class ImageTest {
                         periodicOutput = true,
                         periodicInput = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/simple_knot",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/simple_knot",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/simple_knot",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/simple_knot",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 12341521
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun simpleWall() {
         assertTrue(
@@ -399,17 +413,18 @@ class ImageTest {
                         periodicOutput = true,
                         periodicInput = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/simple_wall",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/simple_wall",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 31241243
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun skyline() {
         assertTrue(
@@ -423,17 +438,18 @@ class ImageTest {
                         grounded = true,
                         roofed = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/skyline",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/skyline",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 21515123
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun town() {
         assertTrue(
@@ -444,17 +460,18 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicInput = true,
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/town",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/town",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun trickKnot() {
         assertTrue(
@@ -468,17 +485,18 @@ class ImageTest {
                         allowFlips = true,
                         allowRotations = true,
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/trick_knot",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/trick_knot",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun village() {
         assertTrue(
@@ -490,17 +508,18 @@ class ImageTest {
                         periodicOutput = true,
                         periodicInput = true,
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/village",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/village",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun wall() {
         assertTrue(
@@ -508,11 +527,11 @@ class ImageTest {
                 "sources/wall.png", 48, 48,
                 ImageAdapterOptions(
                     overlap = 2,
-                    outputImageOptions = ImageOptions(
-                        "outputs/wall",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/wall",
+//                        "0_result",
+//                        8
+//                    ),
                     repeats = 5,
                     seed = 1123890487
                 ),
@@ -520,6 +539,7 @@ class ImageTest {
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun water() {
         assertTrue(
@@ -531,17 +551,18 @@ class ImageTest {
                         periodicOutput = true,
                         periodicInput = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/water",
-                        "0_result",
-                        8
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/water",
+//                        "0_result",
+//                        8
+//                    ),
                     seed = 1123890487
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun office() {
         assertTrue(
@@ -553,31 +574,32 @@ class ImageTest {
                         periodicOutput = true,
                         periodicInput = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/office",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/office",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
-                    debugOptions = DebugOptions(
-                        "outputs/office/debug",
-                        true,
-                        16,
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/office",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/office",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
+//                    debugOptions = DebugOptions(
+//                        "outputs/office/debug",
+//                        true,
+//                        16,
+//                    ),
                     seed = 12431512
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun fabric() {
         assertTrue(
@@ -591,26 +613,27 @@ class ImageTest {
                         allowFlips = true,
                         allowRotations = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/fabric",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/fabric",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/fabric",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/fabric",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 21315
                 ),
             )
         )
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun fabricSmall() {
         assertTrue(
@@ -624,20 +647,20 @@ class ImageTest {
                         allowFlips = true,
                         allowRotations = true
                     ),
-                    outputImageOptions = ImageOptions(
-                        "outputs/fabric_small",
-                        "0_result",
-                        8
-                    ),
-                    outputAnimationOptions = AnimationOptions(
-                        "outputs/fabric_small",
-                        "1_animation",
-                        8,
-                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-                        16,
-                        16,
-                        true
-                    ),
+//                    outputImageOptions = ImageOptions(
+//                        "outputs/fabric_small",
+//                        "0_result",
+//                        8
+//                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/fabric_small",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
+//                        16,
+//                        16,
+//                        true
+//                    ),
                     seed = 123151
                 ),
             )

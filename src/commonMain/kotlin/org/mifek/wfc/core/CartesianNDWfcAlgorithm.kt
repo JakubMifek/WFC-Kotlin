@@ -1,14 +1,12 @@
 package org.mifek.wfc.core
 
-import jdk.jfr.Experimental
 import org.mifek.wfc.datastructures.IntArrayND
 import org.mifek.wfc.heuristics.LowestEntropyHeuristic
 import org.mifek.wfc.models.Patterns
 import org.mifek.wfc.models.Pixels
 import org.mifek.wfc.topologies.CartesianNDTopology
 
-@Experimental
-class CartesianNDWfcAlgorithm(
+open class CartesianNDWfcAlgorithm(
     private val topologyND: CartesianNDTopology,
     weights: DoubleArray,
     propagator: Array<Array<IntArray>>,
@@ -23,7 +21,7 @@ class CartesianNDWfcAlgorithm(
     /**
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
-    fun constructOutput(): IntArrayND {
+    open fun constructOutput(): IntArrayND {
         return IntArrayND(topologyND.sizes) { waveIndex ->
             val a = 0
             val b = 1

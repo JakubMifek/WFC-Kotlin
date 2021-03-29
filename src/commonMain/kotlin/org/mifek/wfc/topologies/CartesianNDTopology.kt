@@ -1,12 +1,10 @@
 package org.mifek.wfc.topologies
 
-import jdk.jfr.Experimental
 import org.mifek.wfc.utils.product
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 
-@Experimental
-class CartesianNDTopology(val sizes: IntArray, override val periodic: Boolean = false) :
+open class CartesianNDTopology(val sizes: IntArray, override val periodic: Boolean = false) :
     Topology {
     val dimension = sizes.size
     override val totalSize = sizes.product()

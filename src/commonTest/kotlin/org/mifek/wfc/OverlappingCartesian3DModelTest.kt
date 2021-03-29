@@ -18,7 +18,7 @@ class OverlappingCartesian3DModelTest {
         }
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
+    @ExperimentalUnsignedTypes
     fun createModel(
         source: IntArray3D,
         width: Int,
@@ -61,6 +61,7 @@ class OverlappingCartesian3DModelTest {
         return model.constructOutput(algorithm)
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun simpleCheckers() {
         val d = intArrayOf(1, 0, 0, 1, 0, 1, 1, 0)
@@ -92,6 +93,7 @@ class OverlappingCartesian3DModelTest {
         }
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun complexCheckers() {
         val data = intArrayOf(
@@ -136,6 +138,7 @@ class OverlappingCartesian3DModelTest {
         }
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun redDot() {
         val data = intArrayOf(

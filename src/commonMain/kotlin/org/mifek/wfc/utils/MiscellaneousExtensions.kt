@@ -13,7 +13,7 @@ fun IntArray.product(): Int {
 
 fun IntArray.toIndex(sizes: IntArray): Int {
     var res = 0
-    var i = size-1
+    var i = size - 1
     for (size in sizes.reversed()) {
         res = res * size + this[i--]
     }

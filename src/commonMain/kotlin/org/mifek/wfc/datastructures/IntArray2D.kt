@@ -6,31 +6,31 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
     val lastIndex = data.lastIndex
     val indices = data.indices
 
-    override inline fun iterator(): IntIterator {
+    override fun iterator(): IntIterator {
         return data.iterator()
     }
 
-    inline operator fun get(index: Int): Int {
+    operator fun get(index: Int): Int {
         return data[index]
     }
 
-    inline operator fun set(index: Int, value: Int) {
+    operator fun set(index: Int, value: Int) {
         data[index] = value
     }
 
-    inline operator fun get(x: Int, y: Int): Int {
+    operator fun get(x: Int, y: Int): Int {
         return data[y * width + x]
     }
 
-    inline operator fun set(x: Int, y: Int, value: Int) {
+    operator fun set(x: Int, y: Int, value: Int) {
         data[y * width + x] = value
     }
 
-    inline fun contentHashCode(): Int {
+    fun contentHashCode(): Int {
         return data.contentHashCode()
     }
 
-    inline fun contentEquals(other: IntArray2D): Boolean {
+    fun contentEquals(other: IntArray2D): Boolean {
         return data.contentEquals(other.data)
     }
 

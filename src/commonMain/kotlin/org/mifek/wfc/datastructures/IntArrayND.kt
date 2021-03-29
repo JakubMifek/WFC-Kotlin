@@ -1,43 +1,40 @@
 package org.mifek.wfc.datastructures
 
-import jdk.jfr.Experimental
 import org.mifek.wfc.utils.product
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
-import java.security.InvalidParameterException
 
-@Experimental
 class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(sizes.product(), init)
     val size = data.size
     val lastIndex = data.lastIndex
     val indices = data.indices
 
-    override inline fun iterator(): IntIterator {
+    override fun iterator(): IntIterator {
         return data.iterator()
     }
 
-    inline operator fun get(index: Int): Int {
+    operator fun get(index: Int): Int {
         return data[index]
     }
 
-    inline operator fun set(index: Int, value: Int) {
+    operator fun set(index: Int, value: Int) {
         data[index] = value
     }
 
-    inline operator fun get(coords: IntArray): Int {
+    operator fun get(coords: IntArray): Int {
         return data[coords.toIndex(sizes)]
     }
 
-    inline operator fun set(coords: IntArray, value: Int) {
+    operator fun set(coords: IntArray, value: Int) {
         data[coords.toIndex(sizes)] = value
     }
 
-    inline fun contentHashCode(): Int {
+    fun contentHashCode(): Int {
         return data.contentHashCode()
     }
 
-    inline fun contentEquals(other: IntArrayND): Boolean {
+    fun contentEquals(other: IntArrayND): Boolean {
         return data.contentEquals(other.data)
     }
 
@@ -71,13 +68,13 @@ class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int
      */
     fun rotated(plane: Pair<Int, Int>, positive: Boolean = true): IntArrayND {
         if(plane.first == plane.second) {
-            throw InvalidParameterException("Rotation plane consists of two different axis.")
+            throw Exception("Rotation plane consists of two different axis.")
         }
 
         val axis1 = if(plane.first > plane.second) plane.second else plane.first
         val axis2 = if(plane.first > plane.second) plane.first else plane.second
 
-        val newSizes = sizes.clone()
+        val newSizes = IntArray(sizes.size) { sizes[it] }
         val tmpS = newSizes[axis1]
         newSizes[axis1] = newSizes[axis2]
         newSizes[axis2] = tmpS

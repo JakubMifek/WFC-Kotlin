@@ -1,13 +1,13 @@
 package org.mifek.wfc.datastructures
 
-open class Dequeue<T> : Iterable<T> {
+open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
     private var head: Node<T>? = null
     private var tail: Node<T>? = null
     private var count = 0
     val size get() = count
     val isEmpty get() = count == 0
 
-    constructor(init: Iterable<T>) {
+    init {
         for(item in init) {
             this.enqueue(item)
         }

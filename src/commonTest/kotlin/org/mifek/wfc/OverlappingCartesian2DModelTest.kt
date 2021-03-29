@@ -15,6 +15,7 @@ class OverlappingCartesian2DModelTest {
         }
     }
 
+    @ExperimentalUnsignedTypes
     fun createImageModel(source: IntArray2D, width: Int, height: Int, overlap: Int, seed: Int): IntArray2D {
         val model = OverlappingCartesian2DModel(source, overlap, width, height)
         val algorithm = model.build()
@@ -23,6 +24,7 @@ class OverlappingCartesian2DModelTest {
         return model.constructOutput(algorithm)
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun simpleCheckers() {
         val data = intArrayOf(
@@ -43,6 +45,7 @@ class OverlappingCartesian2DModelTest {
         }
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun complexCheckers() {
         val data = intArrayOf(
@@ -59,6 +62,7 @@ class OverlappingCartesian2DModelTest {
         printGrid(result2)
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun redDot() {
         val data = intArrayOf(

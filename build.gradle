@@ -1,13 +1,18 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
+
 plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version '1.4.20'
+    id 'org.jetbrains.kotlin.multiplatform' version '1.4.31'
 }
 
 group = 'org.mifek.wfc'
-version = '1.0.0'
+version = '1.1.0'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
+
+apply plugin: 'maven-publish'
 
 kotlin {
     jvm {
@@ -18,8 +23,24 @@ kotlin {
             useJUnit()
         }
     }
+    js(LEGACY) {
+        browser {
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    webpackConfig.cssSupport.enabled = true
+                }
+            }
+        }
+    }
+    def hostOs = System.getProperty("os.name")
+    def isMingwX64 = hostOs.startsWith("Windows")
+    KotlinNativeTargetWithTests nativeTarget
+    if (hostOs == "Mac OS X") nativeTarget = macosX64('native')
+    else if (hostOs == "Linux") nativeTarget = linuxX64("native")
+    else if (isMingwX64) nativeTarget = mingwX64("native")
+    else throw new GradleException("Host OS is not supported in Kotlin/Native.")
 
-    
     sourceSets {
         commonMain {
         }
@@ -41,19 +62,16 @@ kotlin {
                 implementation kotlin('test-junit')
             }
         }
-    }
-
-    targets {
-        jvm()
-
-        configure([jvm])  {
-            withJava()
-            jvmJar {
-                manifest {
-                    attributes 'Main-Class': 'org.mifek.wfc.Test'
-                }
-                from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+        jsMain {
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
             }
+        }
+        nativeMain {
+        }
+        nativeTest {
         }
     }
 }

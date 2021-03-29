@@ -11,37 +11,37 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
     val indices = data.indices
     private val sizes = intArrayOf(width, height, depth)
 
-    override inline fun iterator(): IntIterator {
+    override fun iterator(): IntIterator {
         return data.iterator()
     }
 
-    inline operator fun get(index: Int): Int {
+    operator fun get(index: Int): Int {
         return data[index]
     }
 
-    inline operator fun set(index: Int, value: Int) {
+    operator fun set(index: Int, value: Int) {
         data[index] = value
     }
 
-    inline operator fun get(x: Int, y: Int, z: Int): Int {
+    operator fun get(x: Int, y: Int, z: Int): Int {
         return data[(z * height + y) * width + x]
     }
 
-    inline operator fun get(x: IntRange?, y: Int, z: Int): Sequence<Int> {
+    operator fun get(x: IntRange?, y: Int, z: Int): Sequence<Int> {
         val index = (z * height + y) * width
         var X = x
         if (X == null) X = 0 until width
         return sequence { for (it in X) yield(data[index + it]) }
     }
 
-    inline operator fun get(x: Int, y: IntRange?, z: Int): Sequence<Int> {
+    operator fun get(x: Int, y: IntRange?, z: Int): Sequence<Int> {
         val index = z * height * width + x
         var Y = y
         if (Y == null) Y = 0 until height
         return sequence { for (it in Y) yield(data[index + it * width]) }
     }
 
-    inline operator fun get(x: Int, y: Int, z: IntRange?): Sequence<Int> {
+    operator fun get(x: Int, y: Int, z: IntRange?): Sequence<Int> {
         val index = y * width + x
         val multiplier = width * height
         var Z = z
@@ -49,7 +49,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return sequence { for (it in Z) yield(data[index + it * multiplier]) }
     }
 
-    inline operator fun get(x: IntRange?, y: IntRange?, z: Int): Sequence<Sequence<Int>> {
+    operator fun get(x: IntRange?, y: IntRange?, z: Int): Sequence<Sequence<Int>> {
         val i_z = z * height * width
         var Y = y
         var X = x
@@ -67,7 +67,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun get(x: IntRange?, y: Int, z: IntRange?): Sequence<Sequence<Int>> {
+    operator fun get(x: IntRange?, y: Int, z: IntRange?): Sequence<Sequence<Int>> {
         val i_y = y * width
         val multiplier = width * height
         var Z = z
@@ -86,7 +86,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun get(x: Int, y: IntRange?, z: IntRange?): Sequence<Sequence<Int>> {
+    operator fun get(x: Int, y: IntRange?, z: IntRange?): Sequence<Sequence<Int>> {
         val multiplier = width * height
         var Z = z
         var Y = y
@@ -104,7 +104,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun get(x: IntRange?, y: IntRange?, z: IntRange?): Sequence<Sequence<Sequence<Int>>> {
+    operator fun get(x: IntRange?, y: IntRange?, z: IntRange?): Sequence<Sequence<Sequence<Int>>> {
         var Z = z
         var Y = y
         var X = x
@@ -129,25 +129,25 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun set(x: Int, y: Int, z: Int, value: Int) {
+    operator fun set(x: Int, y: Int, z: Int, value: Int) {
         data[(z * height + y) * width + x] = value
     }
 
-    inline operator fun set(x: IntRange?, y: Int, z: Int, value: Int) {
+    operator fun set(x: IntRange?, y: Int, z: Int, value: Int) {
         val index = (z * height + y) * width
         var X = x
         if (X == null) X = 0 until width
         for (it in X) data[index + it] = value
     }
 
-    inline operator fun set(x: Int, y: IntRange?, z: Int, value: Int) {
+    operator fun set(x: Int, y: IntRange?, z: Int, value: Int) {
         val index = z * height * width + x
         var Y = y
         if (Y == null) Y = 0 until height
         for (it in Y) data[index + it * width] = value
     }
 
-    inline operator fun set(x: Int, y: Int, z: IntRange?, value: Int) {
+    operator fun set(x: Int, y: Int, z: IntRange?, value: Int) {
         val index = y * width + x
         val multiplier = width * height
         var Z = z
@@ -155,7 +155,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         for (it in Z) data[index + it * multiplier] = value
     }
 
-    inline operator fun set(x: IntRange?, y: IntRange?, z: Int, value: Int) {
+    operator fun set(x: IntRange?, y: IntRange?, z: Int, value: Int) {
         val i_z = z * height * width
         var Y = y
         var X = x
@@ -169,7 +169,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun set(x: IntRange?, y: Int, z: IntRange?, value: Int) {
+    operator fun set(x: IntRange?, y: Int, z: IntRange?, value: Int) {
         val i_y = y * width
         val multiplier = width * height
         var Z = z
@@ -184,7 +184,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun set(x: Int, y: IntRange?, z: IntRange?, value: Int) {
+    operator fun set(x: Int, y: IntRange?, z: IntRange?, value: Int) {
         val multiplier = width * height
         var Z = z
         var Y = y
@@ -198,7 +198,7 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline operator fun set(x: IntRange?, y: IntRange?, z: IntRange?, value: Int) {
+    operator fun set(x: IntRange?, y: IntRange?, z: IntRange?, value: Int) {
         var Z = z
         var Y = y
         var X = x
@@ -217,11 +217,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
-    inline fun contentHashCode(): Int {
+    fun contentHashCode(): Int {
         return data.contentHashCode()
     }
 
-    inline fun contentEquals(other: IntArray3D): Boolean {
+    fun contentEquals(other: IntArray3D): Boolean {
         return data.contentEquals(other.data)
     }
 

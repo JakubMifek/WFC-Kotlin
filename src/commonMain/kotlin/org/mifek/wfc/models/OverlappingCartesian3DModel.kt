@@ -7,9 +7,7 @@ import org.mifek.wfc.datastructures.PatternsArrayBuilder
 import org.mifek.wfc.datatypes.Direction3D
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
 import org.mifek.wfc.topologies.Cartesian3DTopology
-import org.mifek.wfc.utils.formatNeighbours
 import org.mifek.wfc.utils.toCoordinates
-import org.mifek.wfc.utils.toIndex
 
 open class OverlappingCartesian3DModel(
     val input: IntArray3D,
@@ -67,7 +65,7 @@ open class OverlappingCartesian3DModel(
             options.periodicOutput
         )
         val algorithm = Cartesian3DWfcAlgorithm(
-            topology, weights, propagator, patterns, pixels
+            topology, weights, propagator, patterns
         )
         return algorithm
     }

@@ -6,7 +6,7 @@ import org.mifek.wfc.models.Patterns
 import org.mifek.wfc.models.Pixels
 import org.mifek.wfc.topologies.Cartesian2DTopology
 
-class Cartesian2DWfcAlgorithm(
+open class Cartesian2DWfcAlgorithm(
     private val topology2D: Cartesian2DTopology,
     weights: DoubleArray,
     propagator: Array<Array<IntArray>>,
@@ -150,7 +150,7 @@ class Cartesian2DWfcAlgorithm(
     /**
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
-    fun constructOutput(): IntArray2D {
+    open fun constructOutput(): IntArray2D {
         return IntArray2D(topology2D.width, topology2D.height) { waveIndex ->
             val a = 0
             val b = 1

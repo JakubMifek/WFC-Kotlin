@@ -9,13 +9,14 @@ import org.mifek.wfc.utils.rgbaToInt
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class OverlappingImageModel(
+open class OverlappingImageModel(
     input: IntArray2D,
     overlap: Int,
     outputWidth: Int,
     outputHeight: Int,
     options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
 ) : OverlappingCartesian2DModel(input, overlap, outputWidth, outputHeight, options) {
+    @ExperimentalUnsignedTypes
     override fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
         return IntArray2D(outputWidth, outputHeight) { waveIndex ->
             var index = waveIndex
