@@ -16,16 +16,16 @@ open class OverlappingCartesian2DModel(
     val outputHeight: Int,
     val options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
 ) : OverlappingModel {
-    private val patternSideSize = overlap + 1
+    protected val patternSideSize = overlap + 1
 
-    private val firstRowPatterns = ArrayList<Int>()
-    private val lastRowPatterns = ArrayList<Int>()
-    private val patternCounts = loadPatterns(
+    protected val firstRowPatterns = ArrayList<Int>()
+    protected val lastRowPatterns = ArrayList<Int>()
+    protected val patternCounts = loadPatterns(
         input,
         overlap,
     )
 
-    private val sum = patternCounts.map { it.second.item }.sum()
+    protected val weightSum = patternCounts.map { it.second.item }.sum()
 
     protected val patternsArray = patternCounts.map { it.first }.toTypedArray()
     override val patterns = Patterns(patternsArray.map { it.asIntArray() }.toTypedArray())
@@ -44,8 +44,8 @@ open class OverlappingCartesian2DModel(
         )
     )
 
-    private val weights = DoubleArray(patternCounts.size) { patternCounts[it].second.item / sum.toDouble() }
-    private val propagator = Array(4) { dir ->
+    protected val weights = DoubleArray(patternCounts.size) { patternCounts[it].second.item / weightSum.toDouble() }
+    protected val propagator = Array(4) { dir ->
         Array(patternsArray.size) { patternIndex ->
             val d = Direction2D.fromInt(dir)
             patternsArray.indices.filter {
@@ -57,19 +57,25 @@ open class OverlappingCartesian2DModel(
             }.toIntArray()
         }
     }
+    val topology = Cartesian2DTopology(
+        outputWidth - if (options.periodicOutput) 0 else overlap, // We can compute smaller array, missing pixels are fixed by boundary patterns
+        outputHeight - if (options.periodicOutput) 0 else overlap, // But if output is periodic, this is not desirable because it would scale down the output
+        options.periodicOutput
+    )
+    protected val bans = mutableMapOf<Int, MutableList<Int>>()
 
     override fun build(): Cartesian2DWfcAlgorithm {
-        val topology = Cartesian2DTopology(
-            outputWidth - if (options.periodicOutput) 0 else overlap, // We can compute smaller array, missing pixels are fixed by boundary patterns
-            outputHeight - if (options.periodicOutput) 0 else overlap, // But if output is periodic, this is not desirable because it would scale down the output
-            options.periodicOutput
-        )
         val algorithm = Cartesian2DWfcAlgorithm(
             topology, weights, propagator, patterns, pixels
         )
+        algorithm.beforeStart += {
+            for (entry in bans) {
+                algorithm.banWavePatterns(entry.key, entry.value)
+            }
+        }
         if (options.grounded) {
             algorithm.beforeStart += {
-                algorithm.setMultiplePatterns(
+                algorithm.setCoordinatePatterns(
                     (0 until topology.width).map {
                         Pair(
                             it,
@@ -82,7 +88,7 @@ open class OverlappingCartesian2DModel(
         }
         if (options.banGroundElsewhere) {
             algorithm.beforeStart += {
-                algorithm.banMultiplePatterns(
+                algorithm.banCoordinatePatterns(
                     (0 until topology.width - if (options.periodicOutput) overlap else 0).map { x ->
                         (0 until topology.height - 1 - if (options.periodicOutput) overlap else 0).map { y ->
                             Pair(x, y)
@@ -94,7 +100,7 @@ open class OverlappingCartesian2DModel(
         }
         if (options.roofed) {
             algorithm.beforeStart += {
-                algorithm.setMultiplePatterns(
+                algorithm.setCoordinatePatterns(
                     (0 until topology.width - if (options.periodicOutput) overlap else 0).map { Pair(it, 0) },
                     firstRowPatterns
                 )
@@ -102,7 +108,7 @@ open class OverlappingCartesian2DModel(
         }
         if (options.banRoofElsewhere) {
             algorithm.beforeStart += {
-                algorithm.banMultiplePatterns(
+                algorithm.banCoordinatePatterns(
                     (0 until topology.width - if (options.periodicOutput) overlap else 0).map { x ->
                         (1 until topology.height - if (options.periodicOutput) overlap else 0).map { y ->
                             Pair(x, y)
@@ -115,7 +121,7 @@ open class OverlappingCartesian2DModel(
         if (options.sided) {
             algorithm.beforeStart += {
                 val possiblePixels = input.column(0).plus(input.column(input.width - 1)).distinct()
-                algorithm.setMultiplePixels(
+                algorithm.setCoordinatePixels(
                     (0 until topology.height - if (options.periodicOutput) overlap else 0).map { Pair(0, it) }
                         .plus((0 until topology.height - if (options.periodicOutput) overlap else 0).map {
                             Pair(
@@ -130,7 +136,7 @@ open class OverlappingCartesian2DModel(
         if (options.banSidesElsewhere) {
             algorithm.beforeStart += {
                 val possiblePixels = input.column(0).plus(input.column(input.width - 1)).distinct()
-                algorithm.setMultiplePixels(
+                algorithm.setCoordinatePixels(
                     (0 until topology.height - if (options.periodicOutput) overlap else 0)
                         .map { y ->
                             (1 until topology.width - 1 - if (options.periodicOutput) overlap else 0).map { x ->
@@ -149,11 +155,163 @@ open class OverlappingCartesian2DModel(
     }
 
 
+    fun banPatterns(x: Int, y: Int, patterns: Iterable<Int>): OverlappingCartesian2DModel {
+        if (
+            x >= outputWidth - (if (options.periodicOutput) 0 else overlap) ||
+            y >= outputHeight - (if (options.periodicOutput) 0 else overlap)
+        ) {
+            throw Error("Output dimensions exceeded [$x, $y]x[${outputWidth - (if (options.periodicOutput) 0 else overlap)}, ${outputHeight - (if (options.periodicOutput) 0 else overlap)}].")
+        }
+
+        val coordinates = topology.serializeCoordinates(x, y)
+        if (!bans.containsKey(coordinates)) {
+            bans[coordinates] = patterns.toMutableList()
+        } else {
+            bans[coordinates]!!.addAll(patterns)
+        }
+
+        return this
+    }
+
+    fun banPatterns(
+        coordinates: Iterable<Pair<Int, Int>>,
+        patterns: Iterable<Int>
+    ): OverlappingCartesian2DModel {
+        coordinates.forEach {
+            banPatterns(it.first, it.second, patterns)
+        }
+
+        return this
+    }
+
+    fun setPatterns(x: Int, y: Int, patterns: Iterable<Int>): OverlappingCartesian2DModel {
+        banPatterns(x, y, patternsArray.indices.minus(patterns))
+
+        return this
+    }
+
+    fun setPatterns(
+        coordinates: Iterable<Pair<Int, Int>>,
+        patterns: Iterable<Int>
+    ): OverlappingCartesian2DModel {
+        coordinates.forEach {
+            setPatterns(it.first, it.second, patterns)
+        }
+
+        return this
+    }
+
+    fun setPixel(x: Int, y: Int, pixel: Int): OverlappingCartesian2DModel {
+        if (options.periodicOutput) {
+            setPatterns(x, y, pixels[pixel].asIterable())
+            return this
+        }
+
+        var X = x
+        var xShift = 0
+        if (X >= outputWidth - overlap) {
+            X = outputWidth - overlap - 1
+            xShift = x - X
+        }
+
+        var Y = y
+        var yShift = 0
+        if (Y >= outputHeight - overlap) {
+            Y = outputHeight - overlap - 1
+            yShift = y - Y
+        }
+
+        setPatterns(X, Y, patterns.indices.filter { patternsArray[it][xShift, yShift] == pixel })
+
+        return this
+    }
+
+    fun setPixel(coordinates: Iterable<Pair<Int, Int>>, pixel: Int): OverlappingCartesian2DModel {
+        coordinates.forEach {
+            setPixel(it.first, it.second, pixel)
+        }
+
+        return this
+    }
+
+    fun banPixel(x: Int, y: Int, pixel: Int): OverlappingCartesian2DModel {
+        if (options.periodicOutput) {
+            banPatterns(x, y, pixels[pixel].asIterable())
+            return this
+        }
+
+        var X = x
+        var xShift = 0
+        if (X >= outputWidth - overlap) {
+            X = outputWidth - overlap - 1
+            xShift = x - X
+        }
+
+        var Y = y
+        var yShift = 0
+        if (Y >= outputHeight - overlap) {
+            Y = outputHeight - overlap - 1
+            yShift = y - Y
+        }
+
+        banPatterns(X, Y, patterns.indices.filter { patternsArray[it][xShift, yShift] == pixel })
+
+        return this
+    }
+
+    fun banPixel(coordinates: Iterable<Pair<Int, Int>>, pixel: Int): OverlappingCartesian2DModel {
+        coordinates.forEach {
+            banPixel(it.first, it.second, pixel)
+        }
+
+        return this
+    }
+
+    fun setPixels(x: Int, y: Int, pixels: Iterable<Int>): OverlappingCartesian2DModel {
+        for (
+        pixel in this.pixels
+            .filter { entry -> entry.key in pixels }
+            .fold(emptySequence<Int>()) { acc, entry -> acc.plus(entry.value) }.asIterable()
+        ) {
+            setPixel(x, y, pixel)
+        }
+
+        return this
+    }
+
+    fun setPixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian2DModel {
+        coordinates.forEach {
+            setPixels(it.first, it.second, pixels)
+        }
+
+        return this
+    }
+
+    fun banPixels(x: Int, y: Int, pixels: Iterable<Int>): OverlappingCartesian2DModel {
+        for (
+        pixel in this.pixels
+            .filter { entry -> entry.key in pixels }
+            .fold(emptySequence<Int>()) { acc, entry -> acc.plus(entry.value) }.asIterable()
+        ) {
+            banPixel(x, y, pixel)
+        }
+
+        return this
+    }
+
+    fun banPixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian2DModel {
+        coordinates.forEach {
+            banPixels(it.first, it.second, pixels)
+        }
+
+        return this
+    }
+
     /**
      * Checks whether two overlapping patterns agree
      * @param size Size of single side of the pattern (square patterns expected)
      */
-    private fun agrees(
+    protected fun agrees(
         pattern1: IntArray2D,
         pattern2: IntArray2D,
         direction: Direction2D,
@@ -189,7 +347,7 @@ open class OverlappingCartesian2DModel(
     /**
      * Loads patterns and number of their occurrences in the input image
      */
-    private fun loadPatterns(
+    protected fun loadPatterns(
         data: IntArray2D,
         overlap: Int,
     ): List<Pair<IntArray2D, IntHolder>> {
@@ -208,12 +366,20 @@ open class OverlappingCartesian2DModel(
                 val pattern = data.slice(index, 0..overlap, 0..overlap)
                 val foundPatterns = mutableListOf(pattern)
 
-                if (options.allowFlips) {
-                    val patternH = pattern.hFlipped()
-                    val patternV = pattern.vFlipped()
-                    val patternHV = patternH.vFlipped()
+                if (options.allowHorizontalFlips || options.allowVerticalFlips) {
+                    if (options.allowHorizontalFlips) {
+                        val patternH = pattern.hFlipped()
+                        foundPatterns.add(patternH)
 
-                    foundPatterns.addAll(sequenceOf(patternH, patternV, patternHV))
+                        if (options.allowVerticalFlips) {
+                            val patternHV = patternH.vFlipped()
+                            foundPatterns.add(patternHV)
+                        }
+                    }
+                    if (options.allowVerticalFlips) {
+                        val patternV = pattern.vFlipped()
+                        foundPatterns.add(patternV)
+                    }
                 }
 
                 if (options.allowRotations) {
@@ -230,32 +396,44 @@ open class OverlappingCartesian2DModel(
                     )
 
 
-                    if (options.allowFlips) {
-                        val pattern90H = pattern90.hFlipped()
-                        val pattern90V = pattern90.vFlipped()
-                        val pattern90HV = pattern90H.vFlipped()
-
-                        val pattern180H = pattern180.hFlipped()
-                        val pattern180V = pattern180.vFlipped()
-                        val pattern180HV = pattern180H.vFlipped()
-
-                        val pattern270H = pattern270.hFlipped()
-                        val pattern270V = pattern270.vFlipped()
-                        val pattern270HV = pattern270H.vFlipped()
-
-                        foundPatterns.addAll(
-                            sequenceOf(
-                                pattern90H,
-                                pattern90V,
-                                pattern90HV,
-                                pattern180H,
-                                pattern180V,
-                                pattern180HV,
-                                pattern270H,
-                                pattern270V,
-                                pattern270HV,
+                    if (options.allowHorizontalFlips || options.allowVerticalFlips) {
+                        if (options.allowHorizontalFlips) {
+                            val pattern90H = pattern90.hFlipped()
+                            val pattern180H = pattern180.hFlipped()
+                            val pattern270H = pattern270.hFlipped()
+                            foundPatterns.addAll(
+                                sequenceOf(
+                                    pattern90H,
+                                    pattern180H,
+                                    pattern270H,
+                                )
                             )
-                        )
+
+                            if (options.allowVerticalFlips) {
+                                val pattern90HV = pattern90H.vFlipped()
+                                val pattern180HV = pattern180H.vFlipped()
+                                val pattern270HV = pattern270H.vFlipped()
+                                foundPatterns.addAll(
+                                    sequenceOf(
+                                        pattern90HV,
+                                        pattern180HV,
+                                        pattern270HV,
+                                    )
+                                )
+                            }
+                        }
+                        if (options.allowVerticalFlips) {
+                            val pattern90V = pattern90.vFlipped()
+                            val pattern180V = pattern180.vFlipped()
+                            val pattern270V = pattern270.vFlipped()
+                            foundPatterns.addAll(
+                                sequenceOf(
+                                    pattern90V,
+                                    pattern180V,
+                                    pattern270V,
+                                )
+                            )
+                        }
                     }
                 }
 

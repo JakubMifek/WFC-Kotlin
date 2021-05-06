@@ -2,7 +2,8 @@ package org.mifek.wfc.models.options
 
 data class Cartesian2DModelOptions(
     override val allowRotations: Boolean = false,
-    override val allowFlips: Boolean = false,
+    val allowHorizontalFlips: Boolean = false,
+    val allowVerticalFlips: Boolean = false,
     override val periodicOutput: Boolean = false,
     override val periodicInput: Boolean = false,
     val grounded: Boolean = false,

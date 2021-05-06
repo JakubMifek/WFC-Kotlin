@@ -29,7 +29,7 @@ class LowestEntropyHeuristic(
             algorithm.afterBan += onBanLambda
         }
         if(onClearLambda !in algorithm.afterClear) {
-            algorithm.afterClear += onClearLambda
+            algorithm.beforeClear += onClearLambda
         }
     }
 

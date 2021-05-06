@@ -1,7 +1,7 @@
 package org.mifek.wfc
 
 import org.mifek.wfc.adapters.ImageAdapter
-import org.mifek.wfc.adapters.options.*
+import org.mifek.wfc.adapters.options.ImageAdapterOptions
 import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -12,7 +12,7 @@ class ImageTest {
     fun bricks() {
         assertTrue(
             ImageAdapter.imitateImageUsingOverlappingModel(
-                "sources/bricks.png", 68, 68,
+                "sources/bricks.png", 64, 64,
                 ImageAdapterOptions(
                     overlap = 2,
 //                    outputImageOptions = ImageOptions(
@@ -20,7 +20,15 @@ class ImageTest {
 //                        "0_result",
 //                        8
 //                    ),
-                    seed = 1123890487
+                    seed = 0,
+//                    repeats = 5,
+//                        debugOptions = DebugOptions(
+//                            outputPath = "outputs/bricks/debug",
+//                            outputSource = true,
+//                            sourceScale = 4,
+//                            outputPatterns = true,
+//                            patternsScale = 4,
+//                        )
                 ),
             )
         )
@@ -72,7 +80,8 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicInput = true,
                         periodicOutput = true,
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true
                     ),
 //                    outputImageOptions = ImageOptions(
@@ -158,7 +167,7 @@ class ImageTest {
 //                        "0_result",
 //                        8
 //                    ),
-                    seed = 1123890487
+                    seed = 2
                 ),
             )
         )
@@ -194,7 +203,8 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicInput = true,
                         periodicOutput = true,
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true,
                     ),
 //                    debugOptions = DebugOptions(
@@ -299,7 +309,8 @@ class ImageTest {
                     overlap = 1,
                     modelOptions = Cartesian2DModelOptions(
                         allowRotations = true,
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         periodicInput = true,
                         periodicOutput = true
                     ),
@@ -335,7 +346,8 @@ class ImageTest {
                 ImageAdapterOptions(
                     overlap = 2,
                     modelOptions = Cartesian2DModelOptions(
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true,
                         periodicOutput = true,
                         periodicInput = true
@@ -374,7 +386,8 @@ class ImageTest {
                 ImageAdapterOptions(
                     overlap = 2,
                     modelOptions = Cartesian2DModelOptions(
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true,
                         periodicOutput = true,
                         periodicInput = true
@@ -408,7 +421,8 @@ class ImageTest {
                 ImageAdapterOptions(
                     overlap = 2,
                     modelOptions = Cartesian2DModelOptions(
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true,
                         periodicOutput = true,
                         periodicInput = true
@@ -482,7 +496,8 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicOutput = true,
                         periodicInput = true,
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true,
                     ),
 //                    outputImageOptions = ImageOptions(
@@ -610,7 +625,8 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicOutput = true,
                         periodicInput = true,
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true
                     ),
 //                    outputImageOptions = ImageOptions(
@@ -644,7 +660,8 @@ class ImageTest {
                     modelOptions = Cartesian2DModelOptions(
                         periodicOutput = false,
                         periodicInput = true,
-                        allowFlips = true,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
                         allowRotations = true
                     ),
 //                    outputImageOptions = ImageOptions(

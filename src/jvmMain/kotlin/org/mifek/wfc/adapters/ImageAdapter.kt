@@ -36,7 +36,7 @@ class ImageAdapter {
                 val outputFile = File(path)
                 outputFile.mkdirs()
                 ImageIO.write(
-                    IntArray2D(model.outputWidth, model.outputHeight) { pattern[it] }.upScaled(scale).toBufferedImage(),
+                    IntArray2D(model.overlap + 1, model.overlap + 1) { pattern[it] }.upScaled(scale).toBufferedImage(),
                     "png",
                     outputFile
                 )

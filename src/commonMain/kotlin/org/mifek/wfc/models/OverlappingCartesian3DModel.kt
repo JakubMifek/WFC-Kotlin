@@ -8,6 +8,7 @@ import org.mifek.wfc.datatypes.Direction3D
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
 import org.mifek.wfc.topologies.Cartesian3DTopology
 import org.mifek.wfc.utils.toCoordinates
+import org.mifek.wfc.utils.toIndex
 
 open class OverlappingCartesian3DModel(
     val input: IntArray3D,
@@ -17,14 +18,14 @@ open class OverlappingCartesian3DModel(
     val outputDepth: Int,
     val options: Cartesian3DModelOptions = Cartesian3DModelOptions(),
 ) : OverlappingModel {
-    private val patternSideSize = overlap + 1
+    protected val patternSideSize = overlap + 1
 
-    private val patternCounts = loadPatterns(
+    protected val patternCounts = loadPatterns(
         input,
         overlap,
     )
 
-    private val sum = patternCounts.map { it.second.item }.sum()
+    protected val weightSum = patternCounts.map { it.second.item }.sum()
 
     protected val patternsArray = patternCounts.map { it.first }.toTypedArray()
     override val patterns = Patterns(patternsArray.map { it.asIntArray() }.toTypedArray())
@@ -43,8 +44,8 @@ open class OverlappingCartesian3DModel(
         )
     )
 
-    private val weights = DoubleArray(patternCounts.size) { patternCounts[it].second.item / sum.toDouble() }
-    private val propagator = Array(6) { dir ->
+    protected val weights = DoubleArray(patternCounts.size) { patternCounts[it].second.item / weightSum.toDouble() }
+    internal val propagator = Array(6) { dir ->
         Array(patternsArray.size) { patternIndex ->
             val d = Direction3D.fromInt(dir)
             patternsArray.indices.filter {
@@ -56,26 +57,198 @@ open class OverlappingCartesian3DModel(
             }.toIntArray()
         }
     }
+    internal val topology = Cartesian3DTopology(
+        outputWidth - if (options.periodicOutput) 0 else overlap, // We can compute smaller array, missing pixels are fixed by boundary patterns
+        outputHeight - if (options.periodicOutput) 0 else overlap, // But if output is periodic, this is not desirable because it would scale down the output
+        outputDepth - if (options.periodicOutput) 0 else overlap,
+        options.periodicOutput
+    )
+    protected val bans = mutableMapOf<Int, MutableList<Int>>()
 
     override fun build(): Cartesian3DWfcAlgorithm {
-        val topology = Cartesian3DTopology(
-            outputWidth - if (options.periodicOutput) 0 else overlap, // We can compute smaller array, missing pixels are fixed by boundary patterns
-            outputHeight - if (options.periodicOutput) 0 else overlap, // But if output is periodic, this is not desirable because it would scale down the output
-            outputDepth - if (options.periodicOutput) 0 else overlap,
-            options.periodicOutput
-        )
         val algorithm = Cartesian3DWfcAlgorithm(
-            topology, weights, propagator, patterns
+            topology, weights, propagator, patterns, pixels,
         )
+        algorithm.beforeStart += {
+            for (entry in bans) {
+                algorithm.banWavePatterns(entry.key, entry.value)
+            }
+        }
         return algorithm
     }
 
+    fun banPatterns(x: Int, y: Int, z: Int, patterns: Iterable<Int>): OverlappingCartesian3DModel {
+        if (
+            x >= outputWidth - (if (options.periodicOutput) 0 else overlap) ||
+            y >= outputHeight - (if (options.periodicOutput) 0 else overlap) ||
+            z >= outputDepth - (if (options.periodicOutput) 0 else overlap)
+        ) {
+            throw Error("Output dimensions exceeded [$x, $y, $z]x[${outputWidth - (if (options.periodicOutput) 0 else overlap)}, ${outputHeight - (if (options.periodicOutput) 0 else overlap)}, ${outputDepth - (if (options.periodicOutput) 0 else overlap)}].")
+        }
+
+        val coordinates = topology.serializeCoordinates(x, y, z)
+        if (!bans.containsKey(coordinates)) {
+            bans[coordinates] = patterns.toMutableList()
+        } else {
+            bans[coordinates]!!.addAll(patterns)
+        }
+
+        return this
+    }
+
+    fun banPatterns(
+        coordinates: Iterable<Triple<Int, Int, Int>>,
+        patterns: Iterable<Int>
+    ): OverlappingCartesian3DModel {
+        coordinates.forEach {
+            banPatterns(it.first, it.second, it.third, patterns)
+        }
+
+        return this
+    }
+
+    fun setPatterns(x: Int, y: Int, z: Int, patterns: Iterable<Int>): OverlappingCartesian3DModel {
+        banPatterns(x, y, z, patternsArray.indices.minus(patterns))
+
+        return this
+    }
+
+    fun setPatterns(
+        coordinates: Iterable<Triple<Int, Int, Int>>,
+        patterns: Iterable<Int>
+    ): OverlappingCartesian3DModel {
+        coordinates.forEach {
+            setPatterns(it.first, it.second, it.third, patterns)
+        }
+
+        return this
+    }
+
+    fun setPixel(x: Int, y: Int, z: Int, pixel: Int): OverlappingCartesian3DModel {
+        if (options.periodicOutput) {
+            setPatterns(x, y, z, pixels[pixel].asIterable())
+            return this
+        }
+
+        var X = x
+        var xShift = 0
+        if (X >= outputWidth - overlap) {
+            X = outputWidth - overlap - 1
+            xShift = x - X
+        }
+
+        var Y = y
+        var yShift = 0
+        if (Y >= outputHeight - overlap) {
+            Y = outputHeight - overlap - 1
+            yShift = y - Y
+        }
+
+        var Z = z
+        var zShift = 0
+        if (Z >= outputDepth - overlap) {
+            Z = outputDepth - overlap - 1
+            zShift = z - Z
+        }
+
+        setPatterns(X, Y, Z, patterns.indices.filter { patternsArray[it][xShift, yShift, zShift] == pixel })
+
+        return this
+    }
+
+    fun setPixel(coordinates: Iterable<Triple<Int, Int, Int>>, pixel: Int): OverlappingCartesian3DModel {
+        coordinates.forEach {
+            setPixel(it.first, it.second, it.third, pixel)
+        }
+
+        return this
+    }
+
+    fun banPixel(x: Int, y: Int, z: Int, pixel: Int): OverlappingCartesian3DModel {
+        if (options.periodicOutput) {
+            banPatterns(x, y, z, pixels[pixel].asIterable())
+            return this
+        }
+
+        var X = x
+        var xShift = 0
+        if (X >= outputWidth - overlap) {
+            X = outputWidth - overlap - 1
+            xShift = x - X
+        }
+
+        var Y = y
+        var yShift = 0
+        if (Y >= outputHeight - overlap) {
+            Y = outputHeight - overlap - 1
+            yShift = y - Y
+        }
+
+        var Z = z
+        var zShift = 0
+        if (Z >= outputDepth - overlap) {
+            Z = outputDepth - overlap - 1
+            zShift = z - Z
+        }
+
+        banPatterns(X, Y, Z, patterns.indices.filter { patternsArray[it][xShift, yShift, zShift] == pixel })
+
+        return this
+    }
+
+    fun banPixel(coordinates: Iterable<Triple<Int, Int, Int>>, pixel: Int): OverlappingCartesian3DModel {
+        coordinates.forEach {
+            banPixel(it.first, it.second, it.third, pixel)
+        }
+
+        return this
+    }
+
+    fun setPixels(x: Int, y: Int, z: Int, pixels: Iterable<Int>): OverlappingCartesian3DModel {
+        for (
+        pixel in this.pixels
+            .filter { entry -> entry.key in pixels }
+            .fold(emptySequence<Int>()) { acc, entry -> acc.plus(entry.value) }.asIterable()
+        ) {
+            setPixel(x, y, z, pixel)
+        }
+
+        return this
+    }
+
+    fun setPixels(coordinates: Iterable<Triple<Int, Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian3DModel {
+        coordinates.forEach {
+            setPixels(it.first, it.second, it.third, pixels)
+        }
+
+        return this
+    }
+
+    fun banPixels(x: Int, y: Int, z: Int, pixels: Iterable<Int>): OverlappingCartesian3DModel {
+        for (
+        pixel in this.pixels
+            .filter { entry -> entry.key in pixels }
+            .fold(emptySequence<Int>()) { acc, entry -> acc.plus(entry.value) }.asIterable()
+        ) {
+            banPixel(x, y, z, pixel)
+        }
+
+        return this
+    }
+
+    fun banPixels(coordinates: Iterable<Triple<Int, Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian3DModel {
+        coordinates.forEach {
+            banPixels(it.first, it.second, it.third, pixels)
+        }
+
+        return this
+    }
 
     /**
      * Checks whether two overlapping patterns agree
      * @param size Size of single side of the pattern (square patterns expected)
      */
-    private fun agrees(
+    protected fun agrees(
         pattern1: IntArray3D,
         pattern2: IntArray3D,
         direction: Direction3D
@@ -113,7 +286,7 @@ open class OverlappingCartesian3DModel(
     /**
      * Loads patterns and number of their occurrences in the input image
      */
-    private fun loadPatterns(
+    protected fun loadPatterns(
         data: IntArray3D,
         overlap: Int,
     ): List<Pair<IntArray3D, IntHolder>> {
@@ -135,18 +308,18 @@ open class OverlappingCartesian3DModel(
                     val pattern = data.slice(index, 0..overlap, 0..overlap, 0..overlap)
                     val foundPatterns = mutableListOf(pattern)
 
-                    if (options.allowFlips) {
-                        foundPatterns.addAll(flips(pattern))
+                    if (options.allowXFlips || options.allowYFlips || options.allowZFlips) {
+                        foundPatterns.addAll(flips(pattern, options))
                     }
 
                     if (options.allowRotations) {
                         val rotations = rotations(pattern)
                         foundPatterns.addAll(rotations)
 
-                        if (options.allowFlips) {
+                        if (options.allowXFlips || options.allowYFlips || options.allowZFlips) {
                             foundPatterns.addAll(
                                 rotations
-                                    .map { flips(it) }
+                                    .map { flips(it, options) }
                                     .reduce { acc, curr -> acc.plus(curr) }
                             )
                         }
@@ -167,26 +340,44 @@ open class OverlappingCartesian3DModel(
         }
     }
 
-    private fun flips(pattern: IntArray3D): Sequence<IntArray3D> {
+    protected fun flips(pattern: IntArray3D, options: Cartesian3DModelOptions): Sequence<IntArray3D> {
         return sequence {
-            val patternX = pattern.flippedX()
-            yield(patternX)
-            val patternY = pattern.flippedY()
-            yield(patternY)
-            val patternZ = pattern.flippedZ()
-            yield(patternZ)
-            val patternXY = patternX.flippedY()
-            yield(patternXY)
-            val patternXZ = patternX.flippedZ()
-            yield(patternXZ)
-            val patternYZ = patternY.flippedZ()
-            yield(patternYZ)
-            val patternXYZ = patternXY.flippedZ()
-            yield(patternXYZ)
+            if (options.allowXFlips) {
+                val patternX = pattern.flippedX()
+                yield(patternX)
+
+                if (options.allowYFlips) {
+                    val patternXY = patternX.flippedY()
+                    yield(patternXY)
+
+                    if (options.allowZFlips) {
+                        val patternXYZ = patternXY.flippedZ()
+                        yield(patternXYZ)
+                    }
+                }
+
+                if (options.allowZFlips) {
+                    val patternXZ = patternX.flippedZ()
+                    yield(patternXZ)
+                }
+            }
+            if (options.allowYFlips) {
+                val patternY = pattern.flippedY()
+                yield(patternY)
+
+                if (options.allowZFlips) {
+                    val patternYZ = patternY.flippedZ()
+                    yield(patternYZ)
+                }
+            }
+            if (options.allowZFlips) {
+                val patternZ = pattern.flippedZ()
+                yield(patternZ)
+            }
         }
     }
 
-    private fun rotations(pattern: IntArray3D): Sequence<IntArray3D> {
+    protected fun rotations(pattern: IntArray3D): Sequence<IntArray3D> {
         return sequence {
             val pattern90X = pattern.xRotated()
             yield(pattern90X)
@@ -223,7 +414,63 @@ open class OverlappingCartesian3DModel(
     }
 
     @ExperimentalUnsignedTypes
-    open fun constructOutput(algorithm: Cartesian3DWfcAlgorithm): IntArray3D {
+    open fun constructNullableOutput(algorithm: Cartesian3DWfcAlgorithm): Array<Array<Array<Int?>>> {
+        return Array(outputWidth) { x ->
+            Array(outputHeight) { y ->
+                Array(outputDepth) { z ->
+                    val waveIndex = intArrayOf(x, y, z).toIndex(intArrayOf(outputWidth, outputHeight, outputDepth))
+                    var index = waveIndex
+                    var shiftX = 0
+                    var shiftY = 0
+                    var shiftZ = 0
+                    val sizes = intArrayOf(outputWidth, outputHeight, outputDepth)
+                    val faceSize = outputWidth * outputHeight
+
+                    if (!options.periodicOutput) {
+                        if (onBoundary(waveIndex)) {
+                            val coordinates = waveIndex.toCoordinates(sizes)
+
+                            if (coordinates[0] >= outputWidth - overlap) {
+                                shiftX = coordinates[0] - outputWidth + overlap + 1
+                                index -= shiftX
+                            }
+                            if (coordinates[1] >= outputHeight - overlap) {
+                                shiftY = coordinates[1] - outputHeight + overlap + 1
+                                index -= shiftY * outputWidth
+                            }
+                            if (coordinates[2] >= outputDepth - overlap) {
+                                shiftZ = coordinates[2] - outputDepth + overlap + 1
+                                index -= shiftZ * faceSize
+                            }
+                        }
+
+                        index -= (((index % faceSize) / outputWidth)) * overlap +
+                                (index / faceSize) * (outputHeight - overlap + outputWidth) * overlap
+                    }
+
+                    val shift = (shiftZ * patternSideSize + shiftY) * patternSideSize + shiftX
+
+                    val a = 0
+                    val b = 1
+                    val sum = algorithm.waves[index].sumOf {
+                        when (it) {
+                            false -> a
+                            true -> b
+                        }
+                    }
+
+                    when (sum) {
+                        0 -> Int.MIN_VALUE
+                        1 -> patternsArray[patterns.indices.filter { algorithm.waves[index, it] }[0]][shift]
+                        else -> null
+                    }
+                }
+            }
+        }
+    }
+
+    @ExperimentalUnsignedTypes
+    open fun constructAveragedOutput(algorithm: Cartesian3DWfcAlgorithm): IntArray3D {
         return IntArray3D(outputWidth, outputHeight, outputDepth) { waveIndex ->
             var index = waveIndex
             var shiftX = 0
@@ -234,19 +481,18 @@ open class OverlappingCartesian3DModel(
 
             if (!options.periodicOutput) {
                 if (onBoundary(waveIndex)) {
-                    // TODO: Fix
-                    val coords = waveIndex.toCoordinates(sizes)
+                    val coordinates = waveIndex.toCoordinates(sizes)
 
-                    if (coords[0] >= outputWidth - overlap) {
-                        shiftX = coords[0] - outputWidth + overlap + 1
+                    if (coordinates[0] >= outputWidth - overlap) {
+                        shiftX = coordinates[0] - outputWidth + overlap + 1
                         index -= shiftX
                     }
-                    if (coords[1] >= outputHeight - overlap) {
-                        shiftY = coords[1] - outputHeight + overlap + 1
+                    if (coordinates[1] >= outputHeight - overlap) {
+                        shiftY = coordinates[1] - outputHeight + overlap + 1
                         index -= shiftY * outputWidth
                     }
-                    if (coords[2] >= outputDepth - overlap) {
-                        shiftZ = coords[2] - outputDepth + overlap + 1
+                    if (coordinates[2] >= outputDepth - overlap) {
+                        shiftZ = coordinates[2] - outputDepth + overlap + 1
                         index -= shiftZ * faceSize
                     }
                 }
@@ -266,13 +512,11 @@ open class OverlappingCartesian3DModel(
                 }
             }
             when (sum) {
-                0 -> -123456789
+                0 -> Int.MIN_VALUE
                 1 -> patternsArray[patterns.indices.filter { algorithm.waves[index, it] }[0]][shift]
                 else -> {
                     patterns.indices
-                        .filter { algorithm.waves[index, it] }
-                        .map { patternsArray[it][shift] }
-                        .sum() / sum
+                        .filter { algorithm.waves[index, it] }.sumOf { patternsArray[it][shift] } / sum
                 }
             }
         }

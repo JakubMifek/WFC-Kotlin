@@ -18,133 +18,178 @@ open class Cartesian2DWfcAlgorithm(
     propagator,
     LowestEntropyHeuristic(patterns.size, topology2D.totalSize, weights)
 ) {
-    /**
-     * Bans all patterns that do not contain given pixel
-     */
-    private fun setPixel(waveIndex: Int, pixel: Int) {
-        (0 until patterns.size).minus(pixels[pixel]).forEach {
-            ban(waveIndex, it)
-        }
-        propagate()
-    }
-
-    /**
-     * Bans all patterns that do not contain any of given pixels
-     */
-    private fun setPixels(waveIndex: Int, pixels: Iterable<Int>) {
-        (0 until patterns.size)
-            .minus(
-                pixels
-                    .map { this.pixels[it] }
-                    .reduce { acc: Sequence<Int>, sequence: Sequence<Int> -> acc.plus(sequence) }
-            )
-            .forEach {
-                ban(waveIndex, it)
-            }
-        propagate()
-    }
-
-    private fun setPatterns(waveIndex: Int, patterns: Iterable<Int>) {
-        (0 until this.patterns.size)
-            .minus(patterns)
-            .forEach {
-                ban(waveIndex, it)
-            }
-        propagate()
-    }
-
-    private fun banPatterns(waveIndex: Int, patterns: Iterable<Int>) {
+    fun banWavePatterns(wave: Int, patterns: Iterable<Int>) {
         patterns.forEach {
-            ban(waveIndex, it)
+            ban(wave, it)
         }
         propagate()
     }
 
-    /**
-     * Bans all patterns that do not contain any of given pixels
-     */
-    private fun setPixels(waveIndices: Iterable<Int>, pixels: Iterable<Int>) {
-        (0 until patterns.size)
-            .minus(
-                pixels
-                    .map { this.pixels[it] }
-                    .reduce { acc: Sequence<Int>, sequence: Sequence<Int> -> acc.plus(sequence) }
-            )
-            .forEach { pattern ->
-                waveIndices.forEach {
-                    ban(it, pattern)
-                }
-            }
-        propagate()
-    }
-
-    private fun setPatterns(waveIndices: Iterable<Int>, patterns: Iterable<Int>) {
-        (0 until this.patterns.size)
-            .minus(patterns)
-            .forEach { pattern ->
-                waveIndices.forEach {
-                    ban(it, pattern)
-                }
-            }
-        propagate()
-    }
-
-    private fun banPatterns(waveIndices: Iterable<Int>, patterns: Iterable<Int>) {
-        patterns.forEach { pattern ->
-            waveIndices.forEach {
-                ban(it, pattern)
+    fun banWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
+        waves.forEach { wave ->
+            patterns.forEach {
+                ban(wave, it)
             }
         }
         propagate()
+    }
+
+    fun setWavePatterns(wave: Int, patterns: Iterable<Int>) {
+        this.banWavePatterns(
+            wave,
+            (0 until this.patterns.size)
+                .minus(patterns)
+        )
+    }
+
+    fun setWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
+        this.banWavePatterns(
+            waves,
+            (0 until this.patterns.size)
+                .minus(patterns)
+        )
+    }
+
+    fun banCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) {
+        this.banWavePatterns(topology2D.serializeCoordinates(x, y), patterns)
+    }
+
+    fun banCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
+        this.banWavePatterns(waves.map { topology2D.serializeCoordinates(it.first, it.second) }, patterns)
+    }
+
+    fun setCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) {
+        this.setWavePatterns(topology2D.serializeCoordinates(x, y), patterns)
+    }
+
+    fun setCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
+        this.setWavePatterns(waves.map { topology2D.serializeCoordinates(it.first, it.second) }, patterns)
+    }
+
+    fun banWavePixel(wave: Int, pixel: Int) {
+        banWavePatterns(wave, pixels[pixel].asIterable())
+    }
+
+    fun banWavePixel(waves: Iterable<Int>, pixel: Int) {
+        banWavePatterns(waves, pixels[pixel].asIterable())
+    }
+
+    fun banCoordinatePixel(x: Int, y: Int, pixel: Int) {
+        banWavePatterns(topology2D.serializeCoordinates(x, y), pixels[pixel].asIterable())
+    }
+
+    fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) {
+        banWavePatterns(
+            coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
+            pixels[pixel].asIterable()
+        )
     }
 
     /**
      * Bans all patterns that do not contain given pixel
      */
-    fun setPixel(x: Int, y: Int, pixel: Int) {
-        this.setPixel(x + y * topology2D.width, pixel)
+    fun setWavePixel(wave: Int, pixel: Int) {
+        setWavePatterns(wave, pixels[pixel].asIterable())
     }
 
     /**
      * Bans all patterns that do not contain any of given pixels
      */
-    fun setPixels(x: Int, y: Int, pixels: Iterable<Int>) {
-        this.setPixels(x + y * topology2D.width, pixels)
+    fun setWavePixels(waves: Iterable<Int>, pixel: Int) {
+        setWavePatterns(waves, pixels[pixel].asIterable())
+    }
+
+    /**
+     * Bans all patterns that do not contain given pixel
+     */
+    fun setCoordinatePixel(x: Int, y: Int, pixel: Int) {
+        setWavePatterns(topology2D.serializeCoordinates(x, y), pixels[pixel].asIterable())
     }
 
     /**
      * Bans all patterns that do not contain any of given pixels
      */
-    fun setMultiplePixels(coords: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
-        this.setPixels(coords.map { pair -> pair.first + pair.second * topology2D.width }, pixels)
+    fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) {
+        setWavePatterns(
+            coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
+            pixels[pixel].asIterable()
+        )
+    }
+
+    fun banWavePixels(wave: Int, pixels: Iterable<Int>) {
+        banWavePatterns(
+            wave,
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
+    }
+
+    fun banWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) {
+        banWavePatterns(
+            waves,
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
+    }
+
+    fun banCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) {
+        banWavePatterns(
+            topology2D.serializeCoordinates(x, y),
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
+    }
+
+    fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
+        banWavePatterns(
+            coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
     }
 
     /**
-     * Bans other than given patterns
+     * Bans all patterns that do not contain any of given pixels
      */
-    fun setPatterns(x: Int, y: Int, patterns: Iterable<Int>) {
-        this.setPatterns(x + y * topology2D.width, patterns)
+    fun setWavePixels(wave: Int, pixels: Iterable<Int>) {
+        setWavePatterns(
+            wave,
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
     }
 
     /**
-     * Bans given patterns
+     * Bans all patterns that do not contain any of given pixels
      */
-    fun banPatterns(x: Int, y: Int, patterns: Iterable<Int>) {
-        this.setPatterns(x + y * topology2D.width, patterns)
+    fun setWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) {
+        setWavePatterns(
+            waves,
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
     }
 
     /**
-     * Bans other than given patterns
+     * Bans all patterns that do not contain any of given pixels
      */
-    fun setMultiplePatterns(coords: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
-        this.setPatterns(coords.map { pair -> pair.first + pair.second * topology2D.width }, patterns)
+    fun setCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) {
+        setWavePatterns(
+            topology2D.serializeCoordinates(x, y),
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
     }
 
     /**
-     * Bans given patterns
+     * Bans all patterns that do not contain any of given pixels
      */
-    fun banMultiplePatterns(coords: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
-        this.banPatterns(coords.map { pair -> pair.first + pair.second * topology2D.width }, patterns)
+    fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
+        setWavePatterns(
+            coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
+            pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
+                .asIterable()
+        )
     }
 
     /**

@@ -18,6 +18,7 @@ open class WfcAlgorithm(
      * Contains option-based boolean array for each pixel
      */
     protected val wavesArray = Array(topology.totalSize) { BooleanArray(patternCount) }
+    protected val amountArray = IntArray(topology.totalSize) { patternCount }
     val waves = Waves(wavesArray)
 
     /**
@@ -53,6 +54,16 @@ open class WfcAlgorithm(
      * Triggered *after* core cleanup.
      */
     val afterClear = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *before* warmup.
+     */
+    val beforeWarmup = EventHandler<WfcAlgorithm>()
+
+    /**
+     * Triggered *after* warmup.
+     */
+    val afterWarmup = EventHandler<WfcAlgorithm>()
 
     /**
      * Triggered *before* wave observation.
@@ -110,6 +121,11 @@ open class WfcAlgorithm(
     val afterFinished = EventHandler<WfcAlgorithm>()
 
     /**
+     * Triggered after a wave is collapsed into a pattern
+     */
+    val afterCollapse = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
+
+    /**
      * Clears the calculations made in the network
      */
     open fun clear() {
@@ -122,9 +138,35 @@ open class WfcAlgorithm(
                         propagator[(n + topology.maxDegree / 2) % topology.maxDegree][p].size // opposite direction number of same patterns
                 }
             }
+            amountArray[w] = patternCount
         }
 
         afterClear(this)
+    }
+
+    /**
+     * Initializes the algorithm.
+     * Bans all patterns in places where they cannot belong (e.g. a pattern without any left neighbour in the centre of the result)
+     */
+    open fun warmup() {
+        beforeWarmup(this)
+
+        for(w in wavesArray.indices) {
+            val neighbourDirections = topology.neighbourIterator(w).map { it.first }
+
+            for(p in 0 until patternCount) {
+                for(d in neighbourDirections) {
+                    if(propagator[d][p].isEmpty()) {
+                        ban(w, p)
+                        break
+                    }
+                }
+            }
+        }
+
+        propagate()
+
+        afterWarmup(this)
     }
 
     /**
@@ -135,16 +177,20 @@ open class WfcAlgorithm(
         beforeBan(Triple(this, wave, pattern))
 
         wavesArray[wave][pattern] = false
+        amountArray[wave]--
 
         val compatiblePatterns = compatible[wave][pattern]
         for (neighbour in 0 until topology.maxDegree) compatiblePatterns[neighbour] = 0
 
+        if(stacksize == stack.size) return null
         stack[stacksize++] = Pair(wave, pattern)
 
         afterBan(Triple(this, wave, pattern))
 
-        if (!wavesArray[wave].filter { it }.any()) {
+        if (amountArray[wave] == 0) {
             return null
+        } else if (amountArray[wave] == 1) {
+            afterCollapse(Triple(this, wave, waves[wave].indexOf(true)))
         }
 
         return true
@@ -290,6 +336,8 @@ open class WfcAlgorithm(
         clear()
 
         beforeStart(this)
+
+        warmup()
 
         // TODO: Allow backtracking if bigger than 0
         if (limit != 0) {

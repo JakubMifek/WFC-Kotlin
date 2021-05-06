@@ -4,6 +4,7 @@ import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.models.OverlappingCartesian2DModel
 import org.mifek.wfc.utils.formatPatterns
 import kotlin.math.floor
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -76,5 +77,28 @@ class OverlappingCartesian2DModelTest {
             IntArray2D(5,5){data[it]}, 32, 32, 1, 12345
         )
         printGrid(result2)
+    }
+
+    @ExperimentalUnsignedTypes
+    @Test
+    fun setPixel() {
+        val data = intArrayOf(
+            1, 1, 1, 1, 1,
+            1, 0, 0, 0, 1,
+            1, 0, 2, 0, 1,
+            1, 0, 0, 0, 1,
+            1, 1, 1, 1, 1,
+        )
+        val seed = Random.nextInt()
+        val source = IntArray2D(5,5){data[it]}
+        val width = 9
+        val height = 9
+        val overlap = 1
+
+        val model = OverlappingCartesian2DModel(source, overlap, width, height).setPixel(4,4, 2)
+        val algorithm = model.build()
+        val result = algorithm.run(seed)
+        assertTrue(result, "Expected algorithm to be successful. Seed $seed")
+        printGrid(model.constructOutput(algorithm))
     }
 }
