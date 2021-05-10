@@ -5,27 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d192b88-3ee4-4868-b224-a8d8137d9640" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/WFC_Kotlin_js_1_2_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/WFC_Kotlin_jvm_1_2_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian3DWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian3DWfcAlgorithm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/LowestEntropyHeuristic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/LowestEntropyHeuristic.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian2DModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian2DModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian2DModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian2DModelOptions.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian3DModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian3DModelOptions.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/ModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/ModelOptions.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Cartesian2DTopology.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Cartesian2DTopology.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/Openness.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian2DModelTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian2DModelTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian3DModelTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian3DModelTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/jvmTest/kotlin/org/mifek/wfc/ImageTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmTest/kotlin/org/mifek/wfc/ImageTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingImageModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingImageModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

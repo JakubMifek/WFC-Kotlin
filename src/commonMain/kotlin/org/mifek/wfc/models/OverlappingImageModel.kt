@@ -51,7 +51,7 @@ open class OverlappingImageModel(
                 }
             }
             when (sum) {
-                0 -> -123456789
+                0 -> Int.MIN_VALUE
                 1 -> patternsArray[patterns.indices.filter { algorithm.waves[index, it] }[0]][shift]
                 else -> {
                     val tmp = patterns.indices
