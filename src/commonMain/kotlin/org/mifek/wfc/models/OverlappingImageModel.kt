@@ -16,6 +16,9 @@ open class OverlappingImageModel(
     outputHeight: Int,
     options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
 ) : OverlappingCartesian2DModel(input, overlap, outputWidth, outputHeight, options) {
+    /**
+     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     */
     @ExperimentalUnsignedTypes
     override fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
         return IntArray2D(outputWidth, outputHeight) { waveIndex ->

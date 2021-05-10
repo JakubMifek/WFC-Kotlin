@@ -469,6 +469,9 @@ open class OverlappingCartesian3DModel(
         }
     }
 
+    /**
+     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     */
     @ExperimentalUnsignedTypes
     open fun constructAveragedOutput(algorithm: Cartesian3DWfcAlgorithm): IntArray3D {
         return IntArray3D(outputWidth, outputHeight, outputDepth) { waveIndex ->

@@ -468,6 +468,9 @@ open class OverlappingCartesian2DModel(
         return false
     }
 
+    /**
+     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     */
     @ExperimentalUnsignedTypes
     open fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
         return IntArray2D(outputWidth, outputHeight) { waveIndex ->
