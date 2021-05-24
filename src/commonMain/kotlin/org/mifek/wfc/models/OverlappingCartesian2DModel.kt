@@ -8,6 +8,9 @@ import org.mifek.wfc.datatypes.Direction2D
 import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import org.mifek.wfc.topologies.Cartesian2DTopology
 import org.mifek.wfc.utils.chain
+import org.mifek.wfc.utils.formatPatterns
+import org.mifek.wfc.utils.toCoordinates
+import org.mifek.wfc.utils.toIndex
 
 open class OverlappingCartesian2DModel(
     val input: IntArray2D,
@@ -17,6 +20,7 @@ open class OverlappingCartesian2DModel(
     val options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
 ) : OverlappingModel {
     protected val patternSideSize = overlap + 1
+    val outputSizes = intArrayOf(outputWidth, outputHeight)
 
     protected val firstRowPatterns = ArrayList<Int>()
     protected val lastRowPatterns = ArrayList<Int>()
@@ -469,34 +473,56 @@ open class OverlappingCartesian2DModel(
     }
 
     /**
+     * Shifts wave index from algorithm coordinates to output coordinates.
+     */
+    fun shiftAlgorithmWave(wave: Int): Int {
+        if (options.periodicOutput) return wave
+        return wave + (wave / (outputWidth - overlap)) * overlap
+    }
+
+    /**
+     * Shifts wave index from output coordinates to algorithm coordinates and an optional shift which represents index in the pattern (for boundary pixels).
+     */
+    fun shiftOutputWave(wave: Int): Pair<Int, Int> {
+        var index = wave
+        var shiftX = 0
+        var shiftY = 0
+
+        if (!options.periodicOutput) {
+            if (onBoundary(wave)) {
+                val coordinates = wave.toCoordinates(outputSizes)
+
+                if (coordinates[0] >= outputWidth - overlap) {
+                    shiftX = coordinates[0] - outputWidth + overlap + 1
+                    index -= shiftX
+                }
+                if (coordinates[1] >= outputHeight - overlap) {
+                    shiftY = coordinates[1] - outputHeight + overlap + 1
+                    index -= shiftY * outputWidth
+                }
+            }
+
+            index -= (index / outputWidth) * overlap
+        }
+
+        val shift = shiftY * (overlap + 1) + shiftX
+
+        return Pair(index, shift)
+    }
+
+    /**
      * Uses Int.MIN_VALUE for pixels without any feasible pattern
      */
     @ExperimentalUnsignedTypes
     open fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
+        if (!algorithm.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return IntArray2D(outputWidth, outputHeight) { waveIndex ->
-            var index = waveIndex
-            var shiftX = 0
-            var shiftY = 0
-
-            if (!options.periodicOutput) {
-                if (onBoundary(waveIndex)) {
-                    val x = waveIndex % outputWidth
-                    val y = waveIndex / outputWidth
-
-                    if (x >= outputWidth - overlap) {
-                        shiftX = x - outputWidth + overlap + 1
-                        index -= shiftX
-                    }
-                    if (y >= outputHeight - overlap) {
-                        shiftY = y - outputHeight + overlap + 1
-                        index -= shiftY * outputWidth
-                    }
-                }
-
-                index -= (index / outputWidth) * overlap
-            }
-
-            val shift = shiftY * (overlap + 1) + shiftX
+            val pair = shiftOutputWave(waveIndex)
+            val index = pair.first
+            val shift = pair.second
 
             val a = 0
             val b = 1

@@ -166,6 +166,10 @@ open class Cartesian3DWfcAlgorithm(
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
     open fun constructOutput(): IntArray3D {
+        if(!this.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return IntArray3D(topology3D.width, topology3D.height, topology3D.depth) { waveIndex ->
             val a = 0
             val b = 1

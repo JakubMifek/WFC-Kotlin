@@ -12,6 +12,10 @@ open class WfcAlgorithm(
     protected val propagator: Array<Array<IntArray>>,
     protected val heuristic: SelectionHeuristic,
 ) {
+    protected var hasBeenRun = false
+    val hasRun: Boolean
+        get() { return hasBeenRun }
+
     protected val patternCount = weights.size
 
     /**
@@ -130,6 +134,8 @@ open class WfcAlgorithm(
      */
     open fun clear() {
         beforeClear(this)
+
+        hasBeenRun = false
         for (w in wavesArray.indices) {
             for (p in 0 until patternCount) {
                 wavesArray[w][p] = true
@@ -150,6 +156,8 @@ open class WfcAlgorithm(
      */
     open fun warmup() {
         beforeWarmup(this)
+
+        hasBeenRun = true
 
         for(w in wavesArray.indices) {
             val neighbourDirections = topology.neighbourIterator(w).map { it.first }

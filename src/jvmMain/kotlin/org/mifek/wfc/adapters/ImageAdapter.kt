@@ -2,6 +2,8 @@ package org.mifek.wfc.adapters
 
 import org.mifek.wfc.adapters.options.EventType
 import org.mifek.wfc.adapters.options.ImageAdapterOptions
+import org.mifek.wfc.adapters.utils.toBufferedImage
+import org.mifek.wfc.adapters.utils.toIntArray2D
 import org.mifek.wfc.core.Cartesian2DWfcAlgorithm
 import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.models.OverlappingImageModel

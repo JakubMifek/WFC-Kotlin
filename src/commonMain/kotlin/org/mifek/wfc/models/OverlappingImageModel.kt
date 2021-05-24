@@ -21,29 +21,14 @@ open class OverlappingImageModel(
      */
     @ExperimentalUnsignedTypes
     override fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
+        if (!algorithm.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return IntArray2D(outputWidth, outputHeight) { waveIndex ->
-            var index = waveIndex
-            var shiftX = 0
-            var shiftY = 0
-
-            if (!options.periodicOutput) {
-                if (onBoundary(waveIndex)) {
-                    val x = waveIndex % outputWidth
-                    val y = waveIndex / outputWidth
-
-                    if (x >= outputWidth - overlap) {
-                        shiftX = x - outputWidth + overlap + 1
-                        index -= shiftX
-                    }
-                    if (y >= outputHeight - overlap) {
-                        shiftY = y - outputHeight + overlap + 1
-                        index -= shiftY * outputWidth
-                    }
-                }
-
-                index -= (index / outputWidth) * overlap
-            }
-            val shift = shiftY * (overlap + 1) + shiftX
+            val pair = shiftOutputWave(waveIndex)
+            val index = pair.first
+            val shift = pair.second
 
             val a = 0
             val b = 1

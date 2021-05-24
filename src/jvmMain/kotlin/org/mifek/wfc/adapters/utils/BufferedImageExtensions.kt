@@ -1,4 +1,4 @@
-package org.mifek.wfc.adapters
+package org.mifek.wfc.adapters.utils
 
 import org.mifek.wfc.datastructures.IntArray2D
 import java.awt.image.BufferedImage

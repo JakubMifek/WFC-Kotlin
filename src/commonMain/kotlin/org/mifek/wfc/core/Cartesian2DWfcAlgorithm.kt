@@ -196,6 +196,10 @@ open class Cartesian2DWfcAlgorithm(
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
     open fun constructOutput(): IntArray2D {
+        if(!this.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return IntArray2D(topology2D.width, topology2D.height) { waveIndex ->
             val a = 0
             val b = 1

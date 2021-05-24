@@ -1,12 +1,19 @@
 package org.mifek.wfc
 
+import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.IntArray3D
+import org.mifek.wfc.models.OverlappingCartesian2DModel
 import org.mifek.wfc.models.OverlappingCartesian3DModel
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
+import org.mifek.wfc.utils.formatPatterns
+import org.mifek.wfc.utils.toCoordinates
+import org.mifek.wfc.utils.toIndex
+import kotlin.math.min
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.asserter
 
 class OverlappingCartesian3DModelTest {
     fun printGrid(grid: IntArray3D, mapping: ((Int) -> Char)? = null) {
@@ -121,6 +128,63 @@ class OverlappingCartesian3DModelTest {
 
     @ExperimentalUnsignedTypes
     @Test
+    fun shiftWaves() {
+        val d = intArrayOf(
+            1, 0, 1,
+            0, 1, 0,
+            1, 0, 1,
+
+            0, 1, 0,
+            1, 0, 1,
+            0, 1, 0,
+
+            1, 0, 1,
+            0, 1, 0,
+            1, 0, 1,
+        )
+        val source = IntArray3D(3, 3, 3) {
+            d[it]
+        }
+        printGrid(source) {
+            when (it) {
+                1 -> '⬛'
+                0 -> '⬜'
+                else -> "$it"[0]
+            }
+        }
+
+        val model = createModel(
+            source, 16, 16, 16, 2
+        )
+
+        for (z in 0 until model.topology.depth) {
+            for (y in 0 until model.topology.height) {
+                for (x in 0 until model.topology.width) {
+                    assertEquals(
+                        intArrayOf(x, y, z).toIndex(model.outputSizes),
+                        model.shiftAlgorithmWave(model.topology.serializeCoordinates(x, y, z))
+                    )
+                }
+            }
+        }
+
+        for (z in 0 until model.outputDepth) {
+            for (y in 0 until model.outputHeight) {
+                for (x in 0 until model.outputWidth) {
+                    assertEquals(
+                        model.topology.serializeCoordinates(
+                            min(model.outputWidth - model.overlap - 1, x),
+                            min(model.outputHeight - model.overlap - 1, y),
+                            min(model.outputDepth - model.overlap - 1, z)
+                        ), model.shiftOutputWave(intArrayOf(x, y, z).toIndex(model.outputSizes)).first
+                    )
+                }
+            }
+        }
+    }
+
+    @ExperimentalUnsignedTypes
+    @Test
     fun simpleCheckers() {
         val d = intArrayOf(1, 0, 0, 1, 0, 1, 1, 0)
         val source = IntArray3D(2, 2, 2) {
@@ -149,6 +213,47 @@ class OverlappingCartesian3DModelTest {
                 assertEquals(2, result[null, i, j].sum())
             }
         }
+    }
+
+    @ExperimentalUnsignedTypes
+    @Test
+    fun simpleCheckersOnCollapse() {
+        val d = intArrayOf(1, 0, 0, 1, 0, 1, 1, 0)
+        val source = IntArray3D(2, 2, 2) {
+            d[it]
+        }
+        val model = OverlappingCartesian3DModel(source, 1, 4, 4, 4, Cartesian3DModelOptions(periodicInput = true))
+        val algorithm = model.build()
+
+        println(formatPatterns(model.patterns.toList().toTypedArray()))
+
+        algorithm.afterCollapse += { event ->
+            println("Collapsed ${event.second} to ${event.third}")
+            println("Shifted ${model.shiftAlgorithmWave(event.second)}")
+            val coordinates = model.shiftAlgorithmWave(event.second).toCoordinates(model.outputSizes)
+            println(
+                "Coordinates: ${
+                    model.shiftAlgorithmWave(event.second).toCoordinates(model.outputSizes).joinToString(", ", "[", "]")
+                }"
+            )
+            println(
+                "Pattern: ${
+                    IntArray3D(
+                        model.overlap + 1,
+                        model.overlap + 1,
+                        model.overlap + 1
+                    ) { model.patterns[event.third][it] }.toIntArray().joinToString(", ", "[", "]")
+                }"
+            )
+            for (i in 0 until 3) {
+                assertTrue(coordinates[i] >= 0)
+                assertTrue(coordinates[i] + model.overlap < model.outputSizes[i])
+            }
+        }
+
+        val seed = 377961908
+        val result = algorithm.run(seed)
+        assertTrue(result, "Expected algorithm to be successful. Seed $seed")
     }
 
     @ExperimentalUnsignedTypes

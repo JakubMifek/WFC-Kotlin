@@ -19,6 +19,10 @@ open class OverlappingCartesian3DModel(
     val options: Cartesian3DModelOptions = Cartesian3DModelOptions(),
 ) : OverlappingModel {
     protected val patternSideSize = overlap + 1
+    val outputSizes = intArrayOf(outputWidth, outputHeight, outputDepth)
+    val faceSize = outputWidth * outputHeight
+    val algorithmFaceSize = (outputWidth - if (options.periodicOutput) 0 else overlap) *
+            (outputHeight - if (options.periodicOutput) 0 else overlap)
 
     protected val patternCounts = loadPatterns(
         input,
@@ -26,7 +30,6 @@ open class OverlappingCartesian3DModel(
     )
 
     protected val weightSum = patternCounts.map { it.second.item }.sum()
-
     protected val patternsArray = patternCounts.map { it.first }.toTypedArray()
     override val patterns = Patterns(patternsArray.map { it.asIntArray() }.toTypedArray())
     override val pixels = Pixels(
@@ -63,6 +66,7 @@ open class OverlappingCartesian3DModel(
         outputDepth - if (options.periodicOutput) 0 else overlap,
         options.periodicOutput
     )
+
     protected val bans = mutableMapOf<Int, MutableList<Int>>()
 
     override fun build(): Cartesian3DWfcAlgorithm {
@@ -312,8 +316,8 @@ open class OverlappingCartesian3DModel(
                         foundPatterns.addAll(flips(pattern, options))
                     }
 
-                    if (options.allowRotations) {
-                        val rotations = rotations(pattern)
+                    if (options.allowXRotations || options.allowYRotations || options.allowZRotations) {
+                        val rotations = rotations(pattern, options)
                         foundPatterns.addAll(rotations)
 
                         if (options.allowXFlips || options.allowYFlips || options.allowZFlips) {
@@ -377,7 +381,7 @@ open class OverlappingCartesian3DModel(
         }
     }
 
-    protected fun rotations(pattern: IntArray3D): Sequence<IntArray3D> {
+    protected fun xRotations(pattern: IntArray3D): Sequence<IntArray3D> {
         return sequence {
             val pattern90X = pattern.xRotated()
             yield(pattern90X)
@@ -385,18 +389,79 @@ open class OverlappingCartesian3DModel(
             yield(pattern180X)
             val pattern270X = pattern180X.xRotated()
             yield(pattern270X)
+        }
+    }
+
+    protected fun yRotations(pattern: IntArray3D): Sequence<IntArray3D> {
+        return sequence {
             val pattern90Y = pattern.yRotated()
             yield(pattern90Y)
             val pattern180Y = pattern90Y.yRotated()
             yield(pattern180Y)
             val pattern270Y = pattern180Y.yRotated()
             yield(pattern270Y)
+        }
+    }
+
+    protected fun zRotations(pattern: IntArray3D): Sequence<IntArray3D> {
+        return sequence {
             val pattern90Z = pattern.zRotated()
             yield(pattern90Z)
             val pattern180Z = pattern90Z.zRotated()
             yield(pattern180Z)
             val pattern270Z = pattern180Z.zRotated()
             yield(pattern270Z)
+        }
+    }
+
+    protected fun rotations(pattern: IntArray3D, options: Cartesian3DModelOptions): Sequence<IntArray3D> {
+        return sequence {
+            if (options.allowXRotations) {
+                val xRotations = xRotations(pattern)
+                for (rotation in xRotations) {
+                    yield(rotation)
+                }
+
+                if (options.allowYRotations) {
+                    val yRotations = xRotations.map { yRotations(it) }.flatten()
+                    for (rotation in yRotations) {
+                        yield(rotation)
+                    }
+
+                    if (options.allowZRotations) {
+                        val zRotations = yRotations.map { zRotations(it) }.flatten()
+                        for (rotation in zRotations) {
+                            yield(rotation)
+                        }
+                    }
+                }
+
+                if (options.allowZRotations) {
+                    val zRotations = xRotations.map { zRotations(it) }.flatten()
+                    for (rotation in zRotations) {
+                        yield(rotation)
+                    }
+                }
+            }
+            if (options.allowYRotations) {
+                val yRotations = yRotations(pattern)
+                for (rotation in yRotations) {
+                    yield(rotation)
+                }
+
+                if (options.allowZRotations) {
+                    val zRotations = yRotations.map { zRotations(it) }.flatten()
+                    for (rotation in zRotations) {
+                        yield(rotation)
+                    }
+                }
+            }
+            if (options.allowZRotations) {
+                val zRotations = zRotations(pattern)
+                for (rotation in zRotations) {
+                    yield(rotation)
+                }
+            }
         }
     }
 
@@ -413,42 +478,64 @@ open class OverlappingCartesian3DModel(
         return false
     }
 
+    /**
+     * Shifts wave index from algorithm coordinates to output coordinates.
+     */
+    fun shiftAlgorithmWave(wave: Int): Int {
+        if (options.periodicOutput) return wave
+        return wave +
+                (((wave % algorithmFaceSize) / (outputWidth - overlap))) * overlap +
+                (wave / algorithmFaceSize) * (outputHeight - overlap + outputWidth) * overlap
+    }
+
+    /**
+     * Shifts wave index from output coordinates to algorithm coordinates and an optional shift which represents index in the pattern (for boundary pixels).
+     */
+    fun shiftOutputWave(wave: Int): Pair<Int, Int> {
+        var index = wave
+        var shiftX = 0
+        var shiftY = 0
+        var shiftZ = 0
+
+        if (!options.periodicOutput) {
+            if (onBoundary(wave)) {
+                val coordinates = wave.toCoordinates(outputSizes)
+
+                if (coordinates[0] >= outputWidth - overlap) {
+                    shiftX = coordinates[0] - outputWidth + overlap + 1
+                    index -= shiftX
+                }
+                if (coordinates[1] >= outputHeight - overlap) {
+                    shiftY = coordinates[1] - outputHeight + overlap + 1
+                    index -= shiftY * outputWidth
+                }
+                if (coordinates[2] >= outputDepth - overlap) {
+                    shiftZ = coordinates[2] - outputDepth + overlap + 1
+                    index -= shiftZ * faceSize
+                }
+            }
+
+            index -= (((index % faceSize) / outputWidth)) * overlap +
+                    (index / faceSize) * (outputHeight - overlap + outputWidth) * overlap
+        }
+
+        val shift = (shiftZ * patternSideSize + shiftY) * patternSideSize + shiftX
+        return Pair(index, shift)
+    }
+
     @ExperimentalUnsignedTypes
     open fun constructNullableOutput(algorithm: Cartesian3DWfcAlgorithm): Array<Array<Array<Int?>>> {
+        if (!algorithm.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return Array(outputWidth) { x ->
             Array(outputHeight) { y ->
                 Array(outputDepth) { z ->
-                    val waveIndex = intArrayOf(x, y, z).toIndex(intArrayOf(outputWidth, outputHeight, outputDepth))
-                    var index = waveIndex
-                    var shiftX = 0
-                    var shiftY = 0
-                    var shiftZ = 0
-                    val sizes = intArrayOf(outputWidth, outputHeight, outputDepth)
-                    val faceSize = outputWidth * outputHeight
-
-                    if (!options.periodicOutput) {
-                        if (onBoundary(waveIndex)) {
-                            val coordinates = waveIndex.toCoordinates(sizes)
-
-                            if (coordinates[0] >= outputWidth - overlap) {
-                                shiftX = coordinates[0] - outputWidth + overlap + 1
-                                index -= shiftX
-                            }
-                            if (coordinates[1] >= outputHeight - overlap) {
-                                shiftY = coordinates[1] - outputHeight + overlap + 1
-                                index -= shiftY * outputWidth
-                            }
-                            if (coordinates[2] >= outputDepth - overlap) {
-                                shiftZ = coordinates[2] - outputDepth + overlap + 1
-                                index -= shiftZ * faceSize
-                            }
-                        }
-
-                        index -= (((index % faceSize) / outputWidth)) * overlap +
-                                (index / faceSize) * (outputHeight - overlap + outputWidth) * overlap
-                    }
-
-                    val shift = (shiftZ * patternSideSize + shiftY) * patternSideSize + shiftX
+                    val waveIndex = intArrayOf(x, y, z).toIndex(outputSizes)
+                    val pair = shiftOutputWave(waveIndex)
+                    val index = pair.first
+                    val shift = pair.second
 
                     val a = 0
                     val b = 1
@@ -474,37 +561,14 @@ open class OverlappingCartesian3DModel(
      */
     @ExperimentalUnsignedTypes
     open fun constructAveragedOutput(algorithm: Cartesian3DWfcAlgorithm): IntArray3D {
+        if (!algorithm.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return IntArray3D(outputWidth, outputHeight, outputDepth) { waveIndex ->
-            var index = waveIndex
-            var shiftX = 0
-            var shiftY = 0
-            var shiftZ = 0
-            val sizes = intArrayOf(outputWidth, outputHeight, outputDepth)
-            val faceSize = outputWidth * outputHeight
-
-            if (!options.periodicOutput) {
-                if (onBoundary(waveIndex)) {
-                    val coordinates = waveIndex.toCoordinates(sizes)
-
-                    if (coordinates[0] >= outputWidth - overlap) {
-                        shiftX = coordinates[0] - outputWidth + overlap + 1
-                        index -= shiftX
-                    }
-                    if (coordinates[1] >= outputHeight - overlap) {
-                        shiftY = coordinates[1] - outputHeight + overlap + 1
-                        index -= shiftY * outputWidth
-                    }
-                    if (coordinates[2] >= outputDepth - overlap) {
-                        shiftZ = coordinates[2] - outputDepth + overlap + 1
-                        index -= shiftZ * faceSize
-                    }
-                }
-
-                index -= (((index % faceSize) / outputWidth)) * overlap +
-                        (index / faceSize) * (outputHeight - overlap + outputWidth) * overlap
-            }
-
-            val shift = (shiftZ * patternSideSize + shiftY) * patternSideSize + shiftX
+            val pair = shiftOutputWave(waveIndex)
+            val index = pair.first
+            val shift = pair.second
 
             val a = 0
             val b = 1

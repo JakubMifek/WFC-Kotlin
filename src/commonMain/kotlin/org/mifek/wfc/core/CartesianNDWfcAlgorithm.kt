@@ -22,6 +22,10 @@ open class CartesianNDWfcAlgorithm(
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
     open fun constructOutput(): IntArrayND {
+        if(!this.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
         return IntArrayND(topologyND.sizes) { waveIndex ->
             val a = 0
             val b = 1

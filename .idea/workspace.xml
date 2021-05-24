@@ -6,9 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="7d192b88-3ee4-4868-b224-a8d8137d9640" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian3DWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian3DWfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/CartesianNDWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/CartesianNDWfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian2DModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian2DModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingImageModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingImageModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian2DModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian2DModelOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian3DModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian3DModelOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/ModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/ModelOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian2DModelTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian2DModelTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian3DModelTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonTest/kotlin/org/mifek/wfc/OverlappingCartesian3DModelTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/utils/BufferedImageExtensions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/utils/BufferedImageExtensions.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,12 +96,12 @@
     <property name="settings.editor.selected.configurable" value="preferences.startup.tasks" />
   </component>
   <component name="RunManager" selected="Gradle.WFC-Kotlin [publishToMavenLocal]">
-    <configuration name="ImageTest.lake" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OverlappingCartesian3DModelTest.shiftWaves" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;org.mifek.wfc.ImageTest.lake&quot;" />
+        <option name="scriptParameters" value="--tests &quot;org.mifek.wfc.OverlappingCartesian3DModelTest.shiftWaves&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -106,34 +118,12 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OverlappingCartesian2DModelTest.setPixel" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="OverlappingCartesian3DModelTest.simpleCheckersOnCollapse" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;org.mifek.wfc.OverlappingCartesian2DModelTest.setPixel&quot;" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="cleanJvmTest" />
-            <option value="jvmTest" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="OverlappingCartesian3DModelTest.setPixel" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;org.mifek.wfc.OverlappingCartesian3DModelTest.setPixel&quot;" />
+        <option name="scriptParameters" value="--tests &quot;org.mifek.wfc.OverlappingCartesian3DModelTest.simpleCheckersOnCollapse&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -171,6 +161,27 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="WFC-Kotlin [jvmTest]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="jvmTest" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="WFC-Kotlin [publishToMavenLocal]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -195,10 +206,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.WFC-Kotlin [publishToMavenLocal]" />
+        <item itemvalue="Gradle.WFC-Kotlin [jvmTest]" />
+        <item itemvalue="Gradle.OverlappingCartesian3DModelTest.shiftWaves" />
         <item itemvalue="Gradle.WFC-Kotlin [allTests]" />
-        <item itemvalue="Gradle.OverlappingCartesian3DModelTest.setPixel" />
-        <item itemvalue="Gradle.OverlappingCartesian2DModelTest.setPixel" />
-        <item itemvalue="Gradle.ImageTest.lake" />
+        <item itemvalue="Gradle.OverlappingCartesian3DModelTest.simpleCheckersOnCollapse" />
       </list>
     </recent_temporary>
   </component>

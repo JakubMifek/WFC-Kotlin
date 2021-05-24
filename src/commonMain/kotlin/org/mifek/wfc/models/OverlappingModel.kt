@@ -1,5 +1,8 @@
 package org.mifek.wfc.models
 
+import org.mifek.wfc.core.WfcAlgorithm
+import org.mifek.wfc.utils.EventHandler
+
 interface OverlappingModel : Model {
     /**
      * Array where for each index representing a pattern is saved serialized pixel value (Int)

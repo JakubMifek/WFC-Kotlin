@@ -1,7 +1,9 @@
 package org.mifek.wfc.models.options
 
 data class Cartesian3DModelOptions(
-    override val allowRotations: Boolean = false,
+    val allowXRotations: Boolean = false,
+    val allowYRotations: Boolean = false,
+    val allowZRotations: Boolean = false,
     val allowXFlips: Boolean = false,
     val allowYFlips: Boolean = false,
     val allowZFlips: Boolean = false,
