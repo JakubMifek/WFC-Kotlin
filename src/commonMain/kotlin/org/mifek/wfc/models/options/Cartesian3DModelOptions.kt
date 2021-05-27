@@ -9,4 +9,5 @@ data class Cartesian3DModelOptions(
     val allowZFlips: Boolean = false,
     override val periodicOutput: Boolean = false,
     override val periodicInput: Boolean = false,
-): ModelOptions
+    override val weightPower: Double = 1.0,
+) : ModelOptions

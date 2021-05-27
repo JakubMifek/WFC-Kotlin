@@ -1,8 +1,12 @@
 package org.mifek.wfc
 
 import org.mifek.wfc.adapters.ImageAdapter
+import org.mifek.wfc.adapters.options.AnimationOptions
+import org.mifek.wfc.adapters.options.EventType
 import org.mifek.wfc.adapters.options.ImageAdapterOptions
+import org.mifek.wfc.adapters.options.ImageOptions
 import org.mifek.wfc.models.options.Cartesian2DModelOptions
+import kotlin.math.pow
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -257,12 +261,12 @@ class ImageTest {
 //                        "outputs/more_flowers",
 //                        "1_animation",
 //                        8,
-//                        arrayOf(EventType.OBSERVATION, EventType.PROPAGATION_STEP),
-//                        16,
-//                        16,
+//                        arrayOf(EventType.COLLAPSE),
+//                        1,
+//                        64,
 //                        true
 //                    ),
-                    seed = 123125124
+                    seed = 12345678
                 ),
             )
         )
@@ -679,6 +683,68 @@ class ImageTest {
 //                        true
 //                    ),
                     seed = 123151
+                ),
+            )
+        )
+    }
+
+    @ExperimentalUnsignedTypes
+    @Test
+    fun floorPlan() {
+        val w = 32
+        val h = 32
+        assertTrue(
+            ImageAdapter.imitateImageUsingOverlappingModel(
+                "sources/floor_plan.png", w, h,
+                ImageAdapterOptions(
+                    overlap = 2,
+                    repeats = 5,
+                    modelOptions = Cartesian2DModelOptions(
+                        periodicOutput = false,
+                        periodicInput = false,
+                        allowHorizontalFlips = true,
+                        allowVerticalFlips = true,
+                        allowRotations = true,
+                        roofed = true,
+                        grounded = true,
+                        leftSided = true,
+                        rightSided = true,
+                        weightPower = 1.0 / 3.0
+                    ),
+                    outputImageOptions = ImageOptions(
+                        "outputs/floor_plan",
+                        "0_result",
+                        8
+                    ),
+//                    outputAnimationOptions = AnimationOptions(
+//                        "outputs/floor_plan",
+//                        "1_animation",
+//                        8,
+//                        arrayOf(EventType.COLLAPSE),
+//                        1,
+//                        64,
+//                        true
+//                    ),
+//                    setPixels = Iterable {
+//                        iterator {
+//                            val wallPixel = org.mifek.wfc.utils.rgbToInt(0u, 0u, 0u)
+//                            yield(Pair(Pair(2, 2), wallPixel))
+//                            yield(Pair(Pair(w - 3, 2), wallPixel))
+//                            yield(Pair(Pair(2, h - 3), wallPixel))
+//                            yield(Pair(Pair(w - 3, h - 3), wallPixel))
+//                        }
+//                    },
+                    banPixels = Iterable {
+                        iterator {
+                            val exteriorPixel = org.mifek.wfc.utils.rgbToInt(255u, 255u, 255u)
+                            for (x in w / 4 until 3 * w / 4) {
+                                for (y in h / 4 until 3 * h / 4) {
+                                    yield(Pair(Pair(x, y), exteriorPixel))
+                                }
+                            }
+                        }
+                    },
+                    seed = 12345,
                 ),
             )
         )

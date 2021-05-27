@@ -5,4 +5,5 @@ enum class EventType {
     PROPAGATION_STEP,
     OBSERVATION,
     STEP,
+    COLLAPSE,
 }

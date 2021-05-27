@@ -350,8 +350,28 @@ class ImageAdapter {
                                     )
                                 }
                             }
+                        EventType.COLLAPSE ->
+                            algorithm.afterCollapse += {
+                                if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
+                                    writer.writeToSequence(
+                                        model.constructOutput(algorithm)
+                                            .upScaled(options.outputAnimationOptions.outputScale)
+                                            .toBufferedImage()
+                                    )
+                                }
+                            }
                     }
                 }
+            }
+
+            if (options.setPixels != null) {
+                for (pixel in options.setPixels)
+                    model.setPixel(pixel.first.first, pixel.first.second, pixel.second)
+            }
+
+            if (options.banPixels != null) {
+                for (pixel in options.banPixels)
+                    model.banPixel(pixel.first.first, pixel.first.second, pixel.second)
             }
 
             val random = Random(options.seed)

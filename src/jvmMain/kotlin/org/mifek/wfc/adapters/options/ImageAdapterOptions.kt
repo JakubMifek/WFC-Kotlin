@@ -12,4 +12,6 @@ data class ImageAdapterOptions(
     val overlap: Int = 1,
     val repeats: Int = 1,
     val seed: Int = Random.nextInt(),
+    val setPixels: Iterable<Pair<Pair<Int, Int>, Int>>? = null,
+    val banPixels: Iterable<Pair<Pair<Int, Int>, Int>>? = null
 )
