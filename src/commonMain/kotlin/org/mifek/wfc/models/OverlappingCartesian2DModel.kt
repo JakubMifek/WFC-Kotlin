@@ -28,7 +28,7 @@ open class OverlappingCartesian2DModel(
 
     val overlap = storage.overlap
     val patternSideSize = storage.patternSideSize
-    
+
     private val options = storage.options
     private val weights = storage.weights
     private val propagator = storage.propagator
@@ -153,7 +153,9 @@ open class OverlappingCartesian2DModel(
         )
         algorithm.beforeStart += {
             for (entry in bans) {
-                algorithm.banWavePatterns(entry.key, entry.value)
+                if (!algorithm.banWavePatterns(entry.key, entry.value)) {
+                    break
+                }
             }
         }
         return algorithm
@@ -356,7 +358,40 @@ open class OverlappingCartesian2DModel(
      * Uses Int.MIN_VALUE for pixels without any feasible pattern
      */
     @ExperimentalUnsignedTypes
-    open fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
+    open fun constructNullableOutput(algorithm: Cartesian2DWfcAlgorithm): Array<Array<Int?>> {
+        if (!algorithm.hasRun) {
+            println("WARNING: Algorithm hasn't run yet.")
+        }
+
+        return Array(outputWidth) { x ->
+            Array(outputHeight) { y ->
+                val waveIndex = intArrayOf(x, y).toIndex(outputSizes)
+                val pair = shiftOutputWave(waveIndex)
+                val index = pair.first
+                val shift = pair.second
+
+                val a = 0
+                val b = 1
+                val sum = algorithm.waves[index].sumOf {
+                    when (it) {
+                        false -> a
+                        true -> b
+                    }
+                }
+                when (sum) {
+                    0 -> Int.MIN_VALUE
+                    1 -> patternsArray[patterns.indices.filter { algorithm.waves[index, it] }[0]][shift]
+                    else -> null
+                }
+            }
+        }
+    }
+
+    /**
+     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     */
+    @ExperimentalUnsignedTypes
+    open fun constructAveragedOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
         if (!algorithm.hasRun) {
             println("WARNING: Algorithm hasn't run yet.")
         }

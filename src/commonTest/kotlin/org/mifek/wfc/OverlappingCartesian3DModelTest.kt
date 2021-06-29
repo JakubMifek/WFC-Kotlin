@@ -2,10 +2,12 @@ package org.mifek.wfc
 
 import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.IntArray3D
+import org.mifek.wfc.datatypes.Direction3D
 import org.mifek.wfc.models.OverlappingCartesian2DModel
 import org.mifek.wfc.models.OverlappingCartesian3DModel
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
 import org.mifek.wfc.utils.formatPatterns
+import org.mifek.wfc.utils.formatPropagator
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 import kotlin.math.min
@@ -16,6 +18,18 @@ import kotlin.test.assertTrue
 import kotlin.test.asserter
 
 class OverlappingCartesian3DModelTest {
+    fun printGrid(grid: Array<Array<Array<Int?>>>, mapping: ((Int) -> Char)? = null) {
+        for (z in grid[0][0].indices) {
+            for (y in grid[0].indices) {
+                for (x in grid.indices) {
+                    print(if (mapping != null && grid[x][y][z] != null) mapping(grid[x][y][z]!!) else grid[x][y][z])
+                }
+                println()
+            }
+            println("\n")
+        }
+    }
+
     fun printGrid(grid: IntArray3D, mapping: ((Int) -> Char)? = null) {
         for (d in 0 until grid.depth) {
             for (i in 0 until grid.height) {
@@ -438,5 +452,64 @@ class OverlappingCartesian3DModelTest {
         val result2 = model.constructAveragedOutput(algorithm)
         assertEquals(2, result2[4, 4, 4])
         assertEquals(2, result2[2, 2, 2])
+    }
+
+    @ExperimentalUnsignedTypes
+    @Test
+    fun setPixelPlane() {
+        val data = intArrayOf(
+            4, 4, 4, 4,
+            4, 0, 0, 0,
+            4, 0, 0, 0,
+            4, 0, 0, 0,
+
+            4, 4, 4, 4,
+            4, 0, 0, 0,
+            4, 0, 16, 0,
+            4, 0, 0, 0,
+
+            4, 4, 4, 4,
+            4, 0, 0, 0,
+            4, 0, 0, 0,
+            4, 0, 0, 0,
+        )
+        val seed = Random.nextInt()
+        val source = IntArray3D(4, 4, 3) { data[it] }
+        val width = 3
+        val height = 3
+        val depth = 3
+        val overlap = 1
+
+        val model =
+            OverlappingCartesian3DModel(
+                source,
+                overlap,
+                width,
+                height,
+                depth,
+                Cartesian3DModelOptions(
+                    setPlanes = setOf(
+                        Direction3D.UP,
+//                        Direction3D.FORWARD,
+//                        Direction3D.RIGHT,
+//                        Direction3D.DOWN,
+                        Direction3D.BACKWARD,
+                        Direction3D.LEFT
+                    )
+                ),
+            )
+
+        val algorithm = model.build()
+
+        val result = algorithm.run(seed)
+        assertTrue(result, "Expected algorithm to be successful. Seed $seed")
+
+        val result2 = model.constructAveragedOutput(algorithm)
+        result2[0 until width, 0, 0 until depth].flatten().forEach {
+            assertEquals(4, it)
+        }
+        result2[0, 0 until height, 0 until depth].flatten().forEach {
+            assertEquals(4, it)
+        }
     }
 }

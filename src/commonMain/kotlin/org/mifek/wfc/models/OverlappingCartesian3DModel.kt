@@ -2,6 +2,7 @@ package org.mifek.wfc.models
 
 import org.mifek.wfc.core.Cartesian3DWfcAlgorithm
 import org.mifek.wfc.datastructures.IntArray3D
+import org.mifek.wfc.datatypes.Direction3D
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
 import org.mifek.wfc.models.storage.PatternWeights3D
 import org.mifek.wfc.topologies.Cartesian3DTopology
@@ -30,6 +31,7 @@ open class OverlappingCartesian3DModel(
     private val weights = storage.weights
     private val propagator = storage.propagator
     private val patternsArray = storage.patternsArray
+    private val input = storage.input
 
     override val patterns = storage.patterns
     override val pixels = storage.pixels
@@ -46,7 +48,144 @@ open class OverlappingCartesian3DModel(
         options.periodicOutput
     )
 
-    protected val bans = mutableMapOf<Int, MutableList<Int>>()
+    protected val bans = mutableMapOf<Int, MutableSet<Int>>()
+
+    init {
+        if (Direction3D.UP in options.setPlanes) {
+            this.setPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputDepth).map { z ->
+                        Triple(x, 0, z)
+                    }
+                }.flatten(),
+                input[(0 until input.width), 0, (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.FORWARD in options.setPlanes) {
+            this.setPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputHeight).map { y ->
+                        Triple(x, y, outputDepth - 1)
+                    }
+                }.flatten(),
+                input[(0 until input.width), (0 until input.height), input.depth - 1].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.RIGHT in options.setPlanes) {
+            this.setPixels(
+                (0 until outputHeight).map { y ->
+                    (0 until outputDepth).map { z ->
+                        Triple(outputWidth - 1, y, z)
+                    }
+                }.flatten(),
+                input[input.width - 1, (0 until input.height), (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.DOWN in options.setPlanes) {
+            this.setPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputDepth).map { z ->
+                        Triple(x, outputHeight - 1, z)
+                    }
+                }.flatten(),
+                input[(0 until input.width), input.height - 1, (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.BACKWARD in options.setPlanes) {
+            this.setPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputHeight).map { y ->
+                        Triple(x, y, 0)
+                    }
+                }.flatten(),
+                input[(0 until input.width), (0 until input.height), 0].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.LEFT in options.setPlanes) {
+            this.setPixels(
+                (0 until outputHeight).map { y ->
+                    (0 until outputDepth).map { z ->
+                        Triple(0, y, z)
+                    }
+                }.flatten(),
+                input[0, (0 until input.height), (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+
+
+        if (Direction3D.UP in options.banPlanesElsewhere) {
+            this.banPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputHeight - 1).map { y ->
+                        (0 until outputDepth).map { z ->
+                            Triple(x, y, z)
+                        }
+                    }
+                }.flatten().flatten(),
+                input[(0 until input.width), input.height - 1, (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.FORWARD in options.banPlanesElsewhere) {
+            this.banPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputHeight).map { y ->
+                        (0 until outputDepth - 1).map { z ->
+                            Triple(x, y, z)
+                        }
+                    }
+                }.flatten().flatten(),
+                input[(0 until input.width), (0 until input.height), input.depth - 1].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.RIGHT in options.banPlanesElsewhere) {
+            this.banPixels(
+                (0 until outputWidth - 1).map { x ->
+                    (0 until outputHeight).map { y ->
+                        (0 until outputDepth).map { z ->
+                            Triple(x, y, z)
+                        }
+                    }
+                }.flatten().flatten(),
+                input[input.width - 1, (0 until input.height), (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.DOWN in options.banPlanesElsewhere) {
+            this.banPixels(
+                (0 until outputWidth).map { x ->
+                    (1 until outputHeight).map { y ->
+                        (0 until outputDepth).map { z ->
+                            Triple(x, y, z)
+                        }
+                    }
+                }.flatten().flatten(),
+                input[(0 until input.width), 0, (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.BACKWARD in options.banPlanesElsewhere) {
+            this.banPixels(
+                (0 until outputWidth).map { x ->
+                    (0 until outputHeight).map { y ->
+                        (1 until outputDepth).map { z ->
+                            Triple(x, y, z)
+                        }
+                    }
+                }.flatten().flatten(),
+                input[(0 until input.width), (0 until input.height), 0].flatten().distinct().asIterable()
+            )
+        }
+        if (Direction3D.LEFT in options.banPlanesElsewhere) {
+            this.banPixels(
+                (1 until outputWidth).map { x ->
+                    (0 until outputHeight).map { y ->
+                        (0 until outputDepth).map { z ->
+                            Triple(x, y, z)
+                        }
+                    }
+                }.flatten().flatten(),
+                input[0, (0 until input.height), (0 until input.depth)].flatten().distinct().asIterable()
+            )
+        }
+    }
 
     override fun build(): Cartesian3DWfcAlgorithm {
         val algorithm = Cartesian3DWfcAlgorithm(
@@ -54,7 +193,10 @@ open class OverlappingCartesian3DModel(
         )
         algorithm.beforeStart += {
             for (entry in bans) {
-                algorithm.banWavePatterns(entry.key, entry.value)
+                if (!algorithm.banWavePatterns(entry.key, entry.value)) {
+                    println("Setting up constraints failed.")
+                    break
+                }
             }
         }
         return algorithm
@@ -70,8 +212,9 @@ open class OverlappingCartesian3DModel(
         }
 
         val coordinates = topology.serializeCoordinates(x, y, z)
+
         if (!bans.containsKey(coordinates)) {
-            bans[coordinates] = patterns.toMutableList()
+            bans[coordinates] = patterns.toMutableSet()
         } else {
             bans[coordinates]!!.addAll(patterns)
         }
@@ -188,13 +331,41 @@ open class OverlappingCartesian3DModel(
     }
 
     fun setPixels(x: Int, y: Int, z: Int, pixels: Iterable<Int>): OverlappingCartesian3DModel {
-        for (
-        pixel in this.pixels
-            .filter { entry -> entry.key in pixels }
-            .fold(emptySequence<Int>()) { acc, entry -> acc.plus(entry.value) }.asIterable()
-        ) {
-            setPixel(x, y, z, pixel)
+        if (options.periodicOutput) {
+            setPatterns(
+                x,
+                y,
+                z,
+                this.pixels.keys.asSequence()
+                    .filter { it in pixels }
+                    .map { this.pixels[it].toList() }
+                    .flatten().distinct().asIterable()
+            )
+            return this
         }
+
+        var X = x
+        var xShift = 0
+        if (X >= outputWidth - overlap) {
+            X = outputWidth - overlap - 1
+            xShift = x - X
+        }
+
+        var Y = y
+        var yShift = 0
+        if (Y >= outputHeight - overlap) {
+            Y = outputHeight - overlap - 1
+            yShift = y - Y
+        }
+
+        var Z = z
+        var zShift = 0
+        if (Z >= outputDepth - overlap) {
+            Z = outputDepth - overlap - 1
+            zShift = z - Z
+        }
+
+        setPatterns(X, Y, Z, patterns.indices.filter { patternsArray[it][xShift, yShift, zShift] in pixels })
 
         return this
     }
@@ -208,13 +379,41 @@ open class OverlappingCartesian3DModel(
     }
 
     fun banPixels(x: Int, y: Int, z: Int, pixels: Iterable<Int>): OverlappingCartesian3DModel {
-        for (
-        pixel in this.pixels
-            .filter { entry -> entry.key in pixels }
-            .fold(emptySequence<Int>()) { acc, entry -> acc.plus(entry.value) }.asIterable()
-        ) {
-            banPixel(x, y, z, pixel)
+        if (options.periodicOutput) {
+            banPatterns(
+                x,
+                y,
+                z,
+                this.pixels.keys.asSequence()
+                    .filter { it in pixels }
+                    .map { this.pixels[it].toList() }
+                    .flatten().distinct().asIterable()
+            )
+            return this
         }
+
+        var X = x
+        var xShift = 0
+        if (X >= outputWidth - overlap) {
+            X = outputWidth - overlap - 1
+            xShift = x - X
+        }
+
+        var Y = y
+        var yShift = 0
+        if (Y >= outputHeight - overlap) {
+            Y = outputHeight - overlap - 1
+            yShift = y - Y
+        }
+
+        var Z = z
+        var zShift = 0
+        if (Z >= outputDepth - overlap) {
+            Z = outputDepth - overlap - 1
+            zShift = z - Z
+        }
+
+        banPatterns(X, Y, Z, patterns.indices.filter { patternsArray[it][xShift, yShift, zShift] in pixels })
 
         return this
     }

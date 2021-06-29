@@ -24,7 +24,7 @@ class OverlappingCartesian2DModelTest {
         val algorithm = model.build()
         val result = algorithm.run(seed)
         assertTrue(result, "Expected algorithm to be successful. Seed $seed")
-        return model.constructOutput(algorithm)
+        return model.constructAveragedOutput(algorithm)
     }
 
     @ExperimentalUnsignedTypes
@@ -146,6 +146,6 @@ class OverlappingCartesian2DModelTest {
         val algorithm = model.build()
         val result = algorithm.run(seed)
         assertTrue(result, "Expected algorithm to be successful. Seed $seed")
-        printGrid(model.constructOutput(algorithm))
+        printGrid(model.constructAveragedOutput(algorithm))
     }
 }

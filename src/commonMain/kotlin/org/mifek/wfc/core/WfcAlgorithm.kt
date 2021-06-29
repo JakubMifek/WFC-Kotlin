@@ -14,7 +14,9 @@ open class WfcAlgorithm(
 ) {
     protected var hasBeenRun = false
     val hasRun: Boolean
-        get() { return hasBeenRun }
+        get() {
+            return hasBeenRun
+        }
 
     protected val patternCount = weights.size
 
@@ -154,27 +156,32 @@ open class WfcAlgorithm(
      * Initializes the algorithm.
      * Bans all patterns in places where they cannot belong (e.g. a pattern without any left neighbour in the centre of the result)
      */
-    open fun warmup() {
+    open fun warmup(): Boolean {
         beforeWarmup(this)
 
         hasBeenRun = true
 
-        for(w in wavesArray.indices) {
+        for (w in wavesArray.indices) {
             val neighbourDirections = topology.neighbourIterator(w).map { it.first }
 
-            for(p in 0 until patternCount) {
-                for(d in neighbourDirections) {
-                    if(propagator[d][p].isEmpty()) {
-                        ban(w, p)
+            for (p in 0 until patternCount) {
+                for (d in neighbourDirections) {
+                    if (propagator[d][p].isEmpty()) {
+                        if (ban(w, p) == null) {
+                            afterFail(this)
+                            return false
+                        }
                         break
                     }
                 }
             }
         }
 
-        propagate()
+        val result = propagate()
 
         afterWarmup(this)
+
+        return result
     }
 
     /**
@@ -190,7 +197,7 @@ open class WfcAlgorithm(
         val compatiblePatterns = compatible[wave][pattern]
         for (neighbour in 0 until topology.maxDegree) compatiblePatterns[neighbour] = 0
 
-        if(stacksize == stack.size) return null
+        if (stacksize == stack.size) return null
         stack[stacksize++] = Pair(wave, pattern)
 
         afterBan(Triple(this, wave, pattern))
@@ -345,7 +352,10 @@ open class WfcAlgorithm(
 
         beforeStart(this)
 
-        warmup()
+        if (!warmup()) {
+            afterFinished(this)
+            return false
+        }
 
         // TODO: Allow backtracking if bigger than 0
         if (limit != 0) {

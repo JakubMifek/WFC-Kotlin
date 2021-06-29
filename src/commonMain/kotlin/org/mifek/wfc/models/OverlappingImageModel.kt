@@ -20,7 +20,7 @@ open class OverlappingImageModel(
      * Uses Int.MIN_VALUE for pixels without any feasible pattern
      */
     @ExperimentalUnsignedTypes
-    override fun constructOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
+    override fun constructAveragedOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {
         if (!algorithm.hasRun) {
             println("WARNING: Algorithm hasn't run yet.")
         }

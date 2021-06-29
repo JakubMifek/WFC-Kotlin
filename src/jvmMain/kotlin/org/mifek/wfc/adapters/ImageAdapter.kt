@@ -53,7 +53,7 @@ class ImageAdapter {
             scale: Int = 1,
             highlight: Int? = null
         ) {
-            val data = model.constructOutput(algorithm)
+            val data = model.constructAveragedOutput(algorithm)
             if (highlight != null) {
                 data[highlight] = Color.RED.rgb
             }
@@ -128,7 +128,7 @@ class ImageAdapter {
                             algorithm.afterStep += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.debugOptions.outputAnimation.outputScale)
                                             .toBufferedImage()
                                     )
@@ -138,7 +138,7 @@ class ImageAdapter {
                             algorithm.afterPropagationStep += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.debugOptions.outputAnimation.outputScale)
                                             .toBufferedImage()
                                     )
@@ -148,7 +148,7 @@ class ImageAdapter {
                             algorithm.afterObserve += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.debugOptions.outputAnimation.outputScale)
                                             .toBufferedImage()
                                     )
@@ -158,7 +158,7 @@ class ImageAdapter {
                             algorithm.afterBan += {
                                 if (++animationNumber % options.debugOptions.outputAnimation.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.debugOptions.outputAnimation.outputScale)
                                             .toBufferedImage()
                                     )
@@ -176,7 +176,7 @@ class ImageAdapter {
                     options.debugOptions.outputScale
                 )
                 writer?.writeToSequence(
-                    model.constructOutput(algorithm)
+                    model.constructAveragedOutput(algorithm)
                         .upScaled(
                             options.debugOptions.outputAnimation?.outputScale ?: 1
                         )
@@ -192,7 +192,7 @@ class ImageAdapter {
                     options.debugOptions.outputScale
                 )
                 writer?.writeToSequence(
-                    model.constructOutput(algorithm)
+                    model.constructAveragedOutput(algorithm)
                         .upScaled(
                             options.debugOptions.outputAnimation?.outputScale ?: 1
                         )
@@ -289,7 +289,7 @@ class ImageAdapter {
 
                 algorithm.beforeStart += {
                     writer.writeToSequence(
-                        model.constructOutput(algorithm)
+                        model.constructAveragedOutput(algorithm)
                             .upScaled(options.outputAnimationOptions.outputScale)
                             .toBufferedImage()
                     )
@@ -298,7 +298,7 @@ class ImageAdapter {
 
                 algorithm.afterFinished += {
                     writer.writeToSequence(
-                        model.constructOutput(algorithm)
+                        model.constructAveragedOutput(algorithm)
                             .upScaled(options.outputAnimationOptions.outputScale)
                             .toBufferedImage()
                     )
@@ -314,7 +314,7 @@ class ImageAdapter {
                             algorithm.afterStep += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.outputAnimationOptions.outputScale)
                                             .toBufferedImage()
                                     )
@@ -324,7 +324,7 @@ class ImageAdapter {
                             algorithm.afterPropagationStep += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.outputAnimationOptions.outputScale)
                                             .toBufferedImage()
                                     )
@@ -334,7 +334,7 @@ class ImageAdapter {
                             algorithm.afterObserve += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.outputAnimationOptions.outputScale)
                                             .toBufferedImage()
                                     )
@@ -344,7 +344,7 @@ class ImageAdapter {
                             algorithm.afterBan += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.outputAnimationOptions.outputScale)
                                             .toBufferedImage()
                                     )
@@ -354,7 +354,7 @@ class ImageAdapter {
                             algorithm.afterCollapse += {
                                 if (++imageNumber % options.outputAnimationOptions.useEvery == 0) {
                                     writer.writeToSequence(
-                                        model.constructOutput(algorithm)
+                                        model.constructAveragedOutput(algorithm)
                                             .upScaled(options.outputAnimationOptions.outputScale)
                                             .toBufferedImage()
                                     )

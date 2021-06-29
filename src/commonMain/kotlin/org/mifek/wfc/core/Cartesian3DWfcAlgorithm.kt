@@ -18,36 +18,44 @@ open class Cartesian3DWfcAlgorithm(
     propagator,
     LowestEntropyHeuristic(patterns.size, topology3D.totalSize, weights)
 ) {
-    fun banWavePatterns(wave: Int, patterns: Iterable<Int>) {
+    fun banWavePatterns(wave: Int, patterns: Iterable<Int>): Boolean {
         patterns.forEach {
-            this.ban(wave, it)
+            if (this.ban(wave, it) == null) {
+                return false
+            }
         }
-        this.propagate()
+        return this.propagate()
     }
 
-    fun banWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
+    fun banWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>): Boolean {
         waves.forEach { wave ->
             patterns.forEach {
-                this.ban(wave, it)
+                if (this.ban(wave, it) == null) {
+                    return false
+                }
             }
         }
-        this.propagate()
+        return this.propagate()
     }
 
-    fun setWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
+    fun setWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>): Boolean {
         waves.forEach { wave ->
             (0 until patternCount).minus(patterns).forEach {
-                this.ban(wave, it)
+                if (this.ban(wave, it) == null) {
+                    return false
+                }
             }
         }
-        this.propagate()
+        return this.propagate()
     }
 
-    fun setWavePatterns(wave: Int, patterns: Iterable<Int>) {
+    fun setWavePatterns(wave: Int, patterns: Iterable<Int>): Boolean {
         (0 until patternCount).minus(patterns).forEach {
-            this.ban(wave, it)
+            if (this.ban(wave, it) == null) {
+                return false
+            }
         }
-        this.propagate()
+        return this.propagate()
     }
 
     fun banCoordinatePatterns(x: Int, y: Int, z: Int, patterns: Iterable<Int>) {
@@ -166,7 +174,7 @@ open class Cartesian3DWfcAlgorithm(
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
     open fun constructOutput(): IntArray3D {
-        if(!this.hasRun) {
+        if (!this.hasRun) {
             println("WARNING: Algorithm hasn't run yet.")
         }
 

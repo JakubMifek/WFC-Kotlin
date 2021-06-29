@@ -18,20 +18,20 @@ open class Cartesian2DWfcAlgorithm(
     propagator,
     LowestEntropyHeuristic(patterns.size, topology2D.totalSize, weights)
 ) {
-    fun banWavePatterns(wave: Int, patterns: Iterable<Int>) {
+    fun banWavePatterns(wave: Int, patterns: Iterable<Int>): Boolean {
         patterns.forEach {
-            ban(wave, it)
+            if (ban(wave, it) == null) return false
         }
-        propagate()
+        return propagate()
     }
 
-    fun banWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
+    fun banWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>): Boolean {
         waves.forEach { wave ->
             patterns.forEach {
-                ban(wave, it)
+                if (ban(wave, it) == null) return false
             }
         }
-        propagate()
+        return propagate()
     }
 
     fun setWavePatterns(wave: Int, patterns: Iterable<Int>) {
@@ -196,7 +196,7 @@ open class Cartesian2DWfcAlgorithm(
      * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
      */
     open fun constructOutput(): IntArray2D {
-        if(!this.hasRun) {
+        if (!this.hasRun) {
             println("WARNING: Algorithm hasn't run yet.")
         }
 
@@ -215,8 +215,7 @@ open class Cartesian2DWfcAlgorithm(
                 else -> {
                     patterns.indices
                         .filter { waves[waveIndex, it] }
-                        .map { patterns.pixels[it] }
-                        .sum() / sum
+                        .sumOf { patterns.pixels[it] } / sum
                 }
             }
         }

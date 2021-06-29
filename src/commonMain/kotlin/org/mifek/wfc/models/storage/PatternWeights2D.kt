@@ -13,7 +13,7 @@ import kotlin.math.pow
 class PatternWeights2D(
     val input: IntArray2D,
     val overlap: Int,
-    val options: Cartesian2DModelOptions = Cartesian2DModelOptions(),
+    val options: Cartesian2DModelOptions = Cartesian2DModelOptions()
 ) {
     val patternSideSize = overlap + 1
 
@@ -63,9 +63,8 @@ class PatternWeights2D(
 
     /**
      * Checks whether two overlapping patterns agree
-     * @param size Size of single side of the pattern (square patterns expected)
      */
-    protected fun agrees(
+    fun agrees(
         pattern1: IntArray2D,
         pattern2: IntArray2D,
         direction: Direction2D,
