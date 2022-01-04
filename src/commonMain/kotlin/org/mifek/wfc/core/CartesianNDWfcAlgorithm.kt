@@ -6,6 +6,17 @@ import org.mifek.wfc.models.Patterns
 import org.mifek.wfc.models.Pixels
 import org.mifek.wfc.topologies.CartesianNDTopology
 
+/**
+ * Cartesian n d wfc algorithm
+ *
+ * @property topologyND
+ * @property patterns
+ * @property pixels
+ * @constructor
+ *
+ * @param weights
+ * @param propagator
+ */
 open class CartesianNDWfcAlgorithm(
     private val topologyND: CartesianNDTopology,
     weights: DoubleArray,
@@ -19,7 +30,9 @@ open class CartesianNDWfcAlgorithm(
     LowestEntropyHeuristic(patterns.size, topologyND.totalSize, weights)
 ) {
     /**
-     * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
+     * Construct output
+     *
+     * @return
      */
     open fun constructOutput(): IntArrayND {
         if(!this.hasRun) {

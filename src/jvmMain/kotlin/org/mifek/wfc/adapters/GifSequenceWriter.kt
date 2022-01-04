@@ -7,6 +7,16 @@ import javax.imageio.metadata.IIOMetadata
 import javax.imageio.metadata.IIOMetadataNode
 import javax.imageio.stream.ImageOutputStream
 
+/**
+ * Gif sequence writer
+ *
+ * @constructor
+ *
+ * @param outputStream
+ * @param imageType
+ * @param timeBetweenFramesMS
+ * @param loopContinuously
+ */
 open class GifSequenceWriter @Throws(IOException::class) constructor(
     outputStream: ImageOutputStream,
     imageType: Int,
@@ -71,6 +81,11 @@ open class GifSequenceWriter @Throws(IOException::class) constructor(
         gifWriter.prepareWriteSequence(null)
     }
 
+    /**
+     * Write to sequence
+     *
+     * @param img
+     */
     @Throws(IOException::class)
     fun writeToSequence(img: RenderedImage) {
         gifWriter.writeToSequence(
@@ -83,6 +98,10 @@ open class GifSequenceWriter @Throws(IOException::class) constructor(
         )
     }
 
+    /**
+     * Close
+     *
+     */
     @Throws(IOException::class)
     open fun close() {
         gifWriter.endWriteSequence()

@@ -9,6 +9,15 @@ import org.mifek.wfc.topologies.Cartesian3DTopology
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 
+/**
+ * Overlapping cartesian3d model
+ *
+ * @property storage
+ * @property outputWidth
+ * @property outputHeight
+ * @property outputDepth
+ * @constructor Create empty Overlapping cartesian3d model
+ */
 open class OverlappingCartesian3DModel(
     val storage: PatternWeights3D,
     val outputWidth: Int,
@@ -202,6 +211,15 @@ open class OverlappingCartesian3DModel(
         return algorithm
     }
 
+    /**
+     * Ban patterns
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param patterns
+     * @return
+     */
     fun banPatterns(x: Int, y: Int, z: Int, patterns: Iterable<Int>): OverlappingCartesian3DModel {
         if (
             x >= outputWidth - (if (options.periodicOutput) 0 else overlap) ||
@@ -222,6 +240,13 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Ban patterns
+     *
+     * @param coordinates
+     * @param patterns
+     * @return
+     */
     fun banPatterns(
         coordinates: Iterable<Triple<Int, Int, Int>>,
         patterns: Iterable<Int>
@@ -233,12 +258,28 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Set patterns
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param patterns
+     * @return
+     */
     fun setPatterns(x: Int, y: Int, z: Int, patterns: Iterable<Int>): OverlappingCartesian3DModel {
         banPatterns(x, y, z, patternsArray.indices.minus(patterns))
 
         return this
     }
 
+    /**
+     * Set patterns
+     *
+     * @param coordinates
+     * @param patterns
+     * @return
+     */
     fun setPatterns(
         coordinates: Iterable<Triple<Int, Int, Int>>,
         patterns: Iterable<Int>
@@ -250,6 +291,15 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Set pixel
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param pixel
+     * @return
+     */
     fun setPixel(x: Int, y: Int, z: Int, pixel: Int): OverlappingCartesian3DModel {
         if (options.periodicOutput) {
             setPatterns(x, y, z, pixels[pixel].asIterable())
@@ -282,6 +332,13 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Set pixel
+     *
+     * @param coordinates
+     * @param pixel
+     * @return
+     */
     fun setPixel(coordinates: Iterable<Triple<Int, Int, Int>>, pixel: Int): OverlappingCartesian3DModel {
         coordinates.forEach {
             setPixel(it.first, it.second, it.third, pixel)
@@ -290,6 +347,15 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Ban pixel
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param pixel
+     * @return
+     */
     fun banPixel(x: Int, y: Int, z: Int, pixel: Int): OverlappingCartesian3DModel {
         if (options.periodicOutput) {
             banPatterns(x, y, z, pixels[pixel].asIterable())
@@ -322,6 +388,13 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Ban pixel
+     *
+     * @param coordinates
+     * @param pixel
+     * @return
+     */
     fun banPixel(coordinates: Iterable<Triple<Int, Int, Int>>, pixel: Int): OverlappingCartesian3DModel {
         coordinates.forEach {
             banPixel(it.first, it.second, it.third, pixel)
@@ -330,6 +403,15 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Set pixels
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param pixels
+     * @return
+     */
     fun setPixels(x: Int, y: Int, z: Int, pixels: Iterable<Int>): OverlappingCartesian3DModel {
         if (options.periodicOutput) {
             setPatterns(
@@ -370,6 +452,13 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Set pixels
+     *
+     * @param coordinates
+     * @param pixels
+     * @return
+     */
     fun setPixels(coordinates: Iterable<Triple<Int, Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian3DModel {
         coordinates.forEach {
             setPixels(it.first, it.second, it.third, pixels)
@@ -378,6 +467,15 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Ban pixels
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param pixels
+     * @return
+     */
     fun banPixels(x: Int, y: Int, z: Int, pixels: Iterable<Int>): OverlappingCartesian3DModel {
         if (options.periodicOutput) {
             banPatterns(
@@ -418,6 +516,13 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * Ban pixels
+     *
+     * @param coordinates
+     * @param pixels
+     * @return
+     */
     fun banPixels(coordinates: Iterable<Triple<Int, Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian3DModel {
         coordinates.forEach {
             banPixels(it.first, it.second, it.third, pixels)
@@ -426,6 +531,12 @@ open class OverlappingCartesian3DModel(
         return this
     }
 
+    /**
+     * On boundary
+     *
+     * @param waveIndex
+     * @return
+     */
     protected fun onBoundary(waveIndex: Int): Boolean {
         if (waveIndex % outputWidth >= outputWidth - overlap) {
             return true
@@ -440,7 +551,10 @@ open class OverlappingCartesian3DModel(
     }
 
     /**
-     * Shifts wave index from algorithm coordinates to output coordinates.
+     * Shift algorithm wave
+     *
+     * @param wave
+     * @return
      */
     fun shiftAlgorithmWave(wave: Int): Int {
         if (options.periodicOutput) return wave
@@ -450,7 +564,10 @@ open class OverlappingCartesian3DModel(
     }
 
     /**
-     * Shifts wave index from output coordinates to algorithm coordinates and an optional shift which represents index in the pattern (for boundary pixels).
+     * Shift output wave
+     *
+     * @param wave
+     * @return
      */
     fun shiftOutputWave(wave: Int): Pair<Int, Int> {
         var index = wave
@@ -484,6 +601,12 @@ open class OverlappingCartesian3DModel(
         return Pair(index, shift)
     }
 
+    /**
+     * Construct nullable output
+     *
+     * @param algorithm
+     * @return
+     */
     @ExperimentalUnsignedTypes
     open fun constructNullableOutput(algorithm: Cartesian3DWfcAlgorithm): Array<Array<Array<Int?>>> {
         if (!algorithm.hasRun) {
@@ -518,7 +641,10 @@ open class OverlappingCartesian3DModel(
     }
 
     /**
-     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     * Construct averaged output
+     *
+     * @param algorithm
+     * @return
      */
     @ExperimentalUnsignedTypes
     open fun constructAveragedOutput(algorithm: Cartesian3DWfcAlgorithm): IntArray3D {

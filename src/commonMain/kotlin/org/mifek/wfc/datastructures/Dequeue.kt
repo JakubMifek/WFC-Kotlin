@@ -1,5 +1,13 @@
 package org.mifek.wfc.datastructures
 
+/**
+ * Dequeue
+ *
+ * @param T
+ * @constructor
+ *
+ * @param init
+ */
 open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
     private var head: Node<T>? = null
     private var tail: Node<T>? = null
@@ -13,6 +21,11 @@ open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
         }
     }
 
+    /**
+     * Enqueue
+     *
+     * @param item
+     */
     fun enqueue(item: T) {
         if(head == null) {
             head = Node(item)
@@ -36,6 +49,11 @@ open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
         count++
     }
 
+    /**
+     * Push front
+     *
+     * @param item
+     */
     fun pushFront(item: T) {
         if(head == null) {
             head = Node(item)
@@ -59,6 +77,11 @@ open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
         count++
     }
 
+    /**
+     * Dequeue
+     *
+     * @return
+     */
     fun dequeue(): T? {
         if(head == null) return null
 
@@ -76,6 +99,11 @@ open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
         return ret
     }
 
+    /**
+     * Pop
+     *
+     * @return
+     */
     fun pop(): T? {
         if(tail == null) return null
 
@@ -94,7 +122,10 @@ open class Dequeue<T>(init: Iterable<T>) : Iterable<T> {
     }
 
     /**
-     * Beware O(N) complexity!
+     * Remove
+     *
+     * @param item
+     * @return
      */
     fun remove(item: T): Boolean {
         var curr = head

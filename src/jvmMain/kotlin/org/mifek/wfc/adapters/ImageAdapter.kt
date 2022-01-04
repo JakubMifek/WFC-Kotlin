@@ -15,6 +15,11 @@ import javax.imageio.stream.FileImageOutputStream
 import javax.imageio.stream.ImageOutputStream
 import kotlin.random.Random
 
+/**
+ * Image adapter
+ *
+ * @constructor Create empty Image adapter
+ */
 class ImageAdapter {
     companion object {
         fun saveImage(

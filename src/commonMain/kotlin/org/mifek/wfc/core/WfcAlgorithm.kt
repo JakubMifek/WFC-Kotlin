@@ -6,6 +6,15 @@ import org.mifek.wfc.utils.EventHandler
 import org.mifek.wfc.utils.randomIndex
 import kotlin.random.Random
 
+/**
+ * Wfc algorithm
+ *
+ * @property topology
+ * @property weights
+ * @property propagator
+ * @property heuristic
+ * @constructor Create empty Wfc algorithm
+ */
 open class WfcAlgorithm(
     protected val topology: Topology,
     protected val weights: DoubleArray,
@@ -132,7 +141,8 @@ open class WfcAlgorithm(
     val afterCollapse = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
 
     /**
-     * Clears the calculations made in the network
+     * Clear
+     *
      */
     open fun clear() {
         beforeClear(this)
@@ -153,8 +163,9 @@ open class WfcAlgorithm(
     }
 
     /**
-     * Initializes the algorithm.
-     * Bans all patterns in places where they cannot belong (e.g. a pattern without any left neighbour in the centre of the result)
+     * Warmup
+     *
+     * @return
      */
     open fun warmup(): Boolean {
         beforeWarmup(this)
@@ -185,7 +196,11 @@ open class WfcAlgorithm(
     }
 
     /**
-     * Bans the pattern in selected wave
+     * Ban
+     *
+     * @param wave
+     * @param pattern
+     * @return
      */
     open fun ban(wave: Int, pattern: Int): Boolean? {
         if (!wavesArray[wave][pattern]) return false
@@ -211,13 +226,23 @@ open class WfcAlgorithm(
         return true
     }
 
+    /**
+     * Observe pattern using weights
+     *
+     * @param patterns
+     * @param random
+     * @return
+     */
     protected fun observePatternUsingWeights(patterns: BooleanArray, random: Random = Random.Default): Int {
         val distribution = DoubleArray(patternCount) { if (patterns[it]) weights[it] else 0.0 }
         return distribution.randomIndex(random)
     }
 
     /**
-     * Observes a pattern in a wave using given random
+     * Observe
+     *
+     * @param random
+     * @return
      */
     open fun observe(random: Random = Random.Default): Boolean? {
         beforeObserve(this)
@@ -249,9 +274,11 @@ open class WfcAlgorithm(
     }
 
     /**
-     * Forces pattern observation to given index.
+     * Force observe
      *
-     * This function is intended for user-interaction.
+     * @param index
+     * @param pattern
+     * @return
      */
     open fun forceObserve(index: Int, pattern: Int): Boolean? {
         beforeObserve(this)
@@ -275,7 +302,9 @@ open class WfcAlgorithm(
     }
 
     /**
-     * Propagates consequences of bans
+     * Propagate
+     *
+     * @return
      */
     open fun propagate(): Boolean {
         beforePropagation(this)
@@ -324,7 +353,10 @@ open class WfcAlgorithm(
     }
 
     /**
-     * Performs single step to the WFC
+     * Step
+     *
+     * @param random
+     * @return
      */
     open fun step(random: Random = Random.Default): Boolean? {
         beforeStep(this)
@@ -342,7 +374,12 @@ open class WfcAlgorithm(
     }
 
     /**
-     * Main loop of WFC algorithm
+     * Run
+     *
+     * @param seed
+     * @param limit
+     * @param backtrackLimit
+     * @return
      */
     open fun run(seed: Int = Random.nextInt(), limit: Int = 0, backtrackLimit: Int = 0): Boolean {
         val random = Random(seed)

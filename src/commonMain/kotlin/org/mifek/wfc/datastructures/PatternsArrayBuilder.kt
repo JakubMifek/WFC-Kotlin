@@ -1,11 +1,23 @@
 package org.mifek.wfc.datastructures
 
+/**
+ * Patterns array builder
+ *
+ * @constructor Create empty Patterns array builder
+ */
 class PatternsArrayBuilder : MutableList<IntArray> {
     private val patternsList = mutableListOf<Pair<IntArray, IntHolder>>()
     private val indices = mutableMapOf<Int, MutableList<Int>>()
     val patterns: List<Pair<IntArray, IntHolder>>
         get() = patternsList
 
+    /**
+     * Pab iterator
+     *
+     * @property pab
+     * @property index
+     * @constructor Create empty Pab iterator
+     */
     class PabIterator(private val pab: PatternsArrayBuilder, private var index: Int) : MutableListIterator<IntArray> {
         val underlyingIterator = pab.patternsList.listIterator()
         override fun hasNext(): Boolean {

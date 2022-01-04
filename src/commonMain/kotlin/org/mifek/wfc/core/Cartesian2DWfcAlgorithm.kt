@@ -6,6 +6,17 @@ import org.mifek.wfc.models.Patterns
 import org.mifek.wfc.models.Pixels
 import org.mifek.wfc.topologies.Cartesian2DTopology
 
+/**
+ * Cartesian2d wfc algorithm
+ *
+ * @property topology2D
+ * @property patterns
+ * @property pixels
+ * @constructor
+ *
+ * @param weights
+ * @param propagator
+ */
 open class Cartesian2DWfcAlgorithm(
     private val topology2D: Cartesian2DTopology,
     weights: DoubleArray,
@@ -18,6 +29,13 @@ open class Cartesian2DWfcAlgorithm(
     propagator,
     LowestEntropyHeuristic(patterns.size, topology2D.totalSize, weights)
 ) {
+    /**
+     * Ban wave patterns
+     *
+     * @param wave
+     * @param patterns
+     * @return
+     */
     fun banWavePatterns(wave: Int, patterns: Iterable<Int>): Boolean {
         patterns.forEach {
             if (ban(wave, it) == null) return false
@@ -25,6 +43,13 @@ open class Cartesian2DWfcAlgorithm(
         return propagate()
     }
 
+    /**
+     * Ban wave patterns
+     *
+     * @param waves
+     * @param patterns
+     * @return
+     */
     fun banWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>): Boolean {
         waves.forEach { wave ->
             patterns.forEach {
@@ -34,6 +59,12 @@ open class Cartesian2DWfcAlgorithm(
         return propagate()
     }
 
+    /**
+     * Set wave patterns
+     *
+     * @param wave
+     * @param patterns
+     */
     fun setWavePatterns(wave: Int, patterns: Iterable<Int>) {
         this.banWavePatterns(
             wave,
@@ -42,6 +73,12 @@ open class Cartesian2DWfcAlgorithm(
         )
     }
 
+    /**
+     * Set wave patterns
+     *
+     * @param waves
+     * @param patterns
+     */
     fun setWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
         this.banWavePatterns(
             waves,
@@ -50,34 +87,85 @@ open class Cartesian2DWfcAlgorithm(
         )
     }
 
+    /**
+     * Ban coordinate patterns
+     *
+     * @param x
+     * @param y
+     * @param patterns
+     */
     fun banCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) {
         this.banWavePatterns(topology2D.serializeCoordinates(x, y), patterns)
     }
 
+    /**
+     * Ban coordinate patterns
+     *
+     * @param waves
+     * @param patterns
+     */
     fun banCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
         this.banWavePatterns(waves.map { topology2D.serializeCoordinates(it.first, it.second) }, patterns)
     }
 
+    /**
+     * Set coordinate patterns
+     *
+     * @param x
+     * @param y
+     * @param patterns
+     */
     fun setCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) {
         this.setWavePatterns(topology2D.serializeCoordinates(x, y), patterns)
     }
 
+    /**
+     * Set coordinate patterns
+     *
+     * @param waves
+     * @param patterns
+     */
     fun setCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
         this.setWavePatterns(waves.map { topology2D.serializeCoordinates(it.first, it.second) }, patterns)
     }
 
+    /**
+     * Ban wave pixel
+     *
+     * @param wave
+     * @param pixel
+     */
     fun banWavePixel(wave: Int, pixel: Int) {
         banWavePatterns(wave, pixels[pixel].asIterable())
     }
 
+    /**
+     * Ban wave pixel
+     *
+     * @param waves
+     * @param pixel
+     */
     fun banWavePixel(waves: Iterable<Int>, pixel: Int) {
         banWavePatterns(waves, pixels[pixel].asIterable())
     }
 
+    /**
+     * Ban coordinate pixel
+     *
+     * @param x
+     * @param y
+     * @param pixel
+     */
     fun banCoordinatePixel(x: Int, y: Int, pixel: Int) {
         banWavePatterns(topology2D.serializeCoordinates(x, y), pixels[pixel].asIterable())
     }
 
+    /**
+     * Ban coordinate pixels
+     *
+     * @param coordinates
+     * @param pixel
+     */
     fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) {
         banWavePatterns(
             coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
@@ -86,28 +174,41 @@ open class Cartesian2DWfcAlgorithm(
     }
 
     /**
-     * Bans all patterns that do not contain given pixel
+     * Set wave pixel
+     *
+     * @param wave
+     * @param pixel
      */
     fun setWavePixel(wave: Int, pixel: Int) {
         setWavePatterns(wave, pixels[pixel].asIterable())
     }
 
     /**
-     * Bans all patterns that do not contain any of given pixels
+     * Set wave pixels
+     *
+     * @param waves
+     * @param pixel
      */
     fun setWavePixels(waves: Iterable<Int>, pixel: Int) {
         setWavePatterns(waves, pixels[pixel].asIterable())
     }
 
     /**
-     * Bans all patterns that do not contain given pixel
+     * Set coordinate pixel
+     *
+     * @param x
+     * @param y
+     * @param pixel
      */
     fun setCoordinatePixel(x: Int, y: Int, pixel: Int) {
         setWavePatterns(topology2D.serializeCoordinates(x, y), pixels[pixel].asIterable())
     }
 
     /**
-     * Bans all patterns that do not contain any of given pixels
+     * Set coordinate pixels
+     *
+     * @param coordinates
+     * @param pixel
      */
     fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) {
         setWavePatterns(
@@ -116,6 +217,12 @@ open class Cartesian2DWfcAlgorithm(
         )
     }
 
+    /**
+     * Ban wave pixels
+     *
+     * @param wave
+     * @param pixels
+     */
     fun banWavePixels(wave: Int, pixels: Iterable<Int>) {
         banWavePatterns(
             wave,
@@ -124,6 +231,12 @@ open class Cartesian2DWfcAlgorithm(
         )
     }
 
+    /**
+     * Ban wave pixels
+     *
+     * @param waves
+     * @param pixels
+     */
     fun banWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) {
         banWavePatterns(
             waves,
@@ -132,6 +245,13 @@ open class Cartesian2DWfcAlgorithm(
         )
     }
 
+    /**
+     * Ban coordinate pixels
+     *
+     * @param x
+     * @param y
+     * @param pixels
+     */
     fun banCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) {
         banWavePatterns(
             topology2D.serializeCoordinates(x, y),
@@ -140,6 +260,12 @@ open class Cartesian2DWfcAlgorithm(
         )
     }
 
+    /**
+     * Ban coordinate pixels
+     *
+     * @param coordinates
+     * @param pixels
+     */
     fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
         banWavePatterns(
             coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
@@ -149,7 +275,10 @@ open class Cartesian2DWfcAlgorithm(
     }
 
     /**
-     * Bans all patterns that do not contain any of given pixels
+     * Set wave pixels
+     *
+     * @param wave
+     * @param pixels
      */
     fun setWavePixels(wave: Int, pixels: Iterable<Int>) {
         setWavePatterns(
@@ -160,7 +289,10 @@ open class Cartesian2DWfcAlgorithm(
     }
 
     /**
-     * Bans all patterns that do not contain any of given pixels
+     * Set wave pixels
+     *
+     * @param waves
+     * @param pixels
      */
     fun setWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) {
         setWavePatterns(
@@ -171,7 +303,11 @@ open class Cartesian2DWfcAlgorithm(
     }
 
     /**
-     * Bans all patterns that do not contain any of given pixels
+     * Set coordinate pixels
+     *
+     * @param x
+     * @param y
+     * @param pixels
      */
     fun setCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) {
         setWavePatterns(
@@ -182,7 +318,10 @@ open class Cartesian2DWfcAlgorithm(
     }
 
     /**
-     * Bans all patterns that do not contain any of given pixels
+     * Set coordinate pixels
+     *
+     * @param coordinates
+     * @param pixels
      */
     fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
         setWavePatterns(
@@ -193,7 +332,9 @@ open class Cartesian2DWfcAlgorithm(
     }
 
     /**
-     * Constructs output from a wave for overlapping model, returns averages when multiple patterns available
+     * Construct output
+     *
+     * @return
      */
     open fun constructOutput(): IntArray2D {
         if (!this.hasRun) {

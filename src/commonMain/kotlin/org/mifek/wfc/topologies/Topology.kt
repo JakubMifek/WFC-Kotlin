@@ -1,5 +1,10 @@
 package org.mifek.wfc.topologies
 
+/**
+ * Topology
+ *
+ * @constructor Create empty Topology
+ */
 interface Topology {
     val periodic: Boolean
 
@@ -14,7 +19,10 @@ interface Topology {
     val maxDegree: Int
 
     /**
-     * Returns pairs of neighbour's direction and index
+     * Neighbour iterator
+     *
+     * @param index
+     * @return
      */
     fun neighbourIterator(index: Int): Sequence<Pair<Int, Int>>
 }

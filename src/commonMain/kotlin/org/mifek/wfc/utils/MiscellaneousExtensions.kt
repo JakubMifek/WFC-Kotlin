@@ -5,12 +5,20 @@ import kotlin.math.min
 import kotlin.random.Random
 
 /**
- * Product of int array elements
+ * Product
+ *
+ * @return
  */
 fun IntArray.product(): Int {
     return this.reduce { acc, it -> acc * it }
 }
 
+/**
+ * To index
+ *
+ * @param sizes
+ * @return
+ */
 fun IntArray.toIndex(sizes: IntArray): Int {
     var res = 0
     var i = size - 1
@@ -20,6 +28,12 @@ fun IntArray.toIndex(sizes: IntArray): Int {
     return res
 }
 
+/**
+ * To coordinates
+ *
+ * @param sizes
+ * @return
+ */
 fun Int.toCoordinates(sizes: IntArray): IntArray {
     // X first, then Y, Z, ... We don't need the last dimension size
     val res = IntArray(sizes.size)
@@ -34,7 +48,10 @@ fun Int.toCoordinates(sizes: IntArray): IntArray {
 }
 
 /**
- * Return index of random element based on given distribution
+ * Random index
+ *
+ * @param random
+ * @return
  */
 fun DoubleArray.randomIndex(random: Random = Random.Default): Int {
     val sum = sum()
@@ -52,10 +69,19 @@ fun DoubleArray.randomIndex(random: Random = Random.Default): Int {
 }
 
 /**
- * Converts this quadruple into a list.
+ * To list
+ *
+ * @param T
+ * @return
  */
 fun <T> Quadruple<T, T, T, T>.toList(): List<T> = listOf(first, second, third, fourth)
 
+/**
+ * Plus
+ *
+ * @param other
+ * @return
+ */
 @ExperimentalUnsignedTypes
 operator fun Quadruple<UByte, UByte, UByte, UByte>.plus(other: Quadruple<UByte, UByte, UByte, UByte>): Quadruple<UByte, UByte, UByte, UByte> {
     return Quadruple(
@@ -66,6 +92,12 @@ operator fun Quadruple<UByte, UByte, UByte, UByte>.plus(other: Quadruple<UByte, 
     )
 }
 
+/**
+ * Div
+ *
+ * @param value
+ * @return
+ */
 @ExperimentalUnsignedTypes
 operator fun Quadruple<UByte, UByte, UByte, UByte>.div(value: Int): Quadruple<UByte, UByte, UByte, UByte> {
     return Quadruple(
@@ -77,7 +109,11 @@ operator fun Quadruple<UByte, UByte, UByte, UByte>.div(value: Int): Quadruple<UB
 }
 
 /**
- * Links up the sequence of arrays into one big array
+ * Chain
+ *
+ * @param number
+ * @param size
+ * @return
  */
 fun Sequence<IntArray>.chain(number: Int = 1, size: Int = 0): IntArray {
     return this.fold(ArrayList<Int>(number * size), { acc, curr ->

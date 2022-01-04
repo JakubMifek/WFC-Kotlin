@@ -4,6 +4,14 @@ import org.mifek.wfc.utils.product
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 
+/**
+ * Int array n d
+ *
+ * @property sizes
+ * @constructor
+ *
+ * @param init
+ */
 class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(sizes.product(), init)
     val size = data.size
@@ -14,42 +22,99 @@ class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int
         return data.iterator()
     }
 
+    /**
+     * Get
+     *
+     * @param index
+     * @return
+     */
     operator fun get(index: Int): Int {
         return data[index]
     }
 
+    /**
+     * Set
+     *
+     * @param index
+     * @param value
+     */
     operator fun set(index: Int, value: Int) {
         data[index] = value
     }
 
+    /**
+     * Get
+     *
+     * @param coords
+     * @return
+     */
     operator fun get(coords: IntArray): Int {
         return data[coords.toIndex(sizes)]
     }
 
+    /**
+     * Set
+     *
+     * @param coords
+     * @param value
+     */
     operator fun set(coords: IntArray, value: Int) {
         data[coords.toIndex(sizes)] = value
     }
 
+    /**
+     * Content hash code
+     *
+     * @return
+     */
     fun contentHashCode(): Int {
         return data.contentHashCode()
     }
 
+    /**
+     * Content equals
+     *
+     * @param other
+     * @return
+     */
     fun contentEquals(other: IntArrayND): Boolean {
         return data.contentEquals(other.data)
     }
 
+    /**
+     * As int array
+     *
+     * @return
+     */
     fun asIntArray(): IntArray {
         return data
     }
 
+    /**
+     * To int array
+     *
+     * @return
+     */
     fun toIntArray(): IntArray {
         return IntArray(size) { data[it] }
     }
 
+    /**
+     * Copy of
+     *
+     * @return
+     */
     fun copyOf(): IntArrayND {
         return IntArrayND(sizes) { data[it] }
     }
 
+    /**
+     * Slice
+     *
+     * @param startIndex
+     * @param ranges
+     * @return
+     */
     fun slice(startIndex: Int, ranges: Sequence<IntRange?>): IntArrayND {
         val ranges2 = ranges.mapIndexed { index, it -> (it ?: 0 until sizes[index]).iterator().asSequence().toList() }
         val rangeSizes = ranges2.map { it.size }.toList().toIntArray()
@@ -62,9 +127,11 @@ class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int
     }
 
     /**
-     * Rotated by 90°
+     * Rotated
      *
-     * Returns a new array
+     * @param plane
+     * @param positive
+     * @return
      */
     fun rotated(plane: Pair<Int, Int>, positive: Boolean = true): IntArrayND {
         if(plane.first == plane.second) {
@@ -92,7 +159,10 @@ class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int
     }
 
     /**
-     * Returns a new array
+     * Flipped
+     *
+     * @param axis
+     * @return
      */
     fun flipped(axis: Int): IntArrayND {
         return IntArrayND(sizes) {
@@ -102,14 +172,20 @@ class IntArrayND(val sizes: IntArray, init: (Int) -> Int = { 0 }) : Iterable<Int
         }
     }
 
+    /**
+     * Clone
+     *
+     * @return
+     */
     fun clone(): IntArrayND {
         return IntArrayND(sizes) { data[it] }
     }
 
     /**
-     * Up-scaled
+     * Up scaled
      *
-     * Returns a new array
+     * @param scale
+     * @return
      */
     fun upScaled(scale: Int): IntArrayND {
         if (scale < 1) {

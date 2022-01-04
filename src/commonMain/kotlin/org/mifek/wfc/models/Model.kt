@@ -2,9 +2,16 @@ package org.mifek.wfc.models
 
 import org.mifek.wfc.core.WfcAlgorithm
 
+/**
+ * Model
+ *
+ * @constructor Create empty Model
+ */
 interface Model {
     /**
-     * Builds the WFC Core
+     * Build
+     *
+     * @return
      */
     fun build(): WfcAlgorithm
 }

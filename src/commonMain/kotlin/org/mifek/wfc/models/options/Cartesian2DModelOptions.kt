@@ -1,5 +1,25 @@
 package org.mifek.wfc.models.options
 
+/**
+ * Cartesian2d model options
+ *
+ * @property allowRotations
+ * @property allowHorizontalFlips
+ * @property allowVerticalFlips
+ * @property grounded
+ * @property banGroundElsewhere
+ * @property roofed
+ * @property banRoofElsewhere
+ * @property leftSided
+ * @property banLeftSideElsewhere
+ * @property rightSided
+ * @property banRightSideElsewhere
+ * @property banSidesElsewhere
+ * @property periodicOutput
+ * @property periodicInput
+ * @property weightPower
+ * @constructor Create empty Cartesian2d model options
+ */
 data class Cartesian2DModelOptions(
     val allowRotations: Boolean = false,
     val allowHorizontalFlips: Boolean = false,

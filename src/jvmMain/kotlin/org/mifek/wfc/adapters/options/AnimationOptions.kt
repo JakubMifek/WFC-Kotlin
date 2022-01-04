@@ -1,5 +1,17 @@
 package org.mifek.wfc.adapters.options
 
+/**
+ * Animation options
+ *
+ * @property outputPath
+ * @property fileName
+ * @property outputScale
+ * @property events
+ * @property useEvery
+ * @property fps
+ * @property loop
+ * @constructor Create empty Animation options
+ */
 data class AnimationOptions(
     val outputPath: String,
     val fileName: String,

@@ -4,6 +4,16 @@ import org.mifek.wfc.datatypes.Axis3D
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 
+/**
+ * Int array3d
+ *
+ * @property width
+ * @property height
+ * @property depth
+ * @constructor
+ *
+ * @param init
+ */
 class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(width * height * depth, init)
     val size = data.size
@@ -15,18 +25,46 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return data.iterator()
     }
 
+    /**
+     * Get
+     *
+     * @param index
+     * @return
+     */
     operator fun get(index: Int): Int {
         return data[index]
     }
 
+    /**
+     * Set
+     *
+     * @param index
+     * @param value
+     */
     operator fun set(index: Int, value: Int) {
         data[index] = value
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: Int, y: Int, z: Int): Int {
         return data[(z * height + y) * width + x]
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: IntRange?, y: Int, z: Int): Sequence<Int> {
         val index = (z * height + y) * width
         var X = x
@@ -34,6 +72,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return sequence { for (it in X) yield(data[index + it]) }
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: Int, y: IntRange?, z: Int): Sequence<Int> {
         val index = z * height * width + x
         var Y = y
@@ -41,6 +87,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return sequence { for (it in Y) yield(data[index + it * width]) }
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: Int, y: Int, z: IntRange?): Sequence<Int> {
         val index = y * width + x
         val multiplier = width * height
@@ -49,6 +103,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return sequence { for (it in Z) yield(data[index + it * multiplier]) }
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: IntRange?, y: IntRange?, z: Int): Sequence<Sequence<Int>> {
         val i_z = z * height * width
         var Y = y
@@ -67,6 +129,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: IntRange?, y: Int, z: IntRange?): Sequence<Sequence<Int>> {
         val i_y = y * width
         val multiplier = width * height
@@ -86,6 +156,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: Int, y: IntRange?, z: IntRange?): Sequence<Sequence<Int>> {
         val multiplier = width * height
         var Z = z
@@ -104,6 +182,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     operator fun get(x: IntRange?, y: IntRange?, z: IntRange?): Sequence<Sequence<Sequence<Int>>> {
         var Z = z
         var Y = y
@@ -129,10 +215,26 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: Int, y: Int, z: Int, value: Int) {
         data[(z * height + y) * width + x] = value
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: IntRange?, y: Int, z: Int, value: Int) {
         val index = (z * height + y) * width
         var X = x
@@ -140,6 +242,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         for (it in X) data[index + it] = value
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: Int, y: IntRange?, z: Int, value: Int) {
         val index = z * height * width + x
         var Y = y
@@ -147,6 +257,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         for (it in Y) data[index + it * width] = value
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: Int, y: Int, z: IntRange?, value: Int) {
         val index = y * width + x
         val multiplier = width * height
@@ -155,6 +273,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         for (it in Z) data[index + it * multiplier] = value
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: IntRange?, y: IntRange?, z: Int, value: Int) {
         val i_z = z * height * width
         var Y = y
@@ -169,6 +295,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: IntRange?, y: Int, z: IntRange?, value: Int) {
         val i_y = y * width
         val multiplier = width * height
@@ -184,6 +318,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: Int, y: IntRange?, z: IntRange?, value: Int) {
         val multiplier = width * height
         var Z = z
@@ -198,6 +340,14 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @param value
+     */
     operator fun set(x: IntRange?, y: IntRange?, z: IntRange?, value: Int) {
         var Z = z
         var Y = y
@@ -217,26 +367,61 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Content hash code
+     *
+     * @return
+     */
     fun contentHashCode(): Int {
         return data.contentHashCode()
     }
 
+    /**
+     * Content equals
+     *
+     * @param other
+     * @return
+     */
     fun contentEquals(other: IntArray3D): Boolean {
         return data.contentEquals(other.data)
     }
 
+    /**
+     * As int array
+     *
+     * @return
+     */
     fun asIntArray(): IntArray {
         return data
     }
 
+    /**
+     * To int array
+     *
+     * @return
+     */
     fun toIntArray(): IntArray {
         return IntArray(size) { data[it] }
     }
 
+    /**
+     * Copy of
+     *
+     * @return
+     */
     fun copyOf(): IntArray3D {
         return IntArray3D(width, height, depth) { data[it] }
     }
 
+    /**
+     * Slice
+     *
+     * @param startIndex
+     * @param xRange
+     * @param yRange
+     * @param zRange
+     * @return
+     */
     fun slice(startIndex: Int, xRange: IntRange?, yRange: IntRange?, zRange: IntRange?): IntArray3D {
         val xRange2 = (xRange ?: 0 until width).iterator().asSequence().toList()
         val yRange2 = (yRange ?: 0 until height).iterator().asSequence().toList()
@@ -258,6 +443,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return slice
     }
 
+    /**
+     * X rotated
+     *
+     * @return
+     */
     fun xRotated(): IntArray3D {
         val res = IntArray3D(width, depth, height)
 
@@ -272,6 +462,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * X neg rotated
+     *
+     * @return
+     */
     fun xNegRotated(): IntArray3D {
         val res = IntArray3D(width, depth, height)
 
@@ -286,6 +481,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * Y rotated
+     *
+     * @return
+     */
     fun yRotated(): IntArray3D {
         val res = IntArray3D(depth, height, width)
 
@@ -300,6 +500,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * Y neg rotated
+     *
+     * @return
+     */
     fun yNegRotated(): IntArray3D {
         val res = IntArray3D(depth, height, width)
 
@@ -314,6 +519,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * Z rotated
+     *
+     * @return
+     */
     fun zRotated(): IntArray3D {
         val res = IntArray3D(height, width, depth)
 
@@ -328,6 +538,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * Z neg rotated
+     *
+     * @return
+     */
     fun zNegRotated(): IntArray3D {
         val res = IntArray3D(height, width, depth)
 
@@ -343,9 +558,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
     }
 
     /**
-     * Rotated by 90°
+     * Rotated
      *
-     * Returns a new array
+     * @param axis
+     * @param positive
+     * @return
      */
     fun rotated(axis: Axis3D, positive: Boolean = true): IntArray3D {
         return when (axis) {
@@ -355,6 +572,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Flipped z
+     *
+     * @return
+     */
     fun flippedZ(): IntArray3D {
         val res = IntArray3D(height, width, depth)
 
@@ -369,6 +591,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * Flipped y
+     *
+     * @return
+     */
     fun flippedY(): IntArray3D {
         val res = IntArray3D(height, width, depth)
 
@@ -383,6 +610,11 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         return res
     }
 
+    /**
+     * Flipped x
+     *
+     * @return
+     */
     fun flippedX(): IntArray3D {
         val res = IntArray3D(height, width, depth)
 
@@ -398,7 +630,10 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
     }
 
     /**
-     * Returns a new array
+     * Flipped
+     *
+     * @param axis
+     * @return
      */
     fun flipped(axis: Axis3D): IntArray3D {
         return when (axis) {
@@ -408,14 +643,20 @@ class IntArray3D(val width: Int, val height: Int, val depth: Int, init: (Int) ->
         }
     }
 
+    /**
+     * Clone
+     *
+     * @return
+     */
     fun clone(): IntArray3D {
         return IntArray3D(width, height, depth) { data[it] }
     }
 
     /**
-     * Up-scaled
+     * Up scaled
      *
-     * Returns a new array
+     * @param scale
+     * @return
      */
     fun upScaled(scale: Int): IntArray3D {
         if (scale < 1) {

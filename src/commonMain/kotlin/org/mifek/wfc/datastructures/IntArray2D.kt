@@ -1,5 +1,14 @@
 package org.mifek.wfc.datastructures
 
+/**
+ * Int array2d
+ *
+ * @property width
+ * @property height
+ * @constructor
+ *
+ * @param init
+ */
 class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : Iterable<Int> {
     val data = IntArray(width * height, init)
     val size = data.size
@@ -10,42 +19,102 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
         return data.iterator()
     }
 
+    /**
+     * Get
+     *
+     * @param index
+     * @return
+     */
     operator fun get(index: Int): Int {
         return data[index]
     }
 
+    /**
+     * Set
+     *
+     * @param index
+     * @param value
+     */
     operator fun set(index: Int, value: Int) {
         data[index] = value
     }
 
+    /**
+     * Get
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     operator fun get(x: Int, y: Int): Int {
         return data[y * width + x]
     }
 
+    /**
+     * Set
+     *
+     * @param x
+     * @param y
+     * @param value
+     */
     operator fun set(x: Int, y: Int, value: Int) {
         data[y * width + x] = value
     }
 
+    /**
+     * Content hash code
+     *
+     * @return
+     */
     fun contentHashCode(): Int {
         return data.contentHashCode()
     }
 
+    /**
+     * Content equals
+     *
+     * @param other
+     * @return
+     */
     fun contentEquals(other: IntArray2D): Boolean {
         return data.contentEquals(other.data)
     }
 
+    /**
+     * As int array
+     *
+     * @return
+     */
     fun asIntArray(): IntArray {
         return data
     }
 
+    /**
+     * To int array
+     *
+     * @return
+     */
     fun toIntArray(): IntArray {
         return IntArray(size) { data[it] }
     }
 
+    /**
+     * Copy of
+     *
+     * @return
+     */
     fun copyOf(): IntArray2D {
         return IntArray2D(width, height) { data[it] }
     }
 
+    /**
+     * Slice
+     *
+     * @param startIndex
+     * @param xRange
+     * @param yRange
+     * @return
+     */
     fun slice(startIndex: Int, xRange: IntRange?, yRange: IntRange?): IntArray2D {
         val xRange2 = (xRange ?: 0 until width).iterator().asSequence().toList()
         val yRange2 = (yRange ?: 0 until height).iterator().asSequence().toList()
@@ -66,21 +135,30 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
     }
 
     /**
-     * Returns the specified column
+     * Column
+     *
+     * @param column
+     * @return
      */
     fun column(column: Int): IntArray {
         return IntArray(height) { this[it * width + column] }
     }
 
     /**
-     * Returns the specified row in given array
+     * Row
+     *
+     * @param row
+     * @return
      */
     fun row(row: Int): IntArray {
         return IntArray(width) { this[it + row * width] }
     }
 
     /**
-     * Finds specified rows in given array
+     * Rows
+     *
+     * @param rows
+     * @return
      */
     fun rows(rows: IntRange): Iterable<IntArray> {
         return Iterable {
@@ -93,7 +171,10 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
     }
 
     /**
-     * Finds specified columns
+     * Columns
+     *
+     * @param columns
+     * @return
      */
     fun columns(columns: IntRange): Iterable<IntArray> {
         return Iterable {
@@ -106,9 +187,10 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
     }
 
     /**
-     * Rotated by 90°
+     * Rotated
      *
-     * Returned a new array
+     * @param positive
+     * @return
      */
     fun rotated(positive: Boolean = true): IntArray2D {
         val res = IntArray2D(height, width)
@@ -121,9 +203,9 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
     }
 
     /**
-     * Horizontally flipped
+     * H flipped
      *
-     * Returned a new array
+     * @return
      */
     fun hFlipped(): IntArray2D {
         val res = IntArray2D(width, height)
@@ -136,9 +218,9 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
     }
 
     /**
-     * Vertically flipped
+     * V flipped
      *
-     * Returned a new array
+     * @return
      */
     fun vFlipped(): IntArray2D {
         val res = IntArray2D(width, height)
@@ -150,14 +232,20 @@ class IntArray2D(val width: Int, val height: Int, init: (Int) -> Int = { 0 }) : 
         return res
     }
 
+    /**
+     * Clone
+     *
+     * @return
+     */
     fun clone(): IntArray2D {
         return IntArray2D(width, height) { data[it] }
     }
 
     /**
-     * Up-scaled
+     * Up scaled
      *
-     * Returns a new array
+     * @param scale
+     * @return
      */
     fun upScaled(scale: Int): IntArray2D {
         if (scale < 1) {

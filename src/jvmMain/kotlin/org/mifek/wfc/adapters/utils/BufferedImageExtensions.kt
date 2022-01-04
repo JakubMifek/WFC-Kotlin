@@ -3,6 +3,11 @@ package org.mifek.wfc.adapters.utils
 import org.mifek.wfc.datastructures.IntArray2D
 import java.awt.image.BufferedImage
 
+/**
+ * To int array
+ *
+ * @return
+ */
 fun BufferedImage.toIntArray(): IntArray {
     var idx = 0
     var idy = 0
@@ -17,6 +22,12 @@ fun BufferedImage.toIntArray(): IntArray {
     }
 }
 
+/**
+ * To buffered image
+ *
+ * @param stride
+ * @return
+ */
 fun IntArray.toBufferedImage(stride: Int): BufferedImage {
     val height = size / stride
     val ret = BufferedImage(stride, height, BufferedImage.TYPE_INT_ARGB)
@@ -29,6 +40,11 @@ fun IntArray.toBufferedImage(stride: Int): BufferedImage {
     return ret
 }
 
+/**
+ * To int array2d
+ *
+ * @return
+ */
 fun BufferedImage.toIntArray2D(): IntArray2D {
     var idx = 0
     var idy = 0
@@ -43,6 +59,11 @@ fun BufferedImage.toIntArray2D(): IntArray2D {
     }
 }
 
+/**
+ * To buffered image
+ *
+ * @return
+ */
 fun IntArray2D.toBufferedImage(): BufferedImage {
     val ret = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
     var i = 0

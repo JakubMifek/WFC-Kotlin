@@ -1,7 +1,10 @@
 package org.mifek.wfc.utils
 
 /**
- * Formats waves and prints to standard output
+ * Format waves
+ *
+ * @param waves
+ * @return
  */
 fun formatWaves(waves: Array<BooleanArray>): String {
     return " " + waves.indices.joinToString(" ") { idx ->
@@ -23,7 +26,10 @@ fun formatWaves(waves: Array<BooleanArray>): String {
 }
 
 /**
- * Formats patterns and prints to standard output
+ * Format patterns
+ *
+ * @param patterns
+ * @return
  */
 fun formatPatterns(patterns: Array<IntArray>): String {
     return patterns.mapIndexed { index, it ->
@@ -32,7 +38,10 @@ fun formatPatterns(patterns: Array<IntArray>): String {
 }
 
 /**
- * Formats propagator and prints to standard output
+ * Format propagator
+ *
+ * @param propagator
+ * @return
  */
 fun formatPropagator(propagator: Array<Array<IntArray>>): String {
     val x = "   "
@@ -54,6 +63,12 @@ fun formatPropagator(propagator: Array<Array<IntArray>>): String {
     return result
 }
 
+/**
+ * Format neighbours
+ *
+ * @param propagator
+ * @return
+ */
 fun formatNeighbours(propagator: Array<Array<IntArray>>): String {
     var ret = ""
     for (patternIndex in propagator[0].indices) {

@@ -1,5 +1,18 @@
 package org.mifek.wfc.datastructures
 
+/**
+ * Quadruple
+ *
+ * @param A
+ * @param B
+ * @param C
+ * @param D
+ * @property first
+ * @property second
+ * @property third
+ * @property fourth
+ * @constructor Create empty Quadruple
+ */
 data class Quadruple<out A, out B, out C, out D>(
     val first: A,
     val second: B,

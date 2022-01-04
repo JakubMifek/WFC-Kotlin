@@ -9,6 +9,14 @@ import org.mifek.wfc.models.Pixels
 import org.mifek.wfc.models.options.Cartesian3DModelOptions
 import kotlin.math.pow
 
+/**
+ * Pattern weights3d
+ *
+ * @property input
+ * @property overlap
+ * @property options
+ * @constructor Create empty Pattern weights3d
+ */
 class PatternWeights3D(
     val input: IntArray3D,
     val overlap: Int,
@@ -56,8 +64,12 @@ class PatternWeights3D(
     }
 
     /**
-     * Checks whether two overlapping patterns agree
-     * @param size Size of single side of the pattern (square patterns expected)
+     * Agrees
+     *
+     * @param pattern1
+     * @param pattern2
+     * @param direction
+     * @return
      */
     protected fun agrees(
         pattern1: IntArray3D,
@@ -95,7 +107,11 @@ class PatternWeights3D(
 
 
     /**
-     * Loads patterns and number of their occurrences in the input image
+     * Load patterns
+     *
+     * @param data
+     * @param overlap
+     * @return
      */
     protected fun loadPatterns(
         data: IntArray3D,
@@ -151,6 +167,13 @@ class PatternWeights3D(
         }
     }
 
+    /**
+     * Flips
+     *
+     * @param pattern
+     * @param options
+     * @return
+     */
     protected fun flips(pattern: IntArray3D, options: Cartesian3DModelOptions): Sequence<IntArray3D> {
         return sequence {
             if (options.allowXFlips) {
@@ -188,6 +211,12 @@ class PatternWeights3D(
         }
     }
 
+    /**
+     * X rotations
+     *
+     * @param pattern
+     * @return
+     */
     protected fun xRotations(pattern: IntArray3D): Sequence<IntArray3D> {
         return sequence {
             val pattern90X = pattern.xRotated()
@@ -199,6 +228,12 @@ class PatternWeights3D(
         }
     }
 
+    /**
+     * Y rotations
+     *
+     * @param pattern
+     * @return
+     */
     protected fun yRotations(pattern: IntArray3D): Sequence<IntArray3D> {
         return sequence {
             val pattern90Y = pattern.yRotated()
@@ -210,6 +245,12 @@ class PatternWeights3D(
         }
     }
 
+    /**
+     * Z rotations
+     *
+     * @param pattern
+     * @return
+     */
     protected fun zRotations(pattern: IntArray3D): Sequence<IntArray3D> {
         return sequence {
             val pattern90Z = pattern.zRotated()
@@ -221,6 +262,13 @@ class PatternWeights3D(
         }
     }
 
+    /**
+     * Rotations
+     *
+     * @param pattern
+     * @param options
+     * @return
+     */
     protected fun rotations(pattern: IntArray3D, options: Cartesian3DModelOptions): Sequence<IntArray3D> {
         return sequence {
             if (options.allowXRotations) {

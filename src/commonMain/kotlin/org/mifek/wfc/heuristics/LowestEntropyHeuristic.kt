@@ -5,6 +5,15 @@ import org.mifek.wfc.utils.LOG_BASE
 import kotlin.math.log
 import kotlin.random.Random
 
+/**
+ * Lowest entropy heuristic
+ *
+ * @property weights
+ * @constructor
+ *
+ * @param patternCount
+ * @param wavesCount
+ */
 class LowestEntropyHeuristic(
     patternCount: Int,
     wavesCount: Int,

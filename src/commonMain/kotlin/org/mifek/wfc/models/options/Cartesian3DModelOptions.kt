@@ -2,6 +2,22 @@ package org.mifek.wfc.models.options
 
 import org.mifek.wfc.datatypes.Direction3D
 
+/**
+ * Cartesian3d model options
+ *
+ * @property allowXRotations
+ * @property allowYRotations
+ * @property allowZRotations
+ * @property allowXFlips
+ * @property allowYFlips
+ * @property allowZFlips
+ * @property setPlanes
+ * @property banPlanesElsewhere
+ * @property periodicOutput
+ * @property periodicInput
+ * @property weightPower
+ * @constructor Create empty Cartesian3d model options
+ */
 data class Cartesian3DModelOptions(
     val allowXRotations: Boolean = false,
     val allowYRotations: Boolean = false,

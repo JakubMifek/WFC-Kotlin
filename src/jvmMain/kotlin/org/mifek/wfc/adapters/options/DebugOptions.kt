@@ -1,5 +1,19 @@
 package org.mifek.wfc.adapters.options
 
+/**
+ * Debug options
+ *
+ * @property outputPath
+ * @property outputSource
+ * @property sourceScale
+ * @property outputPatterns
+ * @property patternsScale
+ * @property outputAnimation
+ * @property outputResultImage
+ * @property outputImagesFromEvents
+ * @property outputScale
+ * @constructor Create empty Debug options
+ */
 data class DebugOptions(
     val outputPath: String,
     val outputSource: Boolean = false,

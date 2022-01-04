@@ -2,15 +2,36 @@ package org.mifek.wfc.topologies
 
 import org.mifek.wfc.datatypes.Direction2D
 
+/**
+ * Cartesian2d topology
+ *
+ * @property width
+ * @property height
+ * @property periodic
+ * @constructor Create empty Cartesian2d topology
+ */
 open class Cartesian2DTopology(val width: Int, val height: Int, override val periodic: Boolean = false) :
     Topology {
     override val totalSize = width * height
     override val maxDegree = 4
 
+    /**
+     * Deserialize coordinates
+     *
+     * @param index
+     * @return
+     */
     fun deserializeCoordinates(index: Int): Pair<Int, Int> {
         return Pair(index % width, index / width)
     }
 
+    /**
+     * Serialize coordinates
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     fun serializeCoordinates(x: Int, y: Int): Int {
         return y * width + x
     }

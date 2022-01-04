@@ -10,6 +10,14 @@ import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import org.mifek.wfc.utils.chain
 import kotlin.math.pow
 
+/**
+ * Pattern weights2d
+ *
+ * @property input
+ * @property overlap
+ * @property options
+ * @constructor Create empty Pattern weights2d
+ */
 class PatternWeights2D(
     val input: IntArray2D,
     val overlap: Int,
@@ -62,7 +70,12 @@ class PatternWeights2D(
 
 
     /**
-     * Checks whether two overlapping patterns agree
+     * Agrees
+     *
+     * @param pattern1
+     * @param pattern2
+     * @param direction
+     * @return
      */
     fun agrees(
         pattern1: IntArray2D,
@@ -98,7 +111,11 @@ class PatternWeights2D(
 
 
     /**
-     * Loads patterns and number of their occurrences in the input image
+     * Load patterns
+     *
+     * @param data
+     * @param overlap
+     * @return
      */
     protected fun loadPatterns(
         data: IntArray2D,

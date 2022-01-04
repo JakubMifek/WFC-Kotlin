@@ -9,6 +9,17 @@ import org.mifek.wfc.utils.rgbaToInt
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+/**
+ * Overlapping image model
+ *
+ * @constructor
+ *
+ * @param input
+ * @param overlap
+ * @param outputWidth
+ * @param outputHeight
+ * @param options
+ */
 open class OverlappingImageModel(
     input: IntArray2D,
     overlap: Int,

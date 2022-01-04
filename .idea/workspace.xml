@@ -1,17 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_TEST_SOURCES" value="false" />
+    <option name="SCOPE_TYPE" value="4" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d192b88-3ee4-4868-b224-a8d8137d9640" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries-with-intellij-classes.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/WFC_Kotlin_js_1_2_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/WFC_Kotlin_js_1_2_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/WFC_Kotlin_jvm_1_2_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/WFC_Kotlin_jvm_1_2_0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian3DWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian3DWfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/CartesianNDWfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/CartesianNDWfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Waves.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Waves.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/Dequeue.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/Dequeue.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntArray2D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntArray2D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntArray3D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntArray3D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntArrayND.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntArrayND.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/IntHolder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/Node.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/Node.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/PatternsArrayBuilder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/PatternsArrayBuilder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/Quadruple.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datastructures/Quadruple.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datatypes/Axis3D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datatypes/Axis3D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datatypes/Direction2D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datatypes/Direction2D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datatypes/Direction3D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/datatypes/Direction3D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/LowestEntropyHeuristic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/LowestEntropyHeuristic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/SelectionHeuristic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/SelectionHeuristic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/Model.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/Model.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian2DModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian2DModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingImageModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingImageModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/Patterns.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/Patterns.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/Pixels.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/Pixels.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian2DModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian2DModelOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian3DModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/Cartesian3DModelOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/ModelOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/options/ModelOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/storage/PatternWeights2D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/storage/PatternWeights2D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/storage/PatternWeights3D.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/storage/PatternWeights3D.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Cartesian2DTopology.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Cartesian2DTopology.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Cartesian3DTopology.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Cartesian3DTopology.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/CartesianNDTopology.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/CartesianNDTopology.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Topology.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/topologies/Topology.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/EventHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/EventHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/Formatters.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/Formatters.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/MiscellaneousExtensions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/MiscellaneousExtensions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/Rgb.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/Rgb.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/GifSequenceWriter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/GifSequenceWriter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/AnimationOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/AnimationOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/DebugOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/DebugOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/EventType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/EventType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/ImageAdapterOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/ImageAdapterOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/ImageOptions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/options/ImageOptions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/utils/BufferedImageExtensions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/utils/BufferedImageExtensions.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +88,36 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="WFC-Kotlin" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="WFC-Kotlin" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="WFC-Kotlin" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build setup" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="WFC-Kotlin" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="dukat" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="WFC-Kotlin" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="help" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="WFC-Kotlin" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="other" type="c8890929:TasksNode$1" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
@@ -78,6 +156,20 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/SelectionHeuristic.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/utils/EventHandler.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/models/OverlappingCartesian3DModel.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/jvmMain/kotlin/org/mifek/wfc/adapters/ImageAdapter.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/WfcAlgorithm.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/build.gradle" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/core/Cartesian2DWfcAlgorithm.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/jvmTest/kotlin/org/mifek/wfc/ImageTest.kt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/commonMain/kotlin/org/mifek/wfc/heuristics/LowestEntropyHeuristic.kt" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="1qQEiGfDBew3r7Kg6NKIFZug15x" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -89,34 +181,12 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="ignore.preview.features.used" value="true" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
-  <component name="RunManager" selected="Gradle.WFC-Kotlin [publishToMavenLocal]">
-    <configuration name="OverlappingCartesian3DModelTest.setPixel" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;org.mifek.wfc.OverlappingCartesian3DModelTest.setPixel&quot;" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="cleanJvmTest" />
-            <option value="jvmTest" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Gradle.WFC-Kotlin [tasks]">
     <configuration name="OverlappingCartesian3DModelTest.setPixelPlane" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -202,12 +272,40 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="WFC-Kotlin [tasks]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="tasks" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.OverlappingCartesian3DModelTest.setPixelPlane" />
+      <item itemvalue="Gradle.WFC-Kotlin [allTests]" />
+      <item itemvalue="Gradle.WFC-Kotlin [jvmTest]" />
+      <item itemvalue="Gradle.WFC-Kotlin [publishToMavenLocal]" />
+      <item itemvalue="Gradle.WFC-Kotlin [tasks]" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.WFC-Kotlin [tasks]" />
         <item itemvalue="Gradle.WFC-Kotlin [publishToMavenLocal]" />
         <item itemvalue="Gradle.OverlappingCartesian3DModelTest.setPixelPlane" />
         <item itemvalue="Gradle.WFC-Kotlin [jvmTest]" />
-        <item itemvalue="Gradle.OverlappingCartesian3DModelTest.setPixelPlane" />
         <item itemvalue="Gradle.OverlappingCartesian3DModelTest.setPixelPlane" />
       </list>
     </recent_temporary>
@@ -233,10 +331,12 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/WFC_Kotlin$ImageTest_flowers.ic" NAME="ImageTest.flowers Coverage Results" MODIFIED="1641141119141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

@@ -13,6 +13,14 @@ import org.mifek.wfc.utils.formatPatterns
 import org.mifek.wfc.utils.toCoordinates
 import org.mifek.wfc.utils.toIndex
 
+/**
+ * Overlapping cartesian2d model
+ *
+ * @property storage
+ * @property outputWidth
+ * @property outputHeight
+ * @constructor Create empty Overlapping cartesian2d model
+ */
 open class OverlappingCartesian2DModel(
     val storage: PatternWeights2D,
     val outputWidth: Int,
@@ -162,6 +170,14 @@ open class OverlappingCartesian2DModel(
     }
 
 
+    /**
+     * Ban patterns
+     *
+     * @param x
+     * @param y
+     * @param patterns
+     * @return
+     */
     fun banPatterns(x: Int, y: Int, patterns: Iterable<Int>): OverlappingCartesian2DModel {
         if (
             x >= outputWidth - (if (options.periodicOutput) 0 else overlap) ||
@@ -180,6 +196,13 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Ban patterns
+     *
+     * @param coordinates
+     * @param patterns
+     * @return
+     */
     fun banPatterns(
         coordinates: Iterable<Pair<Int, Int>>,
         patterns: Iterable<Int>
@@ -191,12 +214,27 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Set patterns
+     *
+     * @param x
+     * @param y
+     * @param patterns
+     * @return
+     */
     fun setPatterns(x: Int, y: Int, patterns: Iterable<Int>): OverlappingCartesian2DModel {
         banPatterns(x, y, patternsArray.indices.minus(patterns))
 
         return this
     }
 
+    /**
+     * Set patterns
+     *
+     * @param coordinates
+     * @param patterns
+     * @return
+     */
     fun setPatterns(
         coordinates: Iterable<Pair<Int, Int>>,
         patterns: Iterable<Int>
@@ -208,6 +246,14 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Set pixel
+     *
+     * @param x
+     * @param y
+     * @param pixel
+     * @return
+     */
     fun setPixel(x: Int, y: Int, pixel: Int): OverlappingCartesian2DModel {
         if (options.periodicOutput) {
             setPatterns(x, y, pixels[pixel].asIterable())
@@ -233,6 +279,13 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Set pixel
+     *
+     * @param coordinates
+     * @param pixel
+     * @return
+     */
     fun setPixel(coordinates: Iterable<Pair<Int, Int>>, pixel: Int): OverlappingCartesian2DModel {
         coordinates.forEach {
             setPixel(it.first, it.second, pixel)
@@ -241,6 +294,14 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Ban pixel
+     *
+     * @param x
+     * @param y
+     * @param pixel
+     * @return
+     */
     fun banPixel(x: Int, y: Int, pixel: Int): OverlappingCartesian2DModel {
         if (options.periodicOutput) {
             banPatterns(x, y, pixels[pixel].asIterable())
@@ -266,6 +327,13 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Ban pixel
+     *
+     * @param coordinates
+     * @param pixel
+     * @return
+     */
     fun banPixel(coordinates: Iterable<Pair<Int, Int>>, pixel: Int): OverlappingCartesian2DModel {
         coordinates.forEach {
             banPixel(it.first, it.second, pixel)
@@ -274,6 +342,14 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Set pixels
+     *
+     * @param x
+     * @param y
+     * @param pixels
+     * @return
+     */
     fun setPixels(x: Int, y: Int, pixels: Iterable<Int>): OverlappingCartesian2DModel {
         pixels.forEach {
             setPixel(x, y, it)
@@ -282,6 +358,13 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Set pixels
+     *
+     * @param coordinates
+     * @param pixels
+     * @return
+     */
     fun setPixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian2DModel {
         coordinates.forEach {
             setPixels(it.first, it.second, pixels)
@@ -290,6 +373,14 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Ban pixels
+     *
+     * @param x
+     * @param y
+     * @param pixels
+     * @return
+     */
     fun banPixels(x: Int, y: Int, pixels: Iterable<Int>): OverlappingCartesian2DModel {
         pixels.forEach {
             banPixel(x, y, it)
@@ -298,6 +389,13 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * Ban pixels
+     *
+     * @param coordinates
+     * @param pixels
+     * @return
+     */
     fun banPixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>): OverlappingCartesian2DModel {
         coordinates.forEach {
             banPixels(it.first, it.second, pixels)
@@ -306,6 +404,12 @@ open class OverlappingCartesian2DModel(
         return this
     }
 
+    /**
+     * On boundary
+     *
+     * @param waveIndex
+     * @return
+     */
     protected fun onBoundary(waveIndex: Int): Boolean {
         if (waveIndex % outputWidth >= outputWidth - overlap) {
             return true
@@ -317,7 +421,10 @@ open class OverlappingCartesian2DModel(
     }
 
     /**
-     * Shifts wave index from algorithm coordinates to output coordinates.
+     * Shift algorithm wave
+     *
+     * @param wave
+     * @return
      */
     fun shiftAlgorithmWave(wave: Int): Int {
         if (options.periodicOutput) return wave
@@ -325,7 +432,10 @@ open class OverlappingCartesian2DModel(
     }
 
     /**
-     * Shifts wave index from output coordinates to algorithm coordinates and an optional shift which represents index in the pattern (for boundary pixels).
+     * Shift output wave
+     *
+     * @param wave
+     * @return
      */
     fun shiftOutputWave(wave: Int): Pair<Int, Int> {
         var index = wave
@@ -355,7 +465,10 @@ open class OverlappingCartesian2DModel(
     }
 
     /**
-     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     * Construct nullable output
+     *
+     * @param algorithm
+     * @return
      */
     @ExperimentalUnsignedTypes
     open fun constructNullableOutput(algorithm: Cartesian2DWfcAlgorithm): Array<Array<Int?>> {
@@ -388,7 +501,10 @@ open class OverlappingCartesian2DModel(
     }
 
     /**
-     * Uses Int.MIN_VALUE for pixels without any feasible pattern
+     * Construct averaged output
+     *
+     * @param algorithm
+     * @return
      */
     @ExperimentalUnsignedTypes
     open fun constructAveragedOutput(algorithm: Cartesian2DWfcAlgorithm): IntArray2D {

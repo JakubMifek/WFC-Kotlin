@@ -2,16 +2,39 @@ package org.mifek.wfc.topologies
 
 import org.mifek.wfc.datatypes.Direction3D
 
+/**
+ * Cartesian3d topology
+ *
+ * @property width
+ * @property height
+ * @property depth
+ * @property periodic
+ * @constructor Create empty Cartesian3d topology
+ */
 open class Cartesian3DTopology(val width: Int, val height: Int, val depth: Int, override val periodic: Boolean = false) :
     Topology {
     override val totalSize = width * height * depth
     override val maxDegree = 6
 
+    /**
+     * Deserialize coordinates
+     *
+     * @param index
+     * @return
+     */
     fun deserializeCoordinates(index: Int): Triple<Int, Int, Int> {
         val rest = index / width
         return Triple(index % width, rest % height, rest / height)
     }
 
+    /**
+     * Serialize coordinates
+     *
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     fun serializeCoordinates(x: Int, y: Int, z: Int): Int {
         return (z * height + y) * width + x
     }
