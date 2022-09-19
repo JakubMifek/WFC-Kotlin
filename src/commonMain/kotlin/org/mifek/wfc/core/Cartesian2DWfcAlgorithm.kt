@@ -65,13 +65,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param wave
      * @param patterns
      */
-    fun setWavePatterns(wave: Int, patterns: Iterable<Int>) {
+    fun setWavePatterns(wave: Int, patterns: Iterable<Int>) =
         this.banWavePatterns(
             wave,
             (0 until this.patterns.size)
                 .minus(patterns)
         )
-    }
 
     /**
      * Set wave patterns
@@ -79,13 +78,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param patterns
      */
-    fun setWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) {
+    fun setWavePatterns(waves: Iterable<Int>, patterns: Iterable<Int>) =
         this.banWavePatterns(
             waves,
             (0 until this.patterns.size)
                 .minus(patterns)
         )
-    }
 
     /**
      * Ban coordinate patterns
@@ -94,9 +92,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param y
      * @param patterns
      */
-    fun banCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) {
+    fun banCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) =
         this.banWavePatterns(topology2D.serializeCoordinates(x, y), patterns)
-    }
 
     /**
      * Ban coordinate patterns
@@ -104,9 +101,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param patterns
      */
-    fun banCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
+    fun banCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) =
         this.banWavePatterns(waves.map { topology2D.serializeCoordinates(it.first, it.second) }, patterns)
-    }
 
     /**
      * Set coordinate patterns
@@ -115,9 +111,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param y
      * @param patterns
      */
-    fun setCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) {
+    fun setCoordinatePatterns(x: Int, y: Int, patterns: Iterable<Int>) =
         this.setWavePatterns(topology2D.serializeCoordinates(x, y), patterns)
-    }
 
     /**
      * Set coordinate patterns
@@ -125,9 +120,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param patterns
      */
-    fun setCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) {
+    fun setCoordinatePatterns(waves: Iterable<Pair<Int, Int>>, patterns: Iterable<Int>) =
         this.setWavePatterns(waves.map { topology2D.serializeCoordinates(it.first, it.second) }, patterns)
-    }
 
     /**
      * Ban wave pixel
@@ -135,9 +129,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param wave
      * @param pixel
      */
-    fun banWavePixel(wave: Int, pixel: Int) {
+    fun banWavePixel(wave: Int, pixel: Int) =
         banWavePatterns(wave, pixels[pixel].asIterable())
-    }
 
     /**
      * Ban wave pixel
@@ -145,9 +138,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param pixel
      */
-    fun banWavePixel(waves: Iterable<Int>, pixel: Int) {
+    fun banWavePixel(waves: Iterable<Int>, pixel: Int) =
         banWavePatterns(waves, pixels[pixel].asIterable())
-    }
 
     /**
      * Ban coordinate pixel
@@ -156,9 +148,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param y
      * @param pixel
      */
-    fun banCoordinatePixel(x: Int, y: Int, pixel: Int) {
+    fun banCoordinatePixel(x: Int, y: Int, pixel: Int) =
         banWavePatterns(topology2D.serializeCoordinates(x, y), pixels[pixel].asIterable())
-    }
 
     /**
      * Ban coordinate pixels
@@ -166,12 +157,11 @@ open class Cartesian2DWfcAlgorithm(
      * @param coordinates
      * @param pixel
      */
-    fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) {
+    fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) =
         banWavePatterns(
             coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
             pixels[pixel].asIterable()
         )
-    }
 
     /**
      * Set wave pixel
@@ -179,9 +169,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param wave
      * @param pixel
      */
-    fun setWavePixel(wave: Int, pixel: Int) {
+    fun setWavePixel(wave: Int, pixel: Int) =
         setWavePatterns(wave, pixels[pixel].asIterable())
-    }
 
     /**
      * Set wave pixels
@@ -189,9 +178,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param pixel
      */
-    fun setWavePixels(waves: Iterable<Int>, pixel: Int) {
+    fun setWavePixels(waves: Iterable<Int>, pixel: Int) =
         setWavePatterns(waves, pixels[pixel].asIterable())
-    }
 
     /**
      * Set coordinate pixel
@@ -200,9 +188,8 @@ open class Cartesian2DWfcAlgorithm(
      * @param y
      * @param pixel
      */
-    fun setCoordinatePixel(x: Int, y: Int, pixel: Int) {
+    fun setCoordinatePixel(x: Int, y: Int, pixel: Int) =
         setWavePatterns(topology2D.serializeCoordinates(x, y), pixels[pixel].asIterable())
-    }
 
     /**
      * Set coordinate pixels
@@ -210,12 +197,11 @@ open class Cartesian2DWfcAlgorithm(
      * @param coordinates
      * @param pixel
      */
-    fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) {
+    fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixel: Int) =
         setWavePatterns(
             coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
             pixels[pixel].asIterable()
         )
-    }
 
     /**
      * Ban wave pixels
@@ -223,13 +209,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param wave
      * @param pixels
      */
-    fun banWavePixels(wave: Int, pixels: Iterable<Int>) {
+    fun banWavePixels(wave: Int, pixels: Iterable<Int>) =
         banWavePatterns(
             wave,
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Ban wave pixels
@@ -237,13 +222,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param pixels
      */
-    fun banWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) {
+    fun banWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) =
         banWavePatterns(
             waves,
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Ban coordinate pixels
@@ -252,13 +236,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param y
      * @param pixels
      */
-    fun banCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) {
+    fun banCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) =
         banWavePatterns(
             topology2D.serializeCoordinates(x, y),
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Ban coordinate pixels
@@ -266,13 +249,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param coordinates
      * @param pixels
      */
-    fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
+    fun banCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) =
         banWavePatterns(
             coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Set wave pixels
@@ -280,13 +262,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param wave
      * @param pixels
      */
-    fun setWavePixels(wave: Int, pixels: Iterable<Int>) {
+    fun setWavePixels(wave: Int, pixels: Iterable<Int>) =
         setWavePatterns(
             wave,
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Set wave pixels
@@ -294,13 +275,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param waves
      * @param pixels
      */
-    fun setWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) {
+    fun setWavePixels(waves: Iterable<Int>, pixels: Iterable<Int>) =
         setWavePatterns(
             waves,
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Set coordinate pixels
@@ -309,13 +289,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param y
      * @param pixels
      */
-    fun setCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) {
+    fun setCoordinatePixels(x: Int, y: Int, pixels: Iterable<Int>) =
         setWavePatterns(
             topology2D.serializeCoordinates(x, y),
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Set coordinate pixels
@@ -323,13 +302,12 @@ open class Cartesian2DWfcAlgorithm(
      * @param coordinates
      * @param pixels
      */
-    fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) {
+    fun setCoordinatePixels(coordinates: Iterable<Pair<Int, Int>>, pixels: Iterable<Int>) =
         setWavePatterns(
             coordinates.map { topology2D.serializeCoordinates(it.first, it.second) },
             pixels.map { this.pixels[it] }.fold(emptySequence<Int>()) { acc, sequence -> acc.plus(sequence) }
                 .asIterable()
         )
-    }
 
     /**
      * Construct output
