@@ -476,8 +476,9 @@ open class OverlappingCartesian2DModel(
             println("WARNING: Algorithm hasn't run yet.")
         }
 
-        return Array(outputWidth) { x ->
-            Array(outputHeight) { y ->
+        return Array(outputHeight) { y ->
+            Array(outputWidth) { x ->
+
                 val waveIndex = intArrayOf(x, y).toIndex(outputSizes)
                 val pair = shiftOutputWave(waveIndex)
                 val index = pair.first
