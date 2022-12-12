@@ -3,6 +3,7 @@ package org.mifek.wfc
 import org.mifek.wfc.datastructures.IntArray2D
 import org.mifek.wfc.datastructures.IntArray3D
 import org.mifek.wfc.models.OverlappingCartesian2DModel
+import org.mifek.wfc.models.options.Cartesian2DModelOptions
 import org.mifek.wfc.utils.formatPatterns
 import org.mifek.wfc.utils.toCoordinates
 import kotlin.math.floor
@@ -147,5 +148,35 @@ class OverlappingCartesian2DModelTest {
         val result = algorithm.run(seed)
         assertTrue(result, "Expected algorithm to be successful. Seed $seed")
         printGrid(model.constructAveragedOutput(algorithm))
+    }
+
+    @Test
+    fun setPixels() {
+        val data = intArrayOf(
+            0, 1, 2,
+            3, 4, 5,
+            6, 7, 8,
+        )
+        val seed = Random.nextInt()
+        val source = IntArray2D(3, 3) { data[it] }
+        val width = source.width * 2
+        val height = source.height * 2
+        val overlap = 1
+        val initSize = 3 - overlap
+
+        val model = OverlappingCartesian2DModel(source, overlap, width, height, Cartesian2DModelOptions(
+            allowHorizontalFlips = true, allowVerticalFlips = true
+        ))
+
+        (0 until initSize ).forEach { y ->
+            (0 until initSize ).forEach { x ->
+                model.setPixel(x, y, source[x, y])
+            }
+        }
+
+        val algorithm = model.build()
+        val result = algorithm.run(seed)
+        printGrid(model.constructAveragedOutput(algorithm))
+        assertTrue(result, "Expected algorithm to be successful. Seed $seed ")
     }
 }

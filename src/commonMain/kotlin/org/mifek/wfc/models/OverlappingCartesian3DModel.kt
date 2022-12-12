@@ -201,10 +201,12 @@ open class OverlappingCartesian3DModel(
             topology, weights, propagator, patterns, pixels,
         )
         algorithm.beforeStart += {
-            for (entry in bans) {
-                if (!algorithm.banWavePatterns(entry.key, entry.value)) {
-                    println("Setting up constraints failed.")
-                    break
+            algorithm.batchUpdate {
+                for (entry in bans) {
+                    if (!algorithm.banWavePatterns(entry.key, entry.value)) {
+                        println("Setting up constraints failed.")
+                        break
+                    }
                 }
             }
         }

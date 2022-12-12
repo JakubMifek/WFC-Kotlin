@@ -40,7 +40,7 @@ open class Cartesian2DWfcAlgorithm(
         patterns.forEach {
             if (ban(wave, it) == null) return false
         }
-        return propagate()
+        return if (isBatchUpdate) true else propagate()
     }
 
     /**
@@ -56,7 +56,7 @@ open class Cartesian2DWfcAlgorithm(
                 if (ban(wave, it) == null) return false
             }
         }
-        return propagate()
+        return if (isBatchUpdate) true else propagate()
     }
 
     /**

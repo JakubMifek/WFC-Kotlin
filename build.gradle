@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.mifek.wfc'
-version = '1.2.0'
+version = '1.2.1'
 
 repositories {
     mavenCentral()
@@ -24,7 +24,7 @@ kotlin {
             useJUnit()
         }
     }
-    js(LEGACY) {
+    js(IR) {
         browser {
             testTask {
                 useKarma {

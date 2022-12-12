@@ -34,6 +34,14 @@ open class WfcAlgorithm(
      */
     protected val wavesArray = Array(topology.totalSize) { BooleanArray(patternCount) }
     protected val amountArray = IntArray(topology.totalSize) { patternCount }
+    var isBatchUpdate = false
+        set(value) {
+            field = value
+            if (!value) {
+                propagate()
+            }
+        }
+
     val waves = Waves(wavesArray)
 
     /**
@@ -139,6 +147,13 @@ open class WfcAlgorithm(
      * Triggered after a wave is collapsed into a pattern
      */
     val afterCollapse = EventHandler<Triple<WfcAlgorithm, Int, Int>>()
+
+    inline fun batchUpdate(block: WfcAlgorithm.() -> Unit) {
+        val wasBatchUpdate = isBatchUpdate
+        isBatchUpdate = true
+        block()
+        isBatchUpdate = wasBatchUpdate
+    }
 
     /**
      * Clear

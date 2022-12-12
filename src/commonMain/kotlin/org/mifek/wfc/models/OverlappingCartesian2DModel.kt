@@ -160,9 +160,11 @@ open class OverlappingCartesian2DModel(
             topology, weights, propagator, patterns, pixels
         )
         algorithm.beforeStart += {
-            for (entry in bans) {
-                if (!algorithm.banWavePatterns(entry.key, entry.value)) {
-                    break
+            it.batchUpdate {
+                for (entry in bans) {
+                    if (!algorithm.banWavePatterns(entry.key, entry.value)) {
+                        break
+                    }
                 }
             }
         }
